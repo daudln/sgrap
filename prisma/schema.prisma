@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProfileType {
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  password      String?   @db.VarChar(200)
+  image         String?
+  accounts      Account[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  isActive      Boolean   @default(true)
+  Profile       Profile?
+
+  @@index([name, email, id])
+  @@map("user")
+}
+
+model Profile {
+  userId    String      @id @unique
+  uuid      String      @unique @default(cuid()) @db.VarChar(100)
+  firstName String      @db.VarChar(40)
+  lastName  String      @db.VarChar(40)
+  type      ProfileType @default(STUDENT)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  isActive  Boolean     @default(true)
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type])
+  @@map("profile")
+}
+
+model VerificationToken {
+  id      Int      @id @default(autoincrement())
+  token   String   @unique @default(cuid()) @db.VarChar(100)
+  email   String
+  expires DateTime
+
+  @@unique([email, token])
+  @@map("email_verification")
+}
+
+model ResetPasswordToken {
+  id      Int      @id @default(autoincrement())
+  token   String   @unique @default(cuid()) @db.VarChar(100)
+  email   String
+  expires DateTime
+
+  @@unique([email, token])
+  @@map("reset_password_token")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("account")
+}
+
+model Subject {
+  id          Int      @id @default(autoincrement())
+  uuid        String   @unique @default(cuid()) @db.VarChar(100)
+  code        String   @unique @db.VarChar(20)
+  name        String   @unique @db.VarChar(100)
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  isActive    Boolean  @default(true)
+
+  @@map("subject")
+}
