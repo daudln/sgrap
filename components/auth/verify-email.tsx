@@ -1,24 +1,18 @@
 "use client";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { VerifyEmailInput, verifyEmailSchema } from "@/schema/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
+import CardWrapper from "@/components/card-wrapper";
+import FormResponseMessage from "@/components/form-response-message";
+import { Button } from "@/components/ui/button";
 import { verifyEmail } from "@/server/auth/actions";
 import { useAction } from "next-safe-action/hooks";
-import { useCallback, useState, useEffect } from "react";
-import { BeatLoader } from "react-spinners";
-import FormResponseMessage from "../form-response-message";
-import { Button } from "../ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { BeatLoader } from "react-spinners";
 
 export function VerifyEmail({ token }: { token: string }) {
   const form = useForm<VerifyEmailInput>({
@@ -59,27 +53,26 @@ export function VerifyEmail({ token }: { token: string }) {
     });
   }, [token, onSubmit]);
   return (
-    <Card className="mx-auto max-w-sm">
-      <CardHeader>
-        <CardTitle className="text-2xl text-center">Confirming Email</CardTitle>
-        <CardDescription>
-          Please wait while we confirm your email.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex items-center justify-center flex-col">
-        {!error && !success && <BeatLoader />}
-        <div className="p-4">
-          {error && <FormResponseMessage message={error} type="error" />}
-          {success && <FormResponseMessage message={success} />}
+    <CardWrapper
+      headerLabel="Confirming Email"
+      cardDescription="Please wait!. You will be redirected to the login page"
+    >
+      {!error && !success && (
+        <div className="flex justify-center">
+          <BeatLoader className="flex justify-self-center" />
         </div>
-        {!result?.data?.success && (
-          <div className="flex justify-center">
-            <Button variant="link">
-              <Link href="/auth/login">Back to Login</Link>
-            </Button>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      )}
+      <div className="p-4">
+        {error && <FormResponseMessage message={error} type="error" />}
+        {success && <FormResponseMessage message={success} />}
+      </div>
+      {!result?.data?.success && (
+        <div className="flex justify-center">
+          <Button variant="link">
+            <Link href="/auth/login">Back to Login</Link>
+          </Button>
+        </div>
+      )}
+    </CardWrapper>
   );
 }

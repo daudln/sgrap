@@ -1,21 +1,14 @@
 "use client";
 
-import Link from "next/link";
-
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+
+import FormResponseMessage from "@/components/form-response-message";
 import { Input } from "@/components/ui/input";
 import { ForgotPasswordInput, forgotPasswordSchema } from "@/schema/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import FormResponseMessage from "../form-response-message";
 
+import CardWrapper from "@/components/card-wrapper";
 import {
   Form,
   FormControl,
@@ -58,54 +51,44 @@ export function ForgotPasswordForm() {
     execute(data);
   };
   return (
-    <Card className="mx-auto max-w-sm">
-      <CardHeader>
-        <CardTitle className="text-2xl">Reset Password</CardTitle>
-        <CardDescription>
-          Enter your email below to reset your password.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form className="grid gap-4" onSubmit={form.handleSubmit(onSubmit)}>
-            <div>
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem className="grid gap-2">
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type="email"
-                        placeholder="student@example.com"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="text-center text-sm space-y-2">
-              <Button type="submit" className="w-full">
-                Get Reset Link
-              </Button>
-            </div>
-          </form>
-        </Form>
-        <div className="mt-4 text-center text-sm">
-          Don&apos;t have an account?{" "}
-          <Link href="register" className="underline">
-            Sign up
-          </Link>
-        </div>
-        <div className="mt-4">
-          {error && <FormResponseMessage message={error} type="error" />}
-          {success && <FormResponseMessage message={success} type="success" />}
-        </div>
-      </CardContent>
-    </Card>
+    <CardWrapper
+      headerLabel="Forgot Password"
+      backButtonLabel="Don't have an account?"
+      backButtonHref="/auth/register"
+      cardDescription="Provide your details below to reset your password"
+    >
+      <Form {...form}>
+        <form className="grid gap-4" onSubmit={form.handleSubmit(onSubmit)}>
+          <div>
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem className="grid gap-2">
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="email"
+                      placeholder="student@example.com"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="text-center text-sm space-y-2">
+            <Button type="submit" className="w-full">
+              Get Reset Link
+            </Button>
+          </div>
+        </form>
+      </Form>
+      <div className="mt-4">
+        {error && <FormResponseMessage message={error} type="error" />}
+        {success && <FormResponseMessage message={success} type="success" />}
+      </div>
+    </CardWrapper>
   );
 }

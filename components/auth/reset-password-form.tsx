@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import FormResponseMessage from "@/components/form-response-message";
 import {
   Card,
   CardContent,
@@ -12,8 +12,8 @@ import { Input } from "@/components/ui/input";
 import { ResetPasswordInput, resetPasswordSchema } from "@/schema/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import FormResponseMessage from "../form-response-message";
 
+import ActionButton from "@/components/action-button";
 import {
   Form,
   FormControl,
@@ -25,7 +25,6 @@ import {
 import { resetPassword } from "@/server/auth/actions";
 import { useAction } from "next-safe-action/hooks";
 import { useState } from "react";
-import ActionButton from "../action-button";
 
 export function ResetPasswordForm({ token }: { token: string }) {
   const form = useForm<ResetPasswordInput>({

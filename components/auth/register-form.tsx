@@ -1,14 +1,5 @@
 "use client";
-import Link from "next/link";
 
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -24,9 +15,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { FcGoogle } from "react-icons/fc";
 import FormResponseMessage from "../form-response-message";
 import ActionButton from "../action-button";
+import CardWrapper from "../card-wrapper";
 
 export function RegisterForm() {
   const [error, setMessage] = useState<string>("");
@@ -60,108 +51,89 @@ export function RegisterForm() {
     execute(data);
   };
   return (
-    <Card className="mx-auto max-w-md">
-      <CardHeader>
-        <CardTitle className="text-xl">Sign Up</CardTitle>
-        <CardDescription>
-          Enter your information to create an account
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form className="grid gap-4" onSubmit={form.handleSubmit(onSubmit)}>
-            <div>
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem className="grid gap-2">
-                    <FormLabel>Username</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="student" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div>
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem className="grid gap-2">
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type="email"
-                        placeholder="student@example.com"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div>
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem className="grid gap-2">
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type="password"
-                        placeholder="********"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div>
-              <FormField
-                control={form.control}
-                name="passwordConfirmation"
-                render={({ field }) => (
-                  <FormItem className="grid gap-2">
-                    <FormLabel>Confirm Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type="password"
-                        placeholder="********"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="text-center text-sm space-y-2">
-              <ActionButton status={status} label="Signup" />
-              <Button type="submit" className="w-full" variant="outline">
-                <FcGoogle className="inline-block mr-2 h-5 w-5" />
-                Signup with Google
-              </Button>
-            </div>
-          </form>
-        </Form>
-        <div className="mt-4 text-center text-sm">
-          Already have an account?{" "}
-          <Link href="login" className="underline">
-            Sign in
-          </Link>
-        </div>
-        <div className="mt-4">
-          {error && <FormResponseMessage message={error} type="error" />}
-          {success && <FormResponseMessage message={success} type="success" />}
-        </div>
-      </CardContent>
-    </Card>
+    <CardWrapper
+      headerLabel="Register"
+      backButtonLabel="Already have an account? Sign in"
+      cardDescription="Provide your details below to create an account"
+      backButtonHref="/auth/login"
+      showSocialButtons
+    >
+      <Form {...form}>
+        <form className="grid gap-4" onSubmit={form.handleSubmit(onSubmit)}>
+          <div>
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem className="grid gap-2">
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="student" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div>
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem className="grid gap-2">
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="email"
+                      placeholder="student@example.com"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div>
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem className="grid gap-2">
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input {...field} type="password" placeholder="********" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div>
+            <FormField
+              control={form.control}
+              name="passwordConfirmation"
+              render={({ field }) => (
+                <FormItem className="grid gap-2">
+                  <FormLabel>Confirm Password</FormLabel>
+                  <FormControl>
+                    <Input {...field} type="password" placeholder="********" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="text-center text-sm space-y-2">
+            <ActionButton status={status} label="Signup" />
+          </div>
+        </form>
+      </Form>
+
+      <div className="mt-4">
+        {error && <FormResponseMessage message={error} type="error" />}
+        {success && <FormResponseMessage message={success} type="success" />}
+      </div>
+    </CardWrapper>
   );
 }

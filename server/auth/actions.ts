@@ -94,7 +94,7 @@ export const register = action(
       return {
         status: 403,
         success: false,
-        message: "User already exists",
+        message: "User with this email or name already exists",
       };
     }
     const hashedPassword = await hashPassword(password);
@@ -115,10 +115,17 @@ export const register = action(
     }
 
     const verificationToken = await generateVerificationToken(email);
+    if (!verificationToken) {
+      return {
+        status: 500,
+        success: false,
+        message: "Something went wrong",
+      };
+    }
     await sendVerificationEmail(
       email,
       "Email verification",
-      "verify-email.html",
+      `<p>Please click <a href="${process.env.DOMAIN_URL}/auth/verify-email?token=${verificationToken?.token}">here</a> to verify your email</p>`,
       verificationToken?.token!
     );
 

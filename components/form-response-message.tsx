@@ -15,7 +15,7 @@ const FormResponseMessage = ({
   return (
     <div
       className={cn(
-        "p-3 rounded-md flex items-center gap-x-2 text-sm text-destructive",
+        "p-3 rounded-md flex items-center gap-x-2 text-sm text-destructive justify-center",
         type === "error" && "text-destructive bg-destructive/15",
         type === "success" && "bg-emerald-500/15 text-emerald-500",
         type === "warning" && "bg-amber-500/15 text-amber-500",

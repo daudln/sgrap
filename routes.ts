@@ -27,6 +27,6 @@ export const PROFILE_ROUTES = ["/profile", "/profile", "/settings", "/logout"];
 
 export const API_AUTH_PREFIX = "/api/auth";
 
-export const DEFAULT_LOGIN_REDIRECT = "/dashboard";
+export const DEFAULT_LOGIN_REDIRECT = "/home";
 
 export const LOGIN_REDIRECT = "/auth/login";
