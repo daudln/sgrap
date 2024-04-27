@@ -5,6 +5,7 @@ import {
   CircleUser,
   Home as HomeIcon,
   LineChart,
+  LogOut,
   Menu,
   Package,
   Package2,
@@ -178,14 +179,22 @@ export default async function layout({
                   Settings
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  className="cursor-pointer hover:text-red-500 transition-all"
-                  action={async () => {
-                    "use server";
-                    await signOut();
-                  }}
-                >
-                  Logout
+                <DropdownMenuItem className="cursor-pointer hover:text-red-500 transition-all">
+                  <form
+                    action={async () => {
+                      "use server";
+                      await signOut();
+                    }}
+                  >
+                    <Button
+                      type="submit"
+                      variant="link"
+                      className="text-red-500"
+                      size="sm"
+                    >
+                      Logout
+                    </Button>
+                  </form>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

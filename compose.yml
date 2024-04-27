@@ -8,3 +8,10 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_DB=sgrap_db
+
+    smtp4dev:
+      image: rnwood/smtp4dev
+      container_name: sgrap-smtp
+      ports:
+        - "5001:5000"
+        - "2526:2525"

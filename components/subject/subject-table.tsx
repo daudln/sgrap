@@ -1,14 +1,14 @@
 "use client";
 
 import { DataTable } from "@/components/data-table";
-import CreateSubjectForm from "@/components/subject/create-subject-form";
+import useSubjects from "@/hooks/useSubjects";
 import { getSubjects } from "@/server/subjects/actions";
 import { Subject } from "@prisma/client";
 import { FilterFn } from "@tanstack/react-table";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 
 const multiColumnFilterFn: FilterFn<Subject> = (row, columnId, filterValue) => {
-  const searchableRowContent = `${row.original.name} ${row.original.name} ${row.original.code} ${row.original.id}`;
+  const searchableRowContent = `${row.original.name} ${row.original.description} ${row.original.code} ${row.original.id}`;
   return searchableRowContent.toLowerCase().includes(filterValue.toLowerCase());
 };
 
@@ -29,22 +29,27 @@ export default function StudentTable() {
     });
   };
 
+  useEffect(() => {
+    fetSubjects();
+  }, []);
+
   return (
-    <div>
-      <h1 className="text-lg font-semibold md:text-2xl">Subjects</h1>
-      <DataTable
-        data={subjects}
-        columns={[
-          { accessorKey: "code", header: "Code" },
-          { accessorKey: "name", header: "Name" },
-          {
-            accessorKey: "description",
-            header: "Description",
-            filterFn: multiColumnFilterFn,
-          },
-        ]}
-      />
-      <CreateSubjectForm />
-    </div>
+    <DataTable
+      data={subjects}
+      columns={[
+        {
+          accessorKey: "s/n",
+          header: "S/N",
+          accessorFn: (row, index) => index + 1,
+        },
+        { accessorKey: "code", header: "Code", filterFn: multiColumnFilterFn },
+        { accessorKey: "name", header: "Name", filterFn: multiColumnFilterFn },
+        {
+          accessorKey: "description",
+          header: "Description",
+          filterFn: multiColumnFilterFn,
+        },
+      ]}
+    />
   );
 }

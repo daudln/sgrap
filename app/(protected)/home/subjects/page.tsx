@@ -5,11 +5,6 @@ import { getSubjects } from "@/server/subjects/actions";
 import { Subject } from "@prisma/client";
 import { FilterFn } from "@tanstack/react-table";
 
-const multiColumnFilterFn: FilterFn<Subject> = (row, columnId, filterValue) => {
-  const searchableRowContent = `${row.original.name} ${row.original.name} ${row.original.code} ${row.original.id}`;
-  return searchableRowContent.toLowerCase().includes(filterValue.toLowerCase());
-};
-
 export default async function Page() {
   const subjects = await getSubjects();
   if (!subjects.success) {

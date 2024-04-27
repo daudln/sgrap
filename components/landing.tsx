@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { BookIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -35,8 +36,8 @@ export default function Landing() {
         <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-900 text-white">
           <div className="container px-4 md:px-6">
             <div className="grid gap-6 lg:grid-cols-2 lg:gap-12">
-              <div className="space-y-4">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">
+              <div className="space-y-8">
+                <h1 className="text-3xl font-bold tracking-normal sm:text-4xl md:text-5xl lg:text-6xl">
                   Streamline Your Student Grading and Reporting
                 </h1>
                 <p className="max-w-[600px] text-gray-300 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
@@ -45,18 +46,12 @@ export default function Landing() {
                   student outcomes.
                 </p>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                  <Link
-                    className="inline-flex h-10 items-center justify-center rounded-md bg-blue-500 px-8 text-sm font-medium text-white shadow transition-colors hover:bg-blue-600 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-700 disabled:pointer-events-none disabled:opacity-50"
-                    href="#"
-                  >
-                    Get Started
-                  </Link>
-                  <Link
-                    className="inline-flex h-10 items-center justify-center rounded-md border border-blue-500 bg-transparent px-8 text-sm font-medium text-blue-500 shadow-sm transition-colors hover:bg-blue-500 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-700 disabled:pointer-events-none disabled:opacity-50"
-                    href="#"
-                  >
-                    Learn More
-                  </Link>
+                  <Button asChild>
+                    <Link href="/auth/login">Get Started</Link>
+                  </Button>
+                  <Button asChild variant="secondary">
+                    <Link href="/auth/login">Learn more</Link>
+                  </Button>
                 </div>
               </div>
               <div className="flex justify-center">
@@ -64,7 +59,7 @@ export default function Landing() {
                   alt="Hero Image"
                   className="mx-auto aspect-[3/2] overflow-hidden rounded-xl object-cover"
                   height="400"
-                  src="/placeholder.svg"
+                  src="/students.gif"
                   width="600"
                 />
               </div>
@@ -78,7 +73,7 @@ export default function Landing() {
                 <div className="inline-block rounded-lg bg-gray-100 px-3 py-1 text-sm dark:bg-gray-800">
                   Key Features
                 </div>
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl p-4">
                   Streamline Your Grading and Reporting
                 </h2>
                 <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
