@@ -5,10 +5,5 @@ export default function layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <div>
-      layout
-      {children}
-    </div>
-  );
+  return <div>{children}</div>;
 }

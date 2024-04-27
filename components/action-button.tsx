@@ -26,7 +26,7 @@ const ActionButton = ({ status, label, variant }: ActionButtonProps) => {
       variant={variant || "default"}
     >
       {status === "executing" ? (
-        <LuLoader2 className="inline-block mr-2 h-5 w-5 animate-spin" />
+        <LuLoader2 className="inline-block mr-2 h-5 w-5 animate-spin cursor-not-allowed" />
       ) : null}
       {status === "executing" ? "Please wait" : label}
     </Button>
