@@ -14,35 +14,21 @@ enum ProfileType {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String      @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?     @unique
+  type          ProfileType @default(STUDENT)
   emailVerified DateTime?
-  password      String?   @db.VarChar(200)
+  password      String?     @db.VarChar(200)
   image         String?
   accounts      Account[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  isActive      Boolean   @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  isActive      Boolean     @default(true)
   Profile       Profile?
 
-  @@index([name, email, id])
+  @@index([email, id])
   @@map("user")
-}
-
-model Profile {
-  userId    String      @id @unique
-  uuid      String      @unique @default(cuid()) @db.VarChar(100)
-  firstName String      @db.VarChar(40)
-  lastName  String      @db.VarChar(40)
-  type      ProfileType @default(STUDENT)
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  isActive  Boolean     @default(true)
-  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId, type])
-  @@map("profile")
 }
 
 model VerificationToken {
@@ -96,4 +82,43 @@ model Subject {
   isActive    Boolean  @default(true)
 
   @@map("subject")
+}
+
+model School {
+  id        Int       @id @default(autoincrement())
+  uuid      String    @unique @default(cuid()) @db.VarChar(100)
+  motto     String    @db.VarChar(200)
+  name      String    @unique @db.VarChar(100)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  isActive  Boolean   @default(true)
+  Class     Class[]
+  Profile   Profile[]
+
+  @@map("school")
+}
+
+model Class {
+  id       Int    @id @default(autoincrement())
+  uuid     String @unique @default(cuid()) @db.VarChar(100)
+  name     String @db.VarChar(50)
+  school   School @relation(fields: [schoolId], references: [id])
+  schoolId Int
+
+  @@unique([schoolId, name])
+  @@map("class")
+}
+
+model Profile {
+  userId    String      @id @unique
+  uuid      String      @unique @default(cuid()) @db.VarChar(100)
+  type      ProfileType @default(STUDENT)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  isActive  Boolean     @default(true)
+  school    School      @relation(fields: [schoolId], references: [id])
+  user      User        @relation(fields: [userId], references: [id])
+  schoolId  Int
+
+  @@map("profile")
 }

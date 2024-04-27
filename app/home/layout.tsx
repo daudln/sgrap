@@ -5,11 +5,9 @@ import {
   CircleUser,
   Home as HomeIcon,
   LineChart,
-  LogOut,
   Menu,
   Package,
   Package2,
-  Search,
   ShoppingCart,
   Users,
 } from "lucide-react";
@@ -24,9 +22,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { auth, signOut } from "@/auth";
+import { NAVIGATION_LINK } from "@/lib/constants";
+import NavigationMenu from "@/components/navigation-menu";
+
 export default async function layout({
   children,
 }: Readonly<{
@@ -52,45 +52,15 @@ export default async function layout({
               </Button>
             </div>
             <div className="flex-1">
-              <nav className="grid items-start px-2 text-sm font-medium lg:px-4 gap-4">
-                <Link
-                  href="/home/dashboard"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                >
-                  <HomeIcon className="h-4 w-4" />
-                  Dashboard
-                </Link>
-                <Link
-                  href="/home/students"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                >
-                  <ShoppingCart className="h-4 w-4" />
-                  Students
-                  <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                    6
-                  </Badge>
-                </Link>
-                <Link
-                  href="/home/teachers"
-                  className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
-                >
-                  <Package className="h-4 w-4" />
-                  Teachers
-                </Link>
-                <Link
-                  href="/home/subjects"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                >
-                  <Users className="h-4 w-4" />
-                  Subjects
-                </Link>
-                <Link
-                  href="/home/analytics"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                >
-                  <LineChart className="h-4 w-4" />
-                  Analytics
-                </Link>
+              <nav className="grid items-start px-2 text-sm font-medium lg:px-4 gap-2">
+                {NAVIGATION_LINK.map((link) => (
+                  <NavigationMenu
+                    key={link.link}
+                    navLink={link.link}
+                    title={link.title}
+                    icon={link.icon}
+                  />
+                ))}
               </nav>
             </div>
           </div>
@@ -110,51 +80,14 @@ export default async function layout({
               </SheetTrigger>
               <SheetContent side="left" className="flex flex-col">
                 <nav className="grid gap-2 text-lg font-medium">
-                  <Link
-                    href="/home"
-                    className="flex items-center gap-2 text-lg font-semibold"
-                  >
-                    <Package2 className="h-6 w-6" />
-                    <span className="sr-only">Acme Inc</span>
-                  </Link>
-                  <Link
-                    href="/home/dashboard"
-                    className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                  >
-                    <HomeIcon className="h-5 w-5" />
-                    Dashboard
-                  </Link>
-                  <Link
-                    href="/home/students"
-                    className="mx-[-0.65rem] flex items-center gap-4 rounded-xl bg-muted px-3 py-2 text-foreground hover:text-foreground"
-                  >
-                    <ShoppingCart className="h-5 w-5" />
-                    Students
-                    <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                      6
-                    </Badge>
-                  </Link>
-                  <Link
-                    href="/home/teachers"
-                    className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                  >
-                    <Package className="h-5 w-5" />
-                    Teachers
-                  </Link>
-                  <Link
-                    href="/home/subjects"
-                    className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                  >
-                    <Users className="h-5 w-5" />
-                    Subjects
-                  </Link>
-                  <Link
-                    href="/home/analytics"
-                    className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                  >
-                    <LineChart className="h-5 w-5" />
-                    Analytics
-                  </Link>
+                  {NAVIGATION_LINK.map((link) => (
+                    <NavigationMenu
+                      key={link.link}
+                      navLink={link.link}
+                      title={link.title}
+                      icon={link.icon}
+                    />
+                  ))}
                 </nav>
               </SheetContent>
             </Sheet>

@@ -1,4 +1,4 @@
-import * as teacherActions from "./teachers/actions";
+import * as teacherActions from "./profile/actions";
 import * as subjectActions from "./subjects/actions";
 import * as authActions from "./auth/actions";
 

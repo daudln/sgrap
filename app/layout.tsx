@@ -6,7 +6,8 @@ const font = localFont({
 });
 
 import "./globals.css";
-import QueryProvider from "@/providers/query.provider";
+import { Toaster } from "@/components/ui/sonner";
+import RootProvider from "@/providers/root-provider";
 
 export const metadata: Metadata = {
   title: "SGRAP - Student Grading, Reporting, and Assessment Platform",
@@ -22,7 +23,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={font.className}>
-        <QueryProvider>{children}</QueryProvider>
+        <RootProvider>
+          <Toaster richColors position="bottom-right" />
+          {children}
+        </RootProvider>
       </body>
     </html>
   );
