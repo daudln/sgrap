@@ -14,10 +14,12 @@ import { Input } from "@/components/ui/input";
 import { createSubjectSchema, CreateSubjectInput } from "@/schema/subject";
 import { useAction } from "next-safe-action/hooks";
 import { subjectActions } from "@/server/index";
-import { Button } from "../ui/button";
 import { useState } from "react";
 import FormResponseMessage from "../form-response-message";
 import ActionButton from "../action-button";
+import DialogBox from "../dialog-box";
+import { Button } from "../ui/button";
+import { PiPlus } from "react-icons/pi";
 
 const CreateSubjectForm = () => {
   const [error, setError] = useState("");
@@ -42,7 +44,15 @@ const CreateSubjectForm = () => {
     execute(data);
   };
   return (
-    <div className="w-full flex justify-center items-center flex-col gap-4">
+    <DialogBox
+      triger={
+        <Button variant="outline" size="sm">
+          <PiPlus className="mr-2" /> Subject
+        </Button>
+      }
+      title="Create Subject"
+      description="Fill the form below to create a new subject"
+    >
       <Form {...form}>
         <form
           className="w-full max-w-lg flex flex-col gap-4"
@@ -101,7 +111,7 @@ const CreateSubjectForm = () => {
           )}
         </form>
       </Form>
-    </div>
+    </DialogBox>
   );
 };
 
