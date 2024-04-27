@@ -1,8 +1,13 @@
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-  host: "localhost",
-  port: 2525,
+  host: process.env.EMAIL_HOST || "localhost",
+  port: Number(process.env.EMAIL_PORT) || 2525,
+  secure: process.env.EMAIL_USE_SSL === "True" ? true : false,
+  auth: {
+    user: process.env.EMAIL_HOST_USER,
+    pass: process.env.EMAIL_HOST_PASSWORD,
+  },
 });
 
 export const sendVerificationEmail = async (
@@ -13,7 +18,7 @@ export const sendVerificationEmail = async (
   from?: string
 ) => {
   const info = await transporter.sendMail({
-    from: from || "no-reply@sgrap.edu.tz",
+    from: from || process.env.DEFAULT_EMAIL_FROM,
     to: to,
     subject: subject,
     html: template,
@@ -42,7 +47,7 @@ export const sendForgotPasswordEmail = async (
   from?: string
 ) => {
   const info = await transporter.sendMail({
-    from: from || "no-reply@sgrap.edu.tz",
+    from: from || process.env.DEFAULT_EMAIL_FROM,
     to: to,
     subject: subject,
     html: template,
