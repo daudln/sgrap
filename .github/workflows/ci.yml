@@ -45,4 +45,3 @@ jobs:
 
       - run: bun install
       - run: bun db:push
-      - run: bun build --if-present
