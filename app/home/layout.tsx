@@ -1,18 +1,9 @@
-import React from "react";
+import { Bell, CircleUser, Menu, Package2 } from "lucide-react";
 import Link from "next/link";
-import {
-  Bell,
-  CircleUser,
-  Home as HomeIcon,
-  LineChart,
-  Menu,
-  Package,
-  Package2,
-  ShoppingCart,
-  Users,
-} from "lucide-react";
+import React from "react";
 
-import { Badge } from "@/components/ui/badge";
+import { auth, signOut } from "@/auth";
+import NavigationMenu from "@/components/navigation-menu";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -23,9 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { auth, signOut } from "@/auth";
-import { NAVIGATION_LINK } from "@/lib/constants";
-import NavigationMenu from "@/components/navigation-menu";
+import { NAVIGATION_LINK } from "@/lib/navlinks";
 
 export default async function layout({
   children,
