@@ -46,5 +46,5 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
       - run: npm install
-      - run: npm run db:push
+      - run: npx prisma db push
       - run: npm run build
