@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npx prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
+    "postinstall": "npx prisma generate",
     "db:migrate": "bunx prisma generate && bunx prisma migrate dev --preview-feature",
     "db:push": "bunx prisma db push",
     "db:studio": "bunx prisma studio"
