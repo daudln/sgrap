@@ -17,6 +17,7 @@ import { subjectActions } from "@/server/index";
 import { Button } from "../ui/button";
 import { useState } from "react";
 import FormResponseMessage from "../form-response-message";
+import ActionButton from "../action-button";
 
 const CreateSubjectForm = () => {
   const [error, setError] = useState("");
@@ -88,9 +89,9 @@ const CreateSubjectForm = () => {
               )}
             />
           </div>
-          <Button disabled={status === "executing"} type="submit">
-            Create
-          </Button>
+
+          <ActionButton label="Create" status={status} />
+
           {error && (
             <FormResponseMessage
               message={error}
