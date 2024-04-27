@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Student Grading, Reporting, and Assessment Platform (SGRAP)
 
-## Getting Started
+Welcome to the Student Grading, Reporting, and Assessment Platform (SGRAP) project!
 
-First, run the development server:
+## Overview:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+SGRAP is a comprehensive platform designed to streamline the process of grading, reporting, and assessing students in educational institutions. It provides teachers, administrators, and students with the tools they need to manage assessments, track progress, and generate reports efficiently.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. [x] User Management:
+       Create and manage user accounts for teachers, students, and administrators.
+       Define user roles and permissions to control access to features and data.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+2. [x] Course Management:
+       Add, edit, and delete courses offered by the institution.
+       Assign teachers to courses and enroll students in classes.
 
-## Learn More
+3. [x] Assessment Creation and Grading:
+       Create various types of assessments such as quizzes, tests, and exams.
+       Grade assessments submitted by students and provide feedback.
 
-To learn more about Next.js, take a look at the following resources:
+4. [x] Reporting and Analytics:
+       Generate comprehensive reports on student performance and class averages.
+       Analyze assessment results to identify trends and areas for improvement.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+5. [x] Communication and Feedback:
+       Facilitate communication between teachers, students, and parents/guardians.
+       Provide feedback mechanisms for teachers to give constructive feedback on assessments.
