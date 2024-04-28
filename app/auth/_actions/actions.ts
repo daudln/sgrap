@@ -214,7 +214,7 @@ export const forgotPassword = action(
     }
 
     const token = await generateResetPasswordToken(email);
-    const resetLink = `<p>Click <a href="http://localhost:3000/auth/reset-password?token=${token?.token}">here</a> to reset your password</p>`;
+    const resetLink = `<p>Click <a href="${process.env.DOMAIN_URL}/auth/reset-password?token=${token?.token}">here</a> to reset your password</p>`;
     await sendForgotPasswordEmail(email, "Reset Password", resetLink);
     return {
       status: 200,
