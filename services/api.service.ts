@@ -4,7 +4,7 @@ export interface APIResponse<T> {
   status: number;
   success: boolean;
   message: string;
-  results: T[];
+  data: T[];
 }
 
 const axiosInstance = axios.create({

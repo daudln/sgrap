@@ -1,28 +1,28 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormField,
-  FormControl,
-  FormLabel,
-  FormMessage,
-  FormItem,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { createSubjectSchema, CreateSubjectInput } from "@/schema/subject";
-import { useAction } from "next-safe-action/hooks";
-import { useState } from "react";
-import FormResponseMessage from "@/components/form-response-message";
+import { createSubject } from "@/app/home/subjects/_actions/actions";
 import ActionButton from "@/components/action-button";
 import DialogBox from "@/components/dialog-box";
 import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { CreateSubjectInput, createSubjectSchema } from "@/schema/subject";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { PiPlus } from "react-icons/pi";
-import { createSubject } from "@/app/home/subjects/_actions/actions";
+import { toast } from "sonner";
 
 const CreateSubjectForm = () => {
-  const [error, setError] = useState("");
+  const [open, setOpen] = useState(false);
   const form = useForm<CreateSubjectInput>({
     resolver: zodResolver(createSubjectSchema),
     defaultValues: {
@@ -31,20 +31,35 @@ const CreateSubjectForm = () => {
       description: "",
     },
   });
-  const { execute, status, result } = useAction(createSubject, {
-    onSuccess: (data) => {
-      if (!data.success) {
-        setError(data.message);
-      }
+  const queryClient = useQueryClient();
+
+  const deleteMutation = useMutation({
+    mutationFn: createSubject,
+    onSuccess: async ({ data }) => {
+      toast.success(data?.message, {
+        id: "create-new-subject",
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: ["subjects"],
+      });
       form.reset();
-      console.log(result.data?.status);
+      setOpen((prev) => !prev);
+    },
+    onError: () => {
+      toast.error("Something went wrong", {
+        id: "create-new-subject",
+      });
     },
   });
+
   const onSubmit = (data: CreateSubjectInput) => {
-    execute(data);
+    deleteMutation.mutate(data);
   };
   return (
     <DialogBox
+      open={open}
+      onOpenChange={setOpen}
       triger={
         <Button variant="outline" size="sm">
           <PiPlus className="mr-2" /> Subject
@@ -100,15 +115,7 @@ const CreateSubjectForm = () => {
             />
           </div>
 
-          <ActionButton label="Create" status={status} />
-
-          {error && (
-            <FormResponseMessage
-              message={error}
-              type="error"
-              classNames="w-full"
-            />
-          )}
+          <ActionButton label="Create" status={deleteMutation.status} />
         </form>
       </Form>
     </DialogBox>

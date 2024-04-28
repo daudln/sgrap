@@ -23,6 +23,7 @@ import { createSubject } from "@/app/home/subjects/_actions/actions";
 
 const CreateStudentForm = () => {
   const [error, setError] = useState("");
+  const [open, setOpen] = useState(false);
   const form = useForm<CreateSubjectInput>({
     resolver: zodResolver(createSubjectSchema),
     defaultValues: {
@@ -36,6 +37,8 @@ const CreateStudentForm = () => {
       if (!data.success) {
         setError(data.message);
       }
+
+      setOpen((prev) => !prev);
       form.reset();
       console.log(result.data?.status);
     },
@@ -45,6 +48,8 @@ const CreateStudentForm = () => {
   };
   return (
     <DialogBox
+      open={open}
+      onOpenChange={setOpen}
       triger={
         <Button variant="outline" size="sm">
           <PiPlus className="mr-2" /> Student

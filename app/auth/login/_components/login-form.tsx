@@ -20,8 +20,10 @@ import ActionButton from "@/components/action-button";
 import CardWrapper from "@/components/card-wrapper";
 import { login } from "../../_actions/actions";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export function LoginForm() {
+  const router = useRouter();
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -38,6 +40,7 @@ export function LoginForm() {
       if (data?.success) {
         toast.dismiss("logging-in");
         toast.success(data?.message);
+        router.push("/home/dashboard");
       }
 
       form.reset();

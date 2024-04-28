@@ -9,6 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Dispatch, SetStateAction } from "react";
 
 interface Props {
   children?: React.ReactNode;
@@ -16,6 +17,8 @@ interface Props {
   title: string;
   description?: string;
   triger: React.ReactNode;
+  open: boolean;
+  onOpenChange: Dispatch<SetStateAction<boolean>>;
 }
 
 const DialogBox = ({
@@ -24,9 +27,11 @@ const DialogBox = ({
   title,
   description,
   triger,
+  open,
+  onOpenChange,
 }: Props) => {
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>{triger}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

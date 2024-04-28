@@ -28,7 +28,7 @@ export const getSubjectSchema = z.object({
 export type GetSubjectInput = z.infer<typeof getSubjectSchema>;
 
 export const deleteSubjectSchema = z.object({
-  id: z.string().min(1),
+  uuid: z.string().min(1),
 });
 
 export type DeleteSubjectInput = z.infer<typeof deleteSubjectSchema>;

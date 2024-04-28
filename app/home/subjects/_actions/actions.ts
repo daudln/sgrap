@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/utils";
-import { createSubjectSchema } from "@/schema/subject";
+import { createSubjectSchema, deleteSubjectSchema } from "@/schema/subject";
 import { createSafeActionClient } from "next-safe-action";
 import { revalidatePath } from "next/cache";
 
@@ -50,9 +50,33 @@ export async function updateSubject() {
   console.log("updateSubject");
 }
 
-export async function deleteSubject() {
-  console.log("deleteSubject");
-}
+export const deleteSubject = action(deleteSubjectSchema, async ({ uuid }) => {
+  console.log(uuid);
+  const existingSubject = await prisma.subject.findFirst({
+    where: {
+      uuid,
+    },
+  });
+  if (!existingSubject) {
+    return {
+      status: 400,
+      success: false,
+      message: "No subject with this id",
+    };
+  }
+  await prisma.subject.delete({
+    where: {
+      uuid,
+    },
+  });
+
+  revalidatePath("/home/subjects");
+  return {
+    status: 201,
+    success: true,
+    message: "Subject delete successfully",
+  };
+});
 
 export const getSubjects = async () => {
   const subjects = await prisma.subject.findMany();

@@ -26,14 +26,14 @@ export const NAVIGATION_LINK = [
     link: "/home/subjects",
     icon: <MdSubject className="h-5 w-5" />,
   },
-  {
-    title: "Schools",
-    link: "/home/subjects",
-    icon: <FaSchool className="h-5 w-5" />,
-  },
-  {
-    title: "Settings",
-    link: "/home/settings",
-    icon: <IoSettingsOutline className="h-5 w-5" />,
-  },
+  // {
+  //   title: "Schools",
+  //   link: "/home/subjects",
+  //   icon: <FaSchool className="h-5 w-5" />,
+  // },
+  // {
+  //   title: "Settings",
+  //   link: "/home/settings",
+  //   icon: <IoSettingsOutline className="h-5 w-5" />,
+  // },
 ];
