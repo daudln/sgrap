@@ -2,7 +2,7 @@
 
 import { DataTable } from "@/components/data-table";
 import useSubjects from "@/hooks/useSubjects";
-import { getSubjects } from "@/server/subjects/actions";
+import { getSubjects } from "@/app/home/subjects/_actions/actions";
 import { Subject } from "@prisma/client";
 import { FilterFn } from "@tanstack/react-table";
 import { useEffect, useState, useTransition } from "react";

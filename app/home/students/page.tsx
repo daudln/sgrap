@@ -1,5 +1,4 @@
-import CreateStudentForm from "@/components/student/create-student-form";
-import SubjectTable from "@/components/subject/subject-table";
+import CreateStudentForm from "./_components/create-student-form";
 
 export default function Page() {
   return (
@@ -8,7 +7,6 @@ export default function Page() {
         <h1 className="text-lg font-semibold md:text-2xl">Student</h1>
         <CreateStudentForm />
       </div>
-      <SubjectTable />
     </div>
   );
 }

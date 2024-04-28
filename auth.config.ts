@@ -2,7 +2,7 @@ import Credentials from "next-auth/providers/credentials";
 
 import { NextAuthConfig } from "next-auth";
 import { loginSchema } from "@/schema/auth";
-import { comparePassword, getUserByEmail } from "@/server/auth/lib";
+import { comparePassword, getUserByEmail } from "@/lib/auth";
 
 export default {
   providers: [

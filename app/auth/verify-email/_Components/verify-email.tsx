@@ -3,16 +3,16 @@
 import { VerifyEmailInput, verifyEmailSchema } from "@/schema/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import CardWrapper from "@/components/card-wrapper";
-import FormResponseMessage from "@/components/form-response-message";
 import { Button } from "@/components/ui/button";
-import { verifyEmail } from "@/server/auth/actions";
 import { useAction } from "next-safe-action/hooks";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { BeatLoader } from "react-spinners";
+import { verifyEmail } from "../../_actions/actions";
 
 export function VerifyEmail({ token }: { token: string }) {
   const form = useForm<VerifyEmailInput>({
@@ -27,17 +27,16 @@ export function VerifyEmail({ token }: { token: string }) {
   const { execute, status, result } = useAction(verifyEmail, {
     onSuccess: (data) => {
       if (!data.success) {
-        setError(data.message);
-        setSuccess("");
+        toast.dismiss("verifying-email");
+        toast.error(data.message);
       }
       if (data.success) {
-        setSuccess(data.message);
-        setError("");
-        router.push("/auth/login");
+        toast.dismiss("verifying-email");
+        toast.success(data.message);
       }
+
       form.reset();
     },
-    onError: (error) => {},
   });
 
   const onSubmit = useCallback(
@@ -62,10 +61,7 @@ export function VerifyEmail({ token }: { token: string }) {
           <BeatLoader className="flex justify-self-center" />
         </div>
       )}
-      <div className="p-4">
-        {error && <FormResponseMessage message={error} type="error" />}
-        {success && <FormResponseMessage message={success} />}
-      </div>
+
       {!result?.data?.success && (
         <div className="flex justify-center">
           <Button variant="link">

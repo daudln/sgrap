@@ -13,13 +13,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { createSubjectSchema, CreateSubjectInput } from "@/schema/subject";
 import { useAction } from "next-safe-action/hooks";
-import { subjectActions } from "@/server/index";
 import { useState } from "react";
-import FormResponseMessage from "../form-response-message";
-import ActionButton from "../action-button";
-import DialogBox from "../dialog-box";
-import { Button } from "../ui/button";
+import FormResponseMessage from "@/components/form-response-message";
+import ActionButton from "@/components/action-button";
+import DialogBox from "@/components/dialog-box";
+import { Button } from "@/components/ui/button";
 import { PiPlus } from "react-icons/pi";
+import { createSubject } from "@/app/home/subjects/_actions/actions";
 
 const CreateSubjectForm = () => {
   const [error, setError] = useState("");
@@ -31,7 +31,7 @@ const CreateSubjectForm = () => {
       description: "",
     },
   });
-  const { execute, status, result } = useAction(subjectActions.createSubject, {
+  const { execute, status, result } = useAction(createSubject, {
     onSuccess: (data) => {
       if (!data.success) {
         setError(data.message);

@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { LoginInput, loginSchema } from "@/schema/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import FormResponseMessage from "@/components/form-response-message";
 
 import {
   Form,
@@ -16,11 +15,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { login } from "@/server/auth/actions";
 import { useAction } from "next-safe-action/hooks";
-import { useState } from "react";
 import ActionButton from "@/components/action-button";
 import CardWrapper from "@/components/card-wrapper";
+import { login } from "../../_actions/actions";
+import { toast } from "sonner";
 
 export function LoginForm() {
   const form = useForm<LoginInput>({
@@ -30,22 +29,18 @@ export function LoginForm() {
       password: "",
     },
   });
-  const [error, setError] = useState<string | undefined>("");
-  const [success, setSuccess] = useState<string | undefined>("");
   const { execute, status } = useAction(login, {
     onSuccess: (data) => {
       if (!data?.success) {
-        setError(data?.message);
-        setSuccess("");
+        toast.dismiss("logging-in");
+        toast.error(data?.message);
       }
       if (data?.success) {
-        setSuccess(data?.message);
-        setError("");
+        toast.dismiss("logging-in");
+        toast.success(data?.message);
       }
+
       form.reset();
-    },
-    onError: (error) => {
-      console.log(error);
     },
   });
 
@@ -109,10 +104,6 @@ export function LoginForm() {
           </div>
         </form>
       </Form>
-      <div className="mt-4">
-        {error && <FormResponseMessage message={error} type="error" />}
-        {success && <FormResponseMessage message={success} type="success" />}
-      </div>
     </CardWrapper>
   );
 }

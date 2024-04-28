@@ -1,4 +1,4 @@
-import { VerifyEmail } from "@/components/auth/verify-email";
+import { VerifyEmail } from "./_Components/verify-email";
 
 const Page = ({
   searchParams,

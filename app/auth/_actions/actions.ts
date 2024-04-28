@@ -16,7 +16,7 @@ import {
   getUserByEmail,
   getVerificationTokenByToken,
   hashPassword,
-} from "./lib";
+} from "@/lib/auth";
 import { signIn } from "@/auth";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { AuthError } from "next-auth";

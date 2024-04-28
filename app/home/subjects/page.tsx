@@ -1,6 +1,6 @@
-import CreateSubjectForm from "@/components/subject/create-subject-form";
-import SubjectTable from "@/components/subject/subject-table";
-import { getSubjects } from "@/server/subjects/actions";
+import CreateSubjectForm from "@/app/home/subjects/_components/create-subject-form";
+import SubjectTable from "@/app/home/subjects/_components/subject-table";
+import { getSubjects } from "@/app/home/subjects/_actions/actions";
 
 export default async function Page() {
   const subjects = await getSubjects();

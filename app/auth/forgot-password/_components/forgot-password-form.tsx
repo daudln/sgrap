@@ -1,13 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-
-import FormResponseMessage from "@/components/form-response-message";
 import { Input } from "@/components/ui/input";
 import { ForgotPasswordInput, forgotPasswordSchema } from "@/schema/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
+import ActionButton from "@/components/action-button";
 import CardWrapper from "@/components/card-wrapper";
 import {
   Form,
@@ -17,9 +15,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { forgotPassword } from "@/server/auth/actions";
 import { useAction } from "next-safe-action/hooks";
-import { useState } from "react";
+import { toast } from "sonner";
+import { forgotPassword } from "../../_actions/actions";
 
 export function ForgotPasswordForm() {
   const form = useForm<ForgotPasswordInput>({
@@ -28,22 +26,20 @@ export function ForgotPasswordForm() {
       email: "",
     },
   });
-  const [error, setError] = useState<string | undefined>("");
-  const [success, setSuccess] = useState<string | undefined>("");
-  const { execute, status, result } = useAction(forgotPassword, {
+  const { execute, status } = useAction(forgotPassword, {
     onSuccess: (data) => {
-      if (!data?.success) {
-        setError(data?.message);
-        setSuccess("");
+      if (!data.success) {
+        toast.dismiss("forgot-password");
+        toast.error(data.message);
       }
-      if (data?.success) {
-        setSuccess(data?.message);
-        setError("");
+      if (data.success) {
+        toast.dismiss("forgot-password");
+        toast.success(data.message);
       }
+      if (status === "executing") toast.loading("Sending reset link...");
+      if (status === "idle") toast.dismiss("forgot-password");
+
       form.reset();
-    },
-    onError: (error) => {
-      console.log(error);
     },
   });
 
@@ -79,16 +75,10 @@ export function ForgotPasswordForm() {
             />
           </div>
           <div className="text-center text-sm space-y-2">
-            <Button type="submit" className="w-full">
-              Get Reset Link
-            </Button>
+            <ActionButton label="Get Reset Link" status={status} />
           </div>
         </form>
       </Form>
-      <div className="mt-4">
-        {error && <FormResponseMessage message={error} type="error" />}
-        {success && <FormResponseMessage message={success} type="success" />}
-      </div>
     </CardWrapper>
   );
 }

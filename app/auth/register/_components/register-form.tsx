@@ -9,33 +9,39 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { RegisterInput, registerSchema } from "@/schema/auth";
-import { register } from "@/server/auth/actions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
-import FormResponseMessage from "../form-response-message";
-import ActionButton from "../action-button";
-import CardWrapper from "../card-wrapper";
+import ActionButton from "@/components/action-button";
+import CardWrapper from "@/components/card-wrapper";
+import { RegisterInput, registerSchema } from "@/schema/auth";
+import { register } from "../../_actions/actions";
+import { toast } from "sonner";
 
 export function RegisterForm() {
-  const [error, setMessage] = useState<string>("");
-  const [success, setSuccess] = useState<string>("");
-  const { execute, status, result } = useAction(register, {
+  const { execute, status } = useAction(register, {
     onSuccess: (data) => {
       if (!data.success) {
-        setMessage(data.message);
+        toast.dismiss("registering-user");
+        toast.error(data.message);
       }
       if (data.success) {
-        setSuccess(data.message);
+        toast.dismiss("registering-user");
+        toast.success(data.message);
       }
+
       form.reset();
     },
     onError: (error) => {
       console.log(error);
     },
   });
+
+  if (status === "executing") {
+    toast.loading("Registering...", {
+      id: "registering-user",
+    });
+  }
 
   const form = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
@@ -129,11 +135,6 @@ export function RegisterForm() {
           </div>
         </form>
       </Form>
-
-      <div className="mt-4">
-        {error && <FormResponseMessage message={error} type="error" />}
-        {success && <FormResponseMessage message={success} type="success" />}
-      </div>
     </CardWrapper>
   );
 }

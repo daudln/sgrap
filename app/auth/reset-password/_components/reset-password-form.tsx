@@ -1,6 +1,5 @@
 "use client";
 
-import FormResponseMessage from "@/components/form-response-message";
 import {
   Card,
   CardContent,
@@ -12,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { ResetPasswordInput, resetPasswordSchema } from "@/schema/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import ActionButton from "@/components/action-button";
 import {
@@ -22,9 +22,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { resetPassword } from "@/server/auth/actions";
 import { useAction } from "next-safe-action/hooks";
-import { useState } from "react";
+import { resetPassword } from "../../_actions/actions";
 
 export function ResetPasswordForm({ token }: { token: string }) {
   const form = useForm<ResetPasswordInput>({
@@ -35,18 +34,17 @@ export function ResetPasswordForm({ token }: { token: string }) {
       token: token,
     },
   });
-  const [error, setError] = useState<string | undefined>("");
-  const [success, setMessage] = useState<string | undefined>("");
-  const { execute, status, result } = useAction(resetPassword, {
+  const { execute, status } = useAction(resetPassword, {
     onSuccess: (data) => {
       if (!data.success) {
-        setError(data.message);
-        setMessage("");
+        toast.dismiss("resetting-password");
+        toast.error(data.message);
       }
       if (data.success) {
-        setMessage(data.message);
-        setError("");
+        toast.dismiss("resetting-password");
+        toast.success(data.message);
       }
+
       form.reset();
     },
     onError: (error) => {
@@ -54,6 +52,11 @@ export function ResetPasswordForm({ token }: { token: string }) {
     },
   });
 
+  if (status === "executing") {
+    toast.loading("Registering...", {
+      id: "resetting-password",
+    });
+  }
   const onSubmit = (data: ResetPasswordInput) => {
     execute(data);
   };
@@ -113,10 +116,6 @@ export function ResetPasswordForm({ token }: { token: string }) {
             </div>
           </form>
         </Form>
-        <div className="mt-4">
-          {error && <FormResponseMessage message={error} type="error" />}
-          {success && <FormResponseMessage message={success} type="success" />}
-        </div>
       </CardContent>
     </Card>
   );
