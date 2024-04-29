@@ -82,7 +82,7 @@ model Subject {
   code        String          @unique @db.VarChar(20)
   name        String          @unique @db.VarChar(100)
   description String?
-  category    SubjectCategory
+  category    SubjectCategory @default(ART)
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
   isActive    Boolean         @default(true)
