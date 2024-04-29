@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { DonutChart, Card } from "@tremor/react";
-import CardWrapper from "./card-wrapper";
+import { DonutChart } from "@tremor/react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 const datahero = [
   {
@@ -19,12 +19,15 @@ const dataFormatter = (number: number) =>
   `${Intl.NumberFormat("us").format(number).toString()}`;
 
 export const GenderDistribution = () => (
-  <CardWrapper headerLabel="Gender Distribution" className="w-1/4">
-    <DonutChart
-      data={datahero}
-      variant="pie"
-      valueFormatter={dataFormatter}
-      onValueChange={(v) => {}}
-    />
-  </CardWrapper>
+  <Card>
+    <CardHeader className="text-center">Gender Distribution</CardHeader>
+    <CardContent>
+      <DonutChart
+        data={datahero}
+        variant="pie"
+        valueFormatter={dataFormatter}
+        onValueChange={(v) => {}}
+      />
+    </CardContent>
+  </Card>
 );

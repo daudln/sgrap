@@ -10,13 +10,13 @@ import { BarChartHero } from "@/components/bar-chart";
 
 export default function Dashboard() {
   return (
-    <div className="p-6">
+    <div className="p-6 grid gap-4">
       <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         <DashboardCard
           icon={<PiStudent className="h-6 w-6" />}
           title="Students"
           subtitle="12,300"
-          iconBackgroundColor="bg-yellow-300"
+          iconBackgroundColor="bg-yellow-300 dark:bg-background"
           backgroundColor="bg-yellow-100"
         />
         <DashboardCard
@@ -48,10 +48,9 @@ export default function Dashboard() {
           backgroundColor="bg-red-100"
         />
       </section>
-      <section className="mt-4 grid grid-cols-2 gap-4">
+      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         <GenderDistribution />
       </section>
-      <BarChartHero />
     </div>
   );
 }

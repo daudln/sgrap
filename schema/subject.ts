@@ -8,6 +8,9 @@ export const createSubjectSchema = z.object({
     message: "Subject code is must be less than 20 characters long",
   }),
   description: z.string().optional(),
+  category: z.enum(["ART", "SCIENCE"], {
+    errorMap: () => ({ message: "Subject category is required" }),
+  }),
 });
 
 export type CreateSubjectInput = z.infer<typeof createSubjectSchema>;
@@ -17,6 +20,9 @@ export const updateSubjectSchema = z.object({
   name: z.string().min(1).max(100),
   code: z.string().min(1).max(200),
   description: z.string().optional(),
+  category: z.enum(["ART", "SCIENCE"], {
+    errorMap: () => ({ message: "Subject category is required" }),
+  }),
 });
 
 export type UpdateSubjectInput = z.infer<typeof updateSubjectSchema>;

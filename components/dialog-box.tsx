@@ -16,7 +16,7 @@ interface Props {
   footerContent?: React.ReactNode;
   title: string;
   description?: string;
-  triger: React.ReactNode;
+  triger?: React.ReactNode;
   open: boolean;
   onOpenChange: Dispatch<SetStateAction<boolean>>;
 }

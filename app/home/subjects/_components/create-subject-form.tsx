@@ -3,6 +3,7 @@
 import { createSubject } from "@/app/home/subjects/_actions/actions";
 import ActionButton from "@/components/action-button";
 import DialogBox from "@/components/dialog-box";
+import { SelectInput } from "@/components/select-input";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,10 +17,21 @@ import { Input } from "@/components/ui/input";
 import { CreateSubjectInput, createSubjectSchema } from "@/schema/subject";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { PiPlus } from "react-icons/pi";
 import { toast } from "sonner";
+
+const SUBJECT_CATEGORIES = [
+  {
+    label: "Art",
+    value: "ART",
+  },
+  {
+    label: "Science",
+    value: "SCIENCE",
+  },
+];
 
 const CreateSubjectForm = () => {
   const [open, setOpen] = useState(false);
@@ -31,6 +43,12 @@ const CreateSubjectForm = () => {
       description: "",
     },
   });
+  const handleOptionChange = useCallback(
+    (value: string) => {
+      form.setValue("category", value as "ART" | "SCIENCE");
+    },
+    [form]
+  );
   const queryClient = useQueryClient();
 
   const deleteMutation = useMutation({
@@ -108,6 +126,24 @@ const CreateSubjectForm = () => {
                   <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Input {...field} placeholder="Description (optional)" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem className="flex flex-col my-2">
+                  <FormLabel>Category</FormLabel>
+                  <FormControl>
+                    <SelectInput
+                      onChange={handleOptionChange}
+                      className="w-full"
+                      options={SUBJECT_CATEGORIES}
+                      label="Category"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

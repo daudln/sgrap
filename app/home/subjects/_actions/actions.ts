@@ -1,7 +1,11 @@
 "use server";
 
 import prisma from "@/lib/utils";
-import { createSubjectSchema, deleteSubjectSchema } from "@/schema/subject";
+import {
+  createSubjectSchema,
+  deleteSubjectSchema,
+  updateSubjectSchema,
+} from "@/schema/subject";
 import { createSafeActionClient } from "next-safe-action";
 import { revalidatePath } from "next/cache";
 
@@ -9,7 +13,7 @@ export const action = createSafeActionClient();
 
 export const createSubject = action(
   createSubjectSchema,
-  async ({ code, name, description }) => {
+  async ({ code, name, description, category }) => {
     const existingSubject = await prisma.subject.findFirst({
       where: {
         OR: [{ code }, { name }],
@@ -27,6 +31,7 @@ export const createSubject = action(
         name,
         code,
         description,
+        category,
       },
     });
     if (!subject) {
@@ -46,12 +51,50 @@ export const createSubject = action(
   }
 );
 
-export async function updateSubject() {
-  console.log("updateSubject");
-}
+export const updateSubject = action(
+  updateSubjectSchema,
+  async ({ code, name, description, category }) => {
+    const existingSubject = await prisma.subject.findFirst({
+      where: {
+        OR: [{ code }, { name }],
+      },
+    });
+    if (!existingSubject) {
+      return {
+        status: 400,
+        success: false,
+        message: "Subject not found",
+      };
+    }
+    const subject = await prisma.subject.update({
+      where: {
+        uuid: existingSubject.uuid,
+      },
+      data: {
+        name,
+        code,
+        description,
+        category,
+      },
+    });
+    if (!subject) {
+      return {
+        status: 500,
+        success: false,
+        message: "Subject not created",
+      };
+    }
+    revalidatePath("/subjects");
+    return {
+      status: 200,
+      success: true,
+      message: "Subject updated successfully",
+      data: subject,
+    };
+  }
+);
 
 export const deleteSubject = action(deleteSubjectSchema, async ({ uuid }) => {
-  console.log(uuid);
   const existingSubject = await prisma.subject.findFirst({
     where: {
       uuid,
@@ -70,7 +113,6 @@ export const deleteSubject = action(deleteSubjectSchema, async ({ uuid }) => {
     },
   });
 
-  revalidatePath("/home/subjects");
   return {
     status: 201,
     success: true,
