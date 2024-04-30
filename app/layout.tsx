@@ -15,6 +15,8 @@ export const metadata: Metadata = {
     "SGRAP is a comprehensive platform designed for managing student grading, reporting, and assessments. It provides teachers and administrators with the tools they need to create, grade, and analyze assessments, while also offering students insight into their performance and progress.",
 };
 
+export const fetchCache = "force-no-store";
+
 export default function RootLayout({
   children,
 }: Readonly<{

@@ -7,11 +7,12 @@ import { SiGoogleclassroom } from "react-icons/si";
 import { LiaSchoolSolid } from "react-icons/lia";
 import { GenderDistribution } from "@/components/gender-distribution-chart";
 import { BarChartHero } from "@/components/bar-chart";
-
+import CountUp from "react-countup";
 export default function Dashboard() {
   return (
     <div className="p-6 grid gap-4">
       <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {/* <CountUp end={100} /> */}
         <DashboardCard
           icon={<PiStudent className="h-6 w-6" />}
           title="Students"
