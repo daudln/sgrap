@@ -20,7 +20,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Subject, SubjectCategory } from "@prisma/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -35,7 +35,12 @@ const SUBJECT_CATEGORIES = [
   },
 ];
 
-const UpdateSubjectForm = ({ subject }: { subject: Subject }) => {
+interface UpdateSubjectProps {
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  subject: Subject;
+}
+
+const UpdateSubjectForm = ({ subject, setOpen }: UpdateSubjectProps) => {
   const form = useForm<UpdateSubjectInput>({
     resolver: zodResolver(createSubjectSchema),
     defaultValues: {
@@ -64,6 +69,7 @@ const UpdateSubjectForm = ({ subject }: { subject: Subject }) => {
         queryKey: ["subjects"],
       });
       form.reset();
+      setOpen((prev) => !prev);
     },
     onError: (error) => {
       toast.error("Something went wrong", {
@@ -72,7 +78,7 @@ const UpdateSubjectForm = ({ subject }: { subject: Subject }) => {
     },
   });
 
-  const onSubmit = (data: CreateSubjectInput) => {
+  const onSubmit = (data: UpdateSubjectInput) => {
     updateMutation.mutate(data);
   };
   return (

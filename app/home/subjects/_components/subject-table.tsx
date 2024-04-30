@@ -75,8 +75,8 @@ function RowActions({ subject }: { subject: SubjectRow }) {
 }
 
 import DataTable from "@/components/datatable/data-table";
-import UpdateSubjectForm from "./update-subject-form";
 import UpdateSubjectDialog from "./update-subject-dialog";
+import CreateSubjectDialog from "./create-subject-dialog";
 
 const filterFn: FilterFn<Subject> = (
   row,
@@ -154,6 +154,7 @@ const columns: ColumnDef<SubjectRow>[] = [
 
 const SubjectTable = () => {
   const { data, isLoading, error } = useSubjects();
+  const [open, setOpen] = useState(false);
   const categoriesOptions = useMemo(() => {
     const categoriesMap = new Map();
     data?.data?.forEach((subject) => {
@@ -166,13 +167,19 @@ const SubjectTable = () => {
     return Array.from(uniqueNames);
   }, [data?.data]);
   return (
-    <DataTable
-      data={data?.data!}
-      columns={columns}
-      isLoading={isLoading}
-      getDataForExport={getDataForExport}
-      facetedFiltersOptions={categoriesOptions}
-    />
+    <>
+      <div className="flex justify-end mb-4">
+        <CreateSubjectDialog open={open} setOpen={setOpen} />
+      </div>
+
+      <DataTable
+        data={data?.data!}
+        columns={columns}
+        isLoading={isLoading}
+        getDataForExport={getDataForExport}
+        facetedFiltersOptions={categoriesOptions}
+      />
+    </>
   );
 };
 

@@ -34,7 +34,7 @@ function UpdateSubjectDialog({ subjectId, open, setOpen }: Props) {
       title="Update Subject"
       description="Update the subject details"
     >
-      <UpdateSubjectForm subject={subject!} />
+      <UpdateSubjectForm subject={subject!} setOpen={setOpen} />
     </DialogBox>
   );
 }

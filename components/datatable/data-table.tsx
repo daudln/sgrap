@@ -43,7 +43,7 @@ interface RowActionsProps<T> {
 
 interface DataTableAction<T> {
   label: string;
-  icon?: React.ComponentType; // For optional icons
+  icon?: React.ComponentType;
   onSelect: (row: T) => void;
 }
 
