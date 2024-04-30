@@ -1,123 +1,149 @@
-"use client";
+// "use client";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormField,
-  FormControl,
-  FormLabel,
-  FormMessage,
-  FormItem,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { createSubjectSchema, CreateSubjectInput } from "@/schema/subject";
-import { useAction } from "next-safe-action/hooks";
-import { useState } from "react";
-import FormResponseMessage from "@/components/form-response-message";
-import ActionButton from "@/components/action-button";
-import DialogBox from "@/components/dialog-box";
-import { Button } from "@/components/ui/button";
-import { PiPlus } from "react-icons/pi";
-import { createSubject } from "@/app/home/subjects/_actions/actions";
+// import { createstudent } from "@/app/home/students/_actions/actions";
+// import ActionButton from "@/components/action-button";
+// import { SelectInput } from "@/components/select-input";
+// import {
+//   Form,
+//   FormControl,
+//   FormField,
+//   FormItem,
+//   FormLabel,
+//   FormMessage,
+// } from "@/components/ui/form";
+// import { Input } from "@/components/ui/input";
+// import { CreatestudentInput, createstudentSchema } from "@/schema/student";
+// import { zodResolver } from "@hookform/resolvers/zod";
+// import { useMutation, useQueryClient } from "@tanstack/react-query";
+// import { Dispatch, SetStateAction, useCallback } from "react";
+// import { useForm } from "react-hook-form";
+// import { toast } from "sonner";
 
-const CreateStudentForm = () => {
-  const [error, setError] = useState("");
-  const [open, setOpen] = useState(false);
-  const form = useForm<CreateSubjectInput>({
-    resolver: zodResolver(createSubjectSchema),
-    defaultValues: {
-      name: "",
-      code: "",
-      description: "",
-    },
-  });
-  const { execute, status, result } = useAction(createSubject, {
-    onSuccess: (data) => {
-      if (!data.success) {
-        setError(data.message);
-      }
+// const student_CATEGORIES = [
+//   {
+//     label: "Art",
+//     value: "ART",
+//   },
+//   {
+//     label: "Science",
+//     value: "SCIENCE",
+//   },
+// ];
 
-      setOpen((prev) => !prev);
-      form.reset();
-      console.log(result.data?.status);
-    },
-  });
-  const onSubmit = (data: CreateSubjectInput) => {
-    execute(data);
-  };
-  return (
-    <DialogBox
-      open={open}
-      onOpenChange={setOpen}
-      triger={
-        <Button variant="outline" size="sm">
-          <PiPlus className="mr-2" /> Student
-        </Button>
-      }
-      title="Create Student"
-      description="Fill the form below to create a new student"
-    >
-      <Form {...form}>
-        <form
-          className="w-full max-w-lg flex flex-col gap-4"
-          onSubmit={form.handleSubmit(onSubmit)}
-        >
-          <div>
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder="Kiswahili" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="code"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Code</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder="KSW" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder="Description (optional)" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+// interface CreatestudentProps {
+//   setOpen: Dispatch<SetStateAction<boolean>>;
+// }
 
-          <ActionButton label="Create" status={status} />
+// const CreateStudentForm = ({ setOpen }: CreatestudentProps) => {
+//   const form = useForm<CreatestudentInput>({
+//     resolver: zodResolver(createstudentSchema),
+//     defaultValues: {
+//       name: "",
+//       code: "",
+//       description: "",
+//     },
+//   });
+//   const handleOptionChange = useCallback(
+//     (value: string) => {
+//       form.setValue("category", value as "ART" | "SCIENCE");
+//     },
+//     [form]
+//   );
+//   const queryClient = useQueryClient();
 
-          {error && (
-            <FormResponseMessage
-              message={error}
-              type="error"
-              classNames="w-full"
-            />
-          )}
-        </form>
-      </Form>
-    </DialogBox>
-  );
-};
+//   const deleteMutation = useMutation({
+//     mutationFn: createstudent,
+//     onSuccess: async ({ data }) => {
+//       toast.success(data?.message, {
+//         id: "create-new-student",
+//       });
 
-export default CreateStudentForm;
+//       await queryClient.invalidateQueries({
+//         queryKey: ["students"],
+//       });
+//       form.reset();
+//       setOpen((prev) => !prev);
+//     },
+//     onError: () => {
+//       toast.error("Something went wrong", {
+//         id: "create-new-student",
+//       });
+//     },
+//   });
+
+//   const onSubmit = (data: CreatestudentInput) => {
+//     deleteMutation.mutate(data);
+//   };
+//   return (
+//     <Form {...form}>
+//       <form
+//         className="w-full max-w-lg flex flex-col gap-4"
+//         onSubmit={form.handleSubmit(onSubmit)}
+//       >
+//         <div>
+//           <FormField
+//             control={form.control}
+//             name="name"
+//             render={({ field }) => (
+//               <FormItem>
+//                 <FormLabel>Name</FormLabel>
+//                 <FormControl>
+//                   <Input {...field} placeholder="Kiswahili" />
+//                 </FormControl>
+//                 <FormMessage />
+//               </FormItem>
+//             )}
+//           />
+//           <FormField
+//             control={form.control}
+//             name="code"
+//             render={({ field }) => (
+//               <FormItem>
+//                 <FormLabel>Code</FormLabel>
+//                 <FormControl>
+//                   <Input {...field} placeholder="KSW" />
+//                 </FormControl>
+//                 <FormMessage />
+//               </FormItem>
+//             )}
+//           />
+//           <FormField
+//             control={form.control}
+//             name="description"
+//             render={({ field }) => (
+//               <FormItem>
+//                 <FormLabel>Description</FormLabel>
+//                 <FormControl>
+//                   <Input {...field} placeholder="Description (optional)" />
+//                 </FormControl>
+//                 <FormMessage />
+//               </FormItem>
+//             )}
+//           />
+//           <FormField
+//             control={form.control}
+//             name="category"
+//             render={({ field }) => (
+//               <FormItem className="flex flex-col my-2">
+//                 <FormLabel>Category</FormLabel>
+//                 <FormControl>
+//                   <SelectInput
+//                     onChange={handleOptionChange}
+//                     className="w-full"
+//                     options={student_CATEGORIES}
+//                     label="Category"
+//                   />
+//                 </FormControl>
+//                 <FormMessage />
+//               </FormItem>
+//             )}
+//           />
+//         </div>
+
+//         <ActionButton label="Create" status={deleteMutation.status} />
+//       </form>
+//     </Form>
+//   );
+// };
+
+// export default CreateStudentForm;

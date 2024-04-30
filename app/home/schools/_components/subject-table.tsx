@@ -1,7 +1,7 @@
 "use client";
 
-import useSubjects from "@/hooks/useSubjects";
-import { Subject } from "@prisma/client";
+import useSchools from "@/hooks/useSchools";
+import { School } from "@prisma/client";
 import { ColumnDef, FilterFn } from "@tanstack/react-table";
 
 import { useState } from "react";
@@ -19,25 +19,25 @@ import {
 import { MoreHorizontal } from "lucide-react";
 import { BsTrash3 } from "react-icons/bs";
 import { LuPencil } from "react-icons/lu";
-import DeleteSubjectDialog from "./delete-subject";
+import DeleteSchoolDialog from "./delete-school";
 
-type SubjectRow = Subject;
+type SchoolRow = School;
 
-function RowActions({ subject }: { subject: SubjectRow }) {
+function RowActions({ school }: { school: SchoolRow }) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
 
   return (
     <>
-      <DeleteSubjectDialog
+      <DeleteSchoolDialog
         open={showDeleteDialog}
         setOpen={setShowDeleteDialog}
-        subjectId={subject.uuid}
+        schoolId={school.uuid}
       />
-      <UpdateSubjectDialog
+      <UpdatesShoolDialog
         setOpen={setShowEditDialog}
         open={showEditDialog}
-        subjectId={subject.uuid}
+        schoolId={school.uuid}
       />
 
       <DropdownMenu>
@@ -75,16 +75,15 @@ function RowActions({ subject }: { subject: SubjectRow }) {
 }
 
 import { DataTable } from "@/components/datatable/datas-table";
-import CreateSubjectDialog from "./create-subject-dialog";
-import { filters } from "./filters";
-import UpdateSubjectDialog from "./update-subject-dialog";
+import CreateschoolDialog from "./create-school-dialog";
+import UpdatesShoolDialog from "./update-school-dialog";
 
-const filterFn: FilterFn<Subject> = (
+const filterFn: FilterFn<School> = (
   row,
   columnId,
   filterValue: string[] | string
 ) => {
-  const searchableRowContent = `${row.original.name} ${row.original.category} ${row.original.description} ${row.original.code} ${row.original.id}`;
+  const searchableRowContent = `${row.original.name} ${row.original.motto} ${row.original.id}`;
 
   if (Array.isArray(filterValue)) {
     return searchableRowContent
@@ -94,25 +93,12 @@ const filterFn: FilterFn<Subject> = (
   return searchableRowContent.toLowerCase().includes(filterValue.toLowerCase());
 };
 
-const getDataForExport = (subject: Subject) => ({
-  code: subject.code,
-  name: subject.name,
-  description: subject.description,
+const getDataForExport = (school: School) => ({
+  name: school.name,
+  motto: school.motto,
 });
 
-const columns: ColumnDef<SubjectRow>[] = [
-  {
-    accessorKey: "code",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Code" />
-    ),
-    filterFn: filterFn,
-    cell: ({ row }) => (
-      <div className="flex gap-2 capitalize">
-        <div className="capitalize">{row.original.code}</div>
-      </div>
-    ),
-  },
+const columns: ColumnDef<SchoolRow>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => (
@@ -121,53 +107,44 @@ const columns: ColumnDef<SubjectRow>[] = [
     filterFn: filterFn,
     cell: ({ row }) => (
       <div className="flex gap-2 capitalize">
-        <div className="">{row.original.name}</div>
+        <div className="capitalize">{row.original.name}</div>
       </div>
     ),
   },
   {
-    accessorKey: "category",
+    accessorKey: "motto",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Category" />
+      <DataTableColumnHeader column={column} title="Motto" />
     ),
     filterFn: filterFn,
     cell: ({ row }) => (
       <div className="flex gap-2 capitalize">
-        <div className="">{row.original.category}</div>
+        <div className="">{row.original.motto}</div>
       </div>
     ),
-  },
-  {
-    accessorKey: "description",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Description" />
-    ),
-    cell: ({ row }) => <div className="">{row.original.description}</div>,
-    filterFn: filterFn,
   },
 
   {
     id: "actions",
     enableHiding: false,
-    cell: ({ row }) => <RowActions subject={row.original} />,
+    cell: ({ row }) => <RowActions school={row.original} />,
   },
 ];
 
-const SubjectTable = () => {
-  const { data, isLoading, error } = useSubjects();
+const SchoolTable = () => {
+  const { data, isLoading, error } = useSchools();
   const [open, setOpen] = useState(false);
 
   return (
     <>
       <div className="flex justify-end mb-4">
-        <CreateSubjectDialog open={open} setOpen={setOpen} />
+        <CreateschoolDialog open={open} setOpen={setOpen} />
       </div>
 
       <DataTable
         data={data?.data || []}
         columns={columns}
-        filters={filters}
-        filterPlaceholder="Filter subjects"
+        filterPlaceholder="Filter schools"
         getDataForExport={getDataForExport}
         isLoading={isLoading}
       />
@@ -175,4 +152,4 @@ const SubjectTable = () => {
   );
 };
 
-export default SubjectTable;
+export default SchoolTable;

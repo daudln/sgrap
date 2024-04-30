@@ -6,49 +6,46 @@ import { MdSubject } from "react-icons/md";
 import { SiGoogleclassroom } from "react-icons/si";
 import { LiaSchoolSolid } from "react-icons/lia";
 import { GenderDistribution } from "@/components/gender-distribution-chart";
-import { BarChartHero } from "@/components/bar-chart";
-import CountUp from "react-countup";
-export default function Dashboard() {
+import prisma from "@/lib/utils";
+
+export default async function Dashboard() {
+  const schools = await prisma.school.count();
+  const classes = await prisma.class.count();
+  const subjects = await prisma.subject.count();
   return (
     <div className="p-6 grid gap-4">
-      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {/* <CountUp end={100} /> */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <DashboardCard
-          icon={<PiStudent className="h-6 w-6" />}
+          icon={<PiStudent className="h-5 w-5" />}
           title="Students"
-          subtitle="12,300"
-          iconBackgroundColor="bg-yellow-300 dark:bg-background"
-          backgroundColor="bg-yellow-100"
+          subtitle={11023}
+          description="Total student registered"
         />
         <DashboardCard
-          icon={<GiTeacher className="h-6 w-6" />}
+          icon={<GiTeacher className="h-5 w-5" />}
           title="Teachers"
-          subtitle="3,240"
-          iconBackgroundColor="bg-violet-300"
-          backgroundColor="bg-violet-100"
+          subtitle={45}
+          description="Total teachers registered"
         />
         <DashboardCard
-          icon={<MdSubject className="h-6 w-6" />}
-          title="Subjects"
-          subtitle="23"
-          iconBackgroundColor="bg-blue-300"
-          backgroundColor="bg-blue-100"
-        />
-        <DashboardCard
-          icon={<SiGoogleclassroom className="h-6 w-6" />}
-          title="Classes"
-          subtitle="6"
-          iconBackgroundColor="bg-orange-300"
-          backgroundColor="bg-orange-100"
-        />
-        <DashboardCard
-          icon={<LiaSchoolSolid className="h-6 w-6" />}
+          icon={<LiaSchoolSolid className="h-5 w-5" />}
           title="Schools"
-          subtitle="6"
-          iconBackgroundColor="bg-red-300"
-          backgroundColor="bg-red-100"
+          subtitle={schools}
+          description="Total schools registered"
         />
-      </section>
+        <DashboardCard
+          icon={<SiGoogleclassroom className="h-5 w-5" />}
+          title="Classes"
+          subtitle={classes}
+          description="Total classes registered"
+        />
+        <DashboardCard
+          icon={<MdSubject className="h-5 w-5" />}
+          title="Subjects"
+          subtitle={subjects}
+          description="Total subjects registered"
+        />
+      </div>
       <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         <GenderDistribution />
       </section>

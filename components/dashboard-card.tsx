@@ -1,36 +1,31 @@
+"use client";
+
 import React from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import CountUp from "react-countup";
 
 interface Props {
   icon: React.ReactNode;
-  title: string;
-  subtitle: string;
-  backgroundColor?: string;
-  iconBackgroundColor?: string;
+  title: string | number;
+  subtitle: string | number;
+  description: string;
 }
-const DashboardCard = ({
-  icon,
-  title,
-  subtitle,
-  backgroundColor,
-  iconBackgroundColor,
-}: Props) => {
+const DashboardCard = ({ icon, title, subtitle, description }: Props) => {
   return (
-    <Card
-      className={cn(
-        "shadow-md transition-transform duration-300 hover:scale-105 rounded-xl text-center",
-        backgroundColor
-      )}
-    >
-      <CardContent className="flex justify-between items-center py-8">
-        <div className="space-y-1 flex flex-col justify-center items-center">
-          <h3 className="text-2xl font-bold">{subtitle}</h3>
-          <p className="text-gray-500 dark:text-gray-400">{title}</p>
+    <Card className="shadow-md transition-transform duration-300 hover:scale-[1.02] rounded-xl">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        {icon}
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">
+          {typeof subtitle === "string" ? (
+            subtitle
+          ) : (
+            <CountUp end={subtitle} start={0} />
+          )}
         </div>
-        <div className={cn("p-4 rounded-full", iconBackgroundColor)}>
-          {icon}
-        </div>
+        <p className="text-xs text-muted-foreground">{description}</p>
       </CardContent>
     </Card>
   );

@@ -4,6 +4,8 @@ import { FaChalkboardTeacher } from "react-icons/fa";
 import { MdSubject } from "react-icons/md";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaSchool } from "react-icons/fa";
+import { RxSection } from "react-icons/rx";
+import { PiExam } from "react-icons/pi";
 
 export const NAVIGATION_LINK = [
   {
@@ -22,18 +24,28 @@ export const NAVIGATION_LINK = [
     icon: <FaChalkboardTeacher className="h-5 w-5" />,
   },
   {
+    title: "Schools",
+    link: "/home/schools",
+    icon: <FaSchool className="h-5 w-5" />,
+  },
+  {
     title: "Subjects",
     link: "/home/subjects",
     icon: <MdSubject className="h-5 w-5" />,
   },
-  // {
-  //   title: "Schools",
-  //   link: "/home/subjects",
-  //   icon: <FaSchool className="h-5 w-5" />,
-  // },
-  // {
-  //   title: "Settings",
-  //   link: "/home/settings",
-  //   icon: <IoSettingsOutline className="h-5 w-5" />,
-  // },
+  {
+    title: "Exams",
+    link: "/home/exams",
+    icon: <PiExam className="h-5 w-5" />,
+  },
+  {
+    title: "Terms",
+    link: "/home/terms",
+    icon: <RxSection className="h-5 w-5" />,
+  },
+  {
+    title: "Settings",
+    link: "/home/settings",
+    icon: <IoSettingsOutline className="h-5 w-5" />,
+  },
 ];

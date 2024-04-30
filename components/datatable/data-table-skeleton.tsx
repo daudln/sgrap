@@ -4,12 +4,12 @@ import React, { ReactNode } from "react";
 
 function DataTableSkeleton({
   children,
-  isLoading,
+  isLoading = false,
   fullWidth = true,
   className,
 }: {
   children: ReactNode;
-  isLoading: boolean;
+  isLoading?: boolean;
   fullWidth?: boolean;
   className?: string;
 }) {
