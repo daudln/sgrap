@@ -21,8 +21,8 @@ default:
 
 build app:
   stage: build-app
+  image: node:20
   script:
-    - npm
     - npm install
     - npx prisma db push
     - npm run lint
