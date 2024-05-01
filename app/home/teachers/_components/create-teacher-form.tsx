@@ -1,6 +1,5 @@
 "use client";
 
-import { updateSubject } from "@/app/home/subjects/_actions/actions";
 import ActionButton from "@/components/action-button";
 import { SelectInput } from "@/components/select-input";
 import {
@@ -12,71 +11,69 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { UpdateSubjectInput, updateSubjectSchema } from "@/schema/subject";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Subject, SubjectCategory } from "@prisma/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { createTeacher } from "../_actions/actions";
+import { CreateProfileInput, createProfileSchema } from "@/schema/profile";
+import useSchools from "@/hooks/useSchools";
 
-const SUBJECT_CATEGORIES = [
-  {
-    label: "Art",
-    value: "ART",
-  },
-  {
-    label: "Science",
-    value: "SCIENCE",
-  },
-];
-
-interface UpdateSubjectProps {
+interface CreateTeacherProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
-  subject: Subject;
 }
 
-const UpdateSubjectForm = ({ subject, setOpen }: UpdateSubjectProps) => {
-  const form = useForm<UpdateSubjectInput>({
-    resolver: zodResolver(updateSubjectSchema),
+const CreateTeacherForm = ({ setOpen }: CreateTeacherProps & {}) => {
+  const form = useForm<CreateProfileInput>({
+    resolver: zodResolver(createProfileSchema),
     defaultValues: {
-      name: subject.name,
-      code: subject.code,
-      description: subject.description ?? undefined,
-      category: subject.category,
-      uuid: subject.uuid,
+      firstName: "",
+      middleName: "",
+      lastName: "",
+      email: "",
+      phoneNumber: "",
+      school: "",
     },
   });
+
+  const { data, isLoading, error } = useSchools();
+
+  const SCHOOLS = data?.data.map((school) => ({
+    label: school.name,
+    value: school.uuid,
+  }));
+
   const handleOptionChange = useCallback(
     (value: string) => {
-      form.setValue("category", value as SubjectCategory);
+      form.setValue("school", value);
     },
     [form]
   );
   const queryClient = useQueryClient();
 
-  const updateMutation = useMutation({
-    mutationFn: updateSubject,
+  const deleteMutation = useMutation({
+    mutationFn: createTeacher,
     onSuccess: async ({ data }) => {
       toast.success(data?.message, {
-        id: "create-new-subject",
+        id: "create-new-teacher",
       });
 
       await queryClient.invalidateQueries({
-        queryKey: ["subjects"],
+        queryKey: ["teachers"],
       });
       form.reset();
       setOpen((prev) => !prev);
     },
-    onError: (error) => {
+    onError: () => {
       toast.error("Something went wrong", {
-        id: "create-new-subject",
+        id: "create-new-teacher",
       });
     },
   });
 
-  const onSubmit = (data: UpdateSubjectInput) => {
-    updateMutation.mutate(data);
+  const onSubmit = (data: CreateProfileInput) => {
+    deleteMutation.mutate(data);
   };
   return (
     <Form {...form}>
@@ -87,12 +84,12 @@ const UpdateSubjectForm = ({ subject, setOpen }: UpdateSubjectProps) => {
         <div>
           <FormField
             control={form.control}
-            name="name"
+            name="firstName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>First Name</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="Kiswahili" />
+                  <Input {...field} placeholder="Daud" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -100,12 +97,12 @@ const UpdateSubjectForm = ({ subject, setOpen }: UpdateSubjectProps) => {
           />
           <FormField
             control={form.control}
-            name="code"
+            name="middleName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Code</FormLabel>
+                <FormLabel>Middle Name</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="KSW" />
+                  <Input {...field} placeholder="Linus (optional)" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -113,12 +110,12 @@ const UpdateSubjectForm = ({ subject, setOpen }: UpdateSubjectProps) => {
           />
           <FormField
             control={form.control}
-            name="description"
+            name="lastName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Description</FormLabel>
+                <FormLabel>Last Name</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="Description (optional)" />
+                  <Input {...field} placeholder="Namayala" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -126,39 +123,56 @@ const UpdateSubjectForm = ({ subject, setOpen }: UpdateSubjectProps) => {
           />
           <FormField
             control={form.control}
-            name="category"
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="daudnamayala@gmail.com" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="phoneNumber"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Phone Number</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="+255712345678" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="school"
             render={({ field }) => (
               <FormItem className="flex flex-col my-2">
-                <FormLabel>Category</FormLabel>
+                <FormLabel>School</FormLabel>
                 <FormControl>
                   <SelectInput
                     onChange={handleOptionChange}
                     className="w-full"
-                    options={SUBJECT_CATEGORIES}
-                    label="Category"
+                    options={SCHOOLS || []}
+                    label="School"
+                    placeholder="Select School"
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="uuid"
-            render={({ field }) => (
-              <FormItem hidden>
-                <FormControl>
-                  <Input {...field} hidden readOnly />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
         </div>
-        <ActionButton label="Update" status={updateMutation.status} />
+
+        <ActionButton label="Create" status={deleteMutation.status} />
       </form>
     </Form>
   );
 };
 
-export default UpdateSubjectForm;
+export default CreateTeacherForm;

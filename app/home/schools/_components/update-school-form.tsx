@@ -24,12 +24,13 @@ interface UpdateSchoolProps {
   school: School;
 }
 
-const UpdateSubjectForm = ({ school, setOpen }: UpdateSchoolProps) => {
+const UpdateSchoolForm = ({ school, setOpen }: UpdateSchoolProps) => {
   const form = useForm<UpdateSchoolInput>({
     resolver: zodResolver(updateSchoolSchema),
     defaultValues: {
       name: school.name,
       motto: school.motto,
+      uuid: school.uuid,
     },
   });
 
@@ -43,7 +44,7 @@ const UpdateSubjectForm = ({ school, setOpen }: UpdateSchoolProps) => {
       });
 
       await queryClient.invalidateQueries({
-        queryKey: ["subjects"],
+        queryKey: ["schools"],
       });
       form.reset();
       setOpen((prev) => !prev);
@@ -91,6 +92,19 @@ const UpdateSubjectForm = ({ school, setOpen }: UpdateSchoolProps) => {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="uuid"
+            render={({ field }) => (
+              <FormItem hidden>
+                <FormLabel>UUID</FormLabel>
+                <FormControl>
+                  <Input {...field} hidden readOnly disabled />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
         <ActionButton label="Update" status={updateMutation.status} />
       </form>
@@ -98,4 +112,4 @@ const UpdateSubjectForm = ({ school, setOpen }: UpdateSchoolProps) => {
   );
 };
 
-export default UpdateSubjectForm;
+export default UpdateSchoolForm;

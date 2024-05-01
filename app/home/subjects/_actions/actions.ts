@@ -53,10 +53,10 @@ export const createSubject = action(
 
 export const updateSubject = action(
   updateSubjectSchema,
-  async ({ code, name, description, category }) => {
+  async ({ code, name, description, category, uuid }) => {
     const existingSubject = await prisma.subject.findFirst({
       where: {
-        OR: [{ code }, { name }],
+        uuid,
       },
     });
     if (!existingSubject) {

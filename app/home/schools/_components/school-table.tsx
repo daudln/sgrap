@@ -83,7 +83,7 @@ const filterFn: FilterFn<School> = (
   columnId,
   filterValue: string[] | string
 ) => {
-  const searchableRowContent = `${row.original.name} ${row.original.motto} ${row.original.id}`;
+  const searchableRowContent = `${row.original.name} ${row.original.motto}`;
 
   if (Array.isArray(filterValue)) {
     return searchableRowContent
@@ -118,7 +118,7 @@ const columns: ColumnDef<SchoolRow>[] = [
     ),
     filterFn: filterFn,
     cell: ({ row }) => (
-      <div className="flex gap-2 capitalize">
+      <div className="flex gap-2">
         <div className="">{row.original.motto}</div>
       </div>
     ),

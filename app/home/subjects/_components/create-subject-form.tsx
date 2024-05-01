@@ -132,6 +132,7 @@ const CreateSubjectForm = ({ setOpen }: CreateSubjectProps & {}) => {
                     className="w-full"
                     options={SUBJECT_CATEGORIES}
                     label="Category"
+                    placeholder="Select category"
                   />
                 </FormControl>
                 <FormMessage />

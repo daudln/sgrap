@@ -31,7 +31,7 @@ function DeleteSubjectDialog({ open, setOpen, schoolId }: Props) {
       });
 
       await queryClient.invalidateQueries({
-        queryKey: ["subjects"],
+        queryKey: ["schools"],
       });
     },
     onError: () => {

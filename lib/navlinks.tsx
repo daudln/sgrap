@@ -6,6 +6,7 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { FaSchool } from "react-icons/fa";
 import { RxSection } from "react-icons/rx";
 import { PiExam } from "react-icons/pi";
+import { SiGoogleclassroom } from "react-icons/si";
 
 export const NAVIGATION_LINK = [
   {
@@ -27,6 +28,11 @@ export const NAVIGATION_LINK = [
     title: "Schools",
     link: "/home/schools",
     icon: <FaSchool className="h-5 w-5" />,
+  },
+  {
+    title: "Classes",
+    link: "/home/classes",
+    icon: <SiGoogleclassroom className="h-5 w-5" />,
   },
   {
     title: "Subjects",

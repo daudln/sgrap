@@ -23,6 +23,7 @@ export const updateSubjectSchema = z.object({
   category: z.enum(["ART", "SCIENCE"], {
     errorMap: () => ({ message: "Subject category is required" }),
   }),
+  uuid: z.string(),
 });
 
 export type UpdateSubjectInput = z.infer<typeof updateSubjectSchema>;

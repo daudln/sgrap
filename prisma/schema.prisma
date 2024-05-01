@@ -77,8 +77,7 @@ model Account {
 }
 
 model Subject {
-  id          Int             @id @default(autoincrement())
-  uuid        String          @unique @default(cuid()) @db.VarChar(100)
+  uuid        String          @id @unique @default(cuid()) @db.VarChar(100)
   code        String          @unique @db.VarChar(20)
   name        String          @unique @db.VarChar(100)
   description String?
@@ -91,15 +90,16 @@ model Subject {
 }
 
 model School {
-  id        Int       @id @default(autoincrement())
-  uuid      String    @unique @default(cuid()) @db.VarChar(100)
-  motto     String    @db.VarChar(200)
-  name      String    @unique @db.VarChar(100)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  isActive  Boolean   @default(true)
-  Class     Class[]
-  Profile   Profile[]
+  uuid          String    @id @unique @default(cuid()) @db.VarChar(100)
+  motto         String    @db.VarChar(200)
+  name          String    @unique @db.VarChar(100)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  isActive      Boolean   @default(true)
+  Class         Class[]
+  Profile       Profile[]
+  SchoolTeacher Teacher[]
+  Student       Student[]
 
   @@map("school")
 }
@@ -108,23 +108,44 @@ model Class {
   id       Int    @id @default(autoincrement())
   uuid     String @unique @default(cuid()) @db.VarChar(100)
   name     String @db.VarChar(50)
-  school   School @relation(fields: [schoolId], references: [id])
-  schoolId Int
+  school   School @relation(fields: [schoolId], references: [uuid])
+  schoolId String
 
   @@unique([schoolId, name])
   @@map("class")
 }
 
 model Profile {
-  userId    String      @id @unique
-  uuid      String      @unique @default(cuid()) @db.VarChar(100)
-  type      ProfileType @default(STUDENT)
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  isActive  Boolean     @default(true)
-  school    School      @relation(fields: [schoolId], references: [id])
-  user      User        @relation(fields: [userId], references: [id])
-  schoolId  Int
+  userId        String      @id @unique
+  uuid          String      @unique @default(cuid()) @db.VarChar(100)
+  type          ProfileType @default(STUDENT)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  isActive      Boolean     @default(true)
+  phoneNumber   String?
+  school        School      @relation(fields: [schoolId], references: [uuid])
+  user          User        @relation(fields: [userId], references: [id])
+  schoolId      String
+  SchoolTeacher Teacher?
+  Student       Student?
 
   @@map("profile")
+}
+
+model Teacher {
+  profileUserId String  @id @unique
+  profile       Profile @relation(fields: [profileUserId], references: [userId])
+  school        School  @relation(fields: [schoolId], references: [uuid])
+  schoolId      String
+
+  @@unique([profileUserId, schoolId])
+}
+
+model Student {
+  profileUserId String  @id @unique
+  profile       Profile @relation(fields: [profileUserId], references: [userId])
+  school        School  @relation(fields: [schoolId], references: [uuid])
+  schoolId      String
+
+  @@unique([schoolId, profileUserId])
 }

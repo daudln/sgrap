@@ -26,11 +26,13 @@ export function SelectInput({
   label,
   className,
   onChange,
+  placeholder = "Select an option",
 }: {
   options: { value: string; label: string }[];
   label?: string;
   className?: string;
   onChange: (value: string) => void;
+  placeholder?: string;
 }) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
@@ -59,7 +61,32 @@ export function SelectInput({
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0" align="center">
-          <OptionList setOpen={setOpen} setValue={setValue} options={options} />
+          <Command>
+            <CommandInput placeholder={placeholder} />
+            <CommandList>
+              <CommandEmpty>No results found.</CommandEmpty>
+              <CommandGroup>
+                {options.map((option) => (
+                  <CommandItem
+                    key={option.value}
+                    value={option.value}
+                    onSelect={() => {
+                      setValue(option.value);
+                      setOpen(false);
+                    }}
+                  >
+                    {option.label}
+                    <Check
+                      className={cn(
+                        "ml-auto h-4 w-4",
+                        value === option.value ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
         </PopoverContent>
       </Popover>
     );
@@ -83,53 +110,34 @@ export function SelectInput({
       </DrawerTrigger>
       <DrawerContent>
         <div className="mt-4 border-t">
-          <OptionList setOpen={setOpen} setValue={setValue} options={options} />
+          <Command>
+            <CommandInput placeholder={`Search ${placeholder}`} />
+            <CommandList>
+              <CommandEmpty>No results found.</CommandEmpty>
+              <CommandGroup>
+                {options.map((option) => (
+                  <CommandItem
+                    key={option.value}
+                    value={option.value}
+                    onSelect={() => {
+                      setValue(option.value);
+                      setOpen(false);
+                    }}
+                  >
+                    {option.label}
+                    <Check
+                      className={cn(
+                        "ml-auto h-4 w-4",
+                        value === option.value ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
         </div>
       </DrawerContent>
     </Drawer>
-  );
-}
-
-function OptionList({
-  setValue,
-  setOpen,
-  options,
-}: {
-  setOpen: (open: boolean) => void;
-  setValue: (value: string) => void;
-  options: { value: string; label: string }[];
-}) {
-  const [selectedValue, setSelectedValue] = React.useState<string | null>(null);
-  const handleSelect = (value: string) => {
-    setValue(value);
-    setOpen(false);
-    setSelectedValue(value);
-  };
-  return (
-    <Command>
-      <CommandInput placeholder="Filter status..." />
-      <CommandList>
-        <CommandEmpty>No results found.</CommandEmpty>
-        <CommandGroup>
-          {options.map((option) => (
-            <CommandItem
-              key={option.value}
-              value={option.value}
-              onSelect={() => {
-                handleSelect(option.value);
-              }}
-            >
-              {option.label}
-              <Check
-                className={cn(
-                  "ml-auto h-4 w-4 opacity-0",
-                  selectedValue === option.value && "opacity-100"
-                )}
-              />
-            </CommandItem>
-          ))}
-        </CommandGroup>
-      </CommandList>
-    </Command>
   );
 }

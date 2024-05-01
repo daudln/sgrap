@@ -1,4 +1,4 @@
-import SchoolTable from "./_components/subject-table";
+import SchoolTable from "./_components/school-table";
 
 export default async function Page() {
   return (

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 
 const font = localFont({
-  src: "fonts/PlusJakartaSans/PlusJakartaSans-VariableFont_wght.ttf",
+  src: "fonts/Manrope/Manrope-VariableFont_wght.ttf",
 });
 
 import "./globals.css";

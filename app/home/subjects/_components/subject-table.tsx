@@ -17,7 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
-import { BsTrash3 } from "react-icons/bs";
+import { BsFillExclamationTriangleFill, BsTrash3 } from "react-icons/bs";
 import { LuPencil } from "react-icons/lu";
 import DeleteSubjectDialog from "./delete-subject";
 
@@ -74,24 +74,20 @@ function RowActions({ subject }: { subject: SubjectRow }) {
   );
 }
 
+import AlertNotication from "@/components/alert-notification";
 import { DataTable } from "@/components/datatable/datas-table";
+import { Badge } from "@/components/ui/badge";
 import CreateSubjectDialog from "./create-subject-dialog";
 import { filters } from "./filters";
 import UpdateSubjectDialog from "./update-subject-dialog";
 
-const filterFn: FilterFn<Subject> = (
-  row,
-  columnId,
-  filterValue: string[] | string
-) => {
-  const searchableRowContent = `${row.original.name} ${row.original.category} ${row.original.description} ${row.original.code} ${row.original.id}`;
+const filterFn: FilterFn<Subject> = (row, id, value: string[] | string) => {
+  const searchableRowContent = `${row.original.name} ${row.original.category} ${row.original.description} ${row.original.code}`;
 
-  if (Array.isArray(filterValue)) {
-    return searchableRowContent
-      .toLowerCase()
-      .includes(filterValue.map((s) => s.toLowerCase()).join(" "));
+  if (Array.isArray(value)) {
+    return value.some((v) => row.getValue(id) === v);
   }
-  return searchableRowContent.toLowerCase().includes(filterValue.toLowerCase());
+  return searchableRowContent.toLowerCase().includes(value.toLowerCase());
 };
 
 const getDataForExport = (subject: Subject) => ({
@@ -133,7 +129,15 @@ const columns: ColumnDef<SubjectRow>[] = [
     filterFn: filterFn,
     cell: ({ row }) => (
       <div className="flex gap-2 capitalize">
-        <div className="">{row.original.category}</div>
+        <Badge
+          className={
+            row.original.category === "SCIENCE"
+              ? "bg-emerald-500 text-white"
+              : "bg-amber-500 text-white"
+          }
+        >
+          {row.original.category}
+        </Badge>
       </div>
     ),
   },
@@ -156,7 +160,16 @@ const columns: ColumnDef<SubjectRow>[] = [
 const SubjectTable = () => {
   const { data, isLoading, error } = useSubjects();
   const [open, setOpen] = useState(false);
-
+  if (error)
+    return (
+      <AlertNotication
+        title={"Error"}
+        description={error.message}
+        className="my-12"
+        variant="destructive"
+        alertIcon={<BsFillExclamationTriangleFill className="h-4 w-4" />}
+      />
+    );
   return (
     <>
       <div className="flex justify-end mb-4">

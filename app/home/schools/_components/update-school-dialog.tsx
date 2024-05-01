@@ -19,6 +19,7 @@ function UpdateSchoolDialog({ schoolId, open, setOpen }: Props) {
   const schools = queryClient.getQueryData<APIResponse<School>>([
     "schools",
   ])?.data;
+
   const school = schools?.find((school) => school.uuid === schoolId) as
     | School
     | undefined;

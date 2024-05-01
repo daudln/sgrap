@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 interface AlertNoticationProps {
   title: string;
   description: string;
-  variant?: "default" | "destructive";
+  variant?: "default" | "destructive" | "success" | "warning" | "info";
   className?: string;
   alertIcon?: React.ReactNode;
 }
