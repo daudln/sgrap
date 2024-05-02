@@ -2,11 +2,19 @@ import prisma from "@/lib/utils";
 
 export async function GET() {
   const profiles = await prisma.teacher.findMany({
+    where: {
+      profile: {
+        user: {
+          type: "TEACHER",
+        },
+      },
+    },
     select: {
       profile: {
         select: {
-          type: true,
           phoneNumber: true,
+          userId: true,
+          schoolId: true,
           user: {
             select: {
               name: true,

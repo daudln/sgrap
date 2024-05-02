@@ -1,42 +1,27 @@
 "use client";
 
-import { APIResponse } from "@/services/api.service";
-import { Subject } from "@prisma/client";
-import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import UpdateSubjectForm from "./update-student-form";
 import DialogBox from "@/components/dialog-box";
+import { UserData } from "@/types/user";
 import { Dispatch, SetStateAction } from "react";
+import UpdateStudentForm from "./update-student-form";
 
 interface Props {
   open: boolean;
-  subjectId: string;
+  profile: UserData;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-function UpdateSubjectDialog({ subjectId, open, setOpen }: Props) {
-  const queryClient = useQueryClient();
-  const subjects = queryClient.getQueryData<APIResponse<Subject>>([
-    "subjects",
-  ])?.data;
-  const subject = subjects?.find((subject) => subject.uuid === subjectId) as
-    | Subject
-    | undefined;
-  if (!subject)
-    toast.error("Something went wrong", {
-      id: subjectId,
-    });
-
+function UpdateStudentDialog({ profile, open, setOpen }: Props) {
   return (
     <DialogBox
       open={open}
       onOpenChange={setOpen}
-      title="Update Subject"
-      description="Update the subject details"
+      title="Update Student"
+      description="Update the student details"
     >
-      <UpdateSubjectForm subject={subject!} setOpen={setOpen} />
+      <UpdateStudentForm profile={profile} setOpen={setOpen} />
     </DialogBox>
   );
 }
 
-export default UpdateSubjectDialog;
+export default UpdateStudentDialog;

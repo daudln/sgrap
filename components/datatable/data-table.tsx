@@ -86,7 +86,6 @@ const DataTable = <T,>({
 }: DataTableProps<T>) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-
   const handleExportCSV = (data: any[]) => {
     const csv = generateCsv(csvConfig)(data);
     download(csvConfig)(csv);

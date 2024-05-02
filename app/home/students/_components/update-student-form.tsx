@@ -1,6 +1,5 @@
 "use client";
 
-import { updateSubject } from "@/app/home/subjects/_actions/actions";
 import ActionButton from "@/components/action-button";
 import { SelectInput } from "@/components/select-input";
 import {
@@ -12,69 +11,83 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { UpdateSubjectInput, updateSubjectSchema } from "@/schema/subject";
+import { useSchoolOptions } from "@/hooks/useSchools";
+import { CLASS_OPTIONS, GENDER_OPTIONS } from "@/lib/constants";
+import { UpdateProfileInput, updateProfileSchema } from "@/schema/profile";
+import { UserData } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Subject, SubjectCategory } from "@prisma/client";
+import { Gender, StudentClass } from "@prisma/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { updateStudent } from "../_actions/actions";
 
-const SUBJECT_CATEGORIES = [
-  {
-    label: "Art",
-    value: "ART",
-  },
-  {
-    label: "Science",
-    value: "SCIENCE",
-  },
-];
-
-interface UpdateSubjectProps {
+interface UpdateProfileProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
-  subject: Subject;
+  profile: UserData;
 }
 
-const UpdateSubjectForm = ({ subject, setOpen }: UpdateSubjectProps) => {
-  const form = useForm<UpdateSubjectInput>({
-    resolver: zodResolver(updateSubjectSchema),
+const UpdateStudentForm = ({ profile, setOpen }: UpdateProfileProps) => {
+  const [firstName, middleName, lastName] = profile.name?.split(" ")!;
+  const form = useForm<UpdateProfileInput>({
+    resolver: zodResolver(updateProfileSchema),
     defaultValues: {
-      name: subject.name,
-      code: subject.code,
-      description: subject.description ?? undefined,
-      category: subject.category,
+      firstName: firstName,
+      middleName: middleName,
+      lastName: lastName,
+      email: profile.email as string | undefined,
+      uuid: profile.id,
+      phoneNumber: profile.Profile?.phoneNumber || "",
+      school: profile.Profile?.school?.name || "",
+      gender: profile.Profile.gender as Gender,
+      classLevel: profile.Profile?.Student?.classLevel || ("" as StudentClass),
     },
   });
-  const handleOptionChange = useCallback(
+  const handleSchoolChange = useCallback(
     (value: string) => {
-      form.setValue("category", value as SubjectCategory);
+      form.setValue("school", value);
+    },
+    [form]
+  );
+
+  const handleGenderChange = useCallback(
+    (value: string) => {
+      form.setValue("gender", value as Gender);
+    },
+    [form]
+  );
+
+  const handleClassChange = useCallback(
+    (value: string) => {
+      form.setValue("classLevel", value as StudentClass);
     },
     [form]
   );
   const queryClient = useQueryClient();
+  const SCHOOLS = useSchoolOptions();
 
   const updateMutation = useMutation({
-    mutationFn: updateSubject,
+    mutationFn: updateStudent,
     onSuccess: async ({ data }) => {
       toast.success(data?.message, {
-        id: "create-new-subject",
+        id: "update-profile",
       });
 
       await queryClient.invalidateQueries({
-        queryKey: ["subjects"],
+        queryKey: ["students"],
       });
       form.reset();
       setOpen((prev) => !prev);
     },
     onError: (error) => {
       toast.error("Something went wrong", {
-        id: "create-new-subject",
+        id: "update-profile",
       });
     },
   });
 
-  const onSubmit = (data: UpdateSubjectInput) => {
+  const onSubmit = (data: UpdateProfileInput) => {
     updateMutation.mutate(data);
   };
   return (
@@ -86,12 +99,12 @@ const UpdateSubjectForm = ({ subject, setOpen }: UpdateSubjectProps) => {
         <div>
           <FormField
             control={form.control}
-            name="name"
+            name="firstName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>First Name</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="Kiswahili" />
+                  <Input {...field} placeholder="Daud" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -99,12 +112,12 @@ const UpdateSubjectForm = ({ subject, setOpen }: UpdateSubjectProps) => {
           />
           <FormField
             control={form.control}
-            name="code"
+            name="middleName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Code</FormLabel>
+                <FormLabel>Middle Name</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="KSW" />
+                  <Input {...field} placeholder="Linus (optional)" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -112,12 +125,12 @@ const UpdateSubjectForm = ({ subject, setOpen }: UpdateSubjectProps) => {
           />
           <FormField
             control={form.control}
-            name="description"
+            name="lastName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Description</FormLabel>
+                <FormLabel>Last Name</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="Description (optional)" />
+                  <Input {...field} placeholder="Namayala" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -125,16 +138,83 @@ const UpdateSubjectForm = ({ subject, setOpen }: UpdateSubjectProps) => {
           />
           <FormField
             control={form.control}
-            name="category"
+            name="gender"
             render={({ field }) => (
-              <FormItem className="flex flex-col my-2">
-                <FormLabel>Category</FormLabel>
+              <FormItem>
+                <FormLabel>Gender</FormLabel>
                 <FormControl>
                   <SelectInput
-                    onChange={handleOptionChange}
+                    onChange={handleGenderChange}
                     className="w-full"
-                    options={SUBJECT_CATEGORIES}
-                    label="Category"
+                    options={GENDER_OPTIONS || []}
+                    label="Gender"
+                    placeholder="Select Gender"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="daudnamayala@gmail.com" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="phoneNumber"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Phone Number</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="+255712345678" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="school"
+            render={({ field }) => (
+              <FormItem className="flex flex-col my-2">
+                <FormLabel>School</FormLabel>
+                <FormControl className="w-full">
+                  <SelectInput
+                    onChange={handleSchoolChange}
+                    className="w-full"
+                    options={SCHOOLS || []}
+                    label="School"
+                    placeholder="Select School"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="classLevel"
+            render={({ field }) => (
+              <FormItem className="flex flex-col my-2">
+                <FormLabel>Class</FormLabel>
+                <FormControl className="w-full">
+                  <SelectInput
+                    onChange={handleClassChange}
+                    className="w-full"
+                    options={CLASS_OPTIONS}
+                    label="Class"
+                    placeholder="Select class"
                   />
                 </FormControl>
                 <FormMessage />
@@ -142,10 +222,11 @@ const UpdateSubjectForm = ({ subject, setOpen }: UpdateSubjectProps) => {
             )}
           />
         </div>
-        <ActionButton label="Update" status={updateMutation.status} />
+
+        <ActionButton label="Create" status={updateMutation.status} />
       </form>
     </Form>
   );
 };
 
-export default UpdateSubjectForm;
+export default UpdateStudentForm;

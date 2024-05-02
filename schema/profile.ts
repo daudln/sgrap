@@ -19,7 +19,17 @@ export const createProfileSchema = z.object({
     .max(100, { message: "Email is must be less than 100 characters long" })
     .optional(),
   school: z.string().min(1, { message: "School is required" }),
-  classLevel: z.string().optional(),
+  gender: z.enum(["MALE", "FEMALE"]),
+  classLevel: z
+    .enum([
+      "FORM_ONE",
+      "FORM_TWO",
+      "FORM_THREE",
+      "FORM_FOUR",
+      "FORM_FIVE",
+      "FORM_SIX",
+    ])
+    .optional(),
   phoneNumber: z
     .string()
     .max(100, {
@@ -31,6 +41,7 @@ export const createProfileSchema = z.object({
 export type CreateProfileInput = z.infer<typeof createProfileSchema>;
 
 export const updateProfileSchema = z.object({
+  uuid: z.string().min(1),
   firstName: z.string().min(1, { message: "First name is required" }).max(100, {
     message: "First name is must be less than 100 characters long",
   }),
@@ -46,11 +57,29 @@ export const updateProfileSchema = z.object({
   email: z
     .string()
     .email({ message: "Provide a valid email" })
-    .min(1, { message: "Email is required" })
     .max(100, { message: "Email is must be less than 100 characters long" })
     .optional(),
   school: z.string().min(1, { message: "School is required" }),
-  classLevel: z.string().optional(),
+  gender: z.enum(["MALE", "FEMALE"], { message: "Gender is required" }),
+  classLevel: z
+    .enum(
+      [
+        "FORM_ONE",
+        "FORM_TWO",
+        "FORM_THREE",
+        "FORM_FOUR",
+        "FORM_FIVE",
+        "FORM_SIX",
+      ],
+      { message: "Class level is required" }
+    )
+    .optional(),
+  phoneNumber: z
+    .string()
+    .max(100, {
+      message: "Phone number is must be less than 100 characters long",
+    })
+    .optional(),
 });
 
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;

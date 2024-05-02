@@ -18,7 +18,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { createTeacher } from "../_actions/actions";
 import { CreateProfileInput, createProfileSchema } from "@/schema/profile";
-import useSchools from "@/hooks/useSchools";
+import { useSchoolOptions } from "@/hooks/useSchools";
 
 interface CreateTeacherProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
@@ -37,12 +37,7 @@ const CreateTeacherForm = ({ setOpen }: CreateTeacherProps & {}) => {
     },
   });
 
-  const { data, isLoading, error } = useSchools();
-
-  const SCHOOLS = data?.data.map((school) => ({
-    label: school.name,
-    value: school.uuid,
-  }));
+  const SCHOOLS = useSchoolOptions();
 
   const handleOptionChange = useCallback(
     (value: string) => {
@@ -52,11 +47,11 @@ const CreateTeacherForm = ({ setOpen }: CreateTeacherProps & {}) => {
   );
   const queryClient = useQueryClient();
 
-  const deleteMutation = useMutation({
+  const createMutation = useMutation({
     mutationFn: createTeacher,
     onSuccess: async ({ data }) => {
       toast.success(data?.message, {
-        id: "create-new-teacher",
+        id: "delete-new-teacher",
       });
 
       await queryClient.invalidateQueries({
@@ -73,7 +68,7 @@ const CreateTeacherForm = ({ setOpen }: CreateTeacherProps & {}) => {
   });
 
   const onSubmit = (data: CreateProfileInput) => {
-    deleteMutation.mutate(data);
+    createMutation.mutate(data);
   };
   return (
     <Form {...form}>
@@ -154,7 +149,7 @@ const CreateTeacherForm = ({ setOpen }: CreateTeacherProps & {}) => {
             render={({ field }) => (
               <FormItem className="flex flex-col my-2">
                 <FormLabel>School</FormLabel>
-                <FormControl>
+                <FormControl className="w-full">
                   <SelectInput
                     onChange={handleOptionChange}
                     className="w-full"
@@ -169,7 +164,7 @@ const CreateTeacherForm = ({ setOpen }: CreateTeacherProps & {}) => {
           />
         </div>
 
-        <ActionButton label="Create" status={deleteMutation.status} />
+        <ActionButton label="Create" status={createMutation.status} />
       </form>
     </Form>
   );

@@ -12,31 +12,31 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { deleteTeacher } from "../_actions/actions";
+import { deleteStudent } from "../_actions/actions";
 
 interface Props {
   open: boolean;
   setOpen: (open: boolean) => void;
-  teacherId: string;
+  id: string;
 }
 
-function DeleteTeacherDialog({ open, setOpen, teacherId }: Props) {
+function DeleteSubjectDialog({ open, setOpen, id }: Props) {
   const queryClient = useQueryClient();
 
   const deleteMutation = useMutation({
-    mutationFn: deleteTeacher,
+    mutationFn: deleteStudent,
     onSuccess: async ({ data }) => {
       toast.success(data?.message, {
-        id: teacherId,
+        id: id,
       });
 
       await queryClient.invalidateQueries({
-        queryKey: ["teachers"],
+        queryKey: ["students"],
       });
     },
     onError: () => {
       toast.error("Something went wrong", {
-        id: teacherId,
+        id: id,
       });
     },
   });
@@ -47,7 +47,7 @@ function DeleteTeacherDialog({ open, setOpen, teacherId }: Props) {
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will permanently delete this
-            teacher
+            student
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -55,10 +55,10 @@ function DeleteTeacherDialog({ open, setOpen, teacherId }: Props) {
           <AlertDialogAction
             className="bg-destructive"
             onClick={() => {
-              toast.loading("Deleting teacher...", {
-                id: teacherId,
+              toast.loading("Deleting subject...", {
+                id: id,
               });
-              deleteMutation.mutate({ uuid: teacherId });
+              deleteMutation.mutate({ uuid: id });
             }}
           >
             Continue
@@ -69,4 +69,4 @@ function DeleteTeacherDialog({ open, setOpen, teacherId }: Props) {
   );
 }
 
-export default DeleteTeacherDialog;
+export default DeleteSubjectDialog;

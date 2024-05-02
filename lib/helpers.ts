@@ -22,3 +22,10 @@ export function GetFormatterForCurrency(currency: string) {
     currency,
   });
 }
+
+export function formatClassName(className: string) {
+  const parts = className
+    .split("_")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase());
+  return parts.join(" ");
+}

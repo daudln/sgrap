@@ -1,142 +1,208 @@
-// "use server";
+"use server";
 
-// import prisma from "@/lib/utils";
-// import {
-//   createStudentSchema,
-//   updateStudentSchema,
-//   deleteStudentSchema,
-// } from "@/schema/student";
-// import { createSafeActionClient } from "next-safe-action";
-// import { revalidatePath } from "next/cache";
+import prisma from "@/lib/utils";
+import {
+  createProfileSchema,
+  deleteProfileSchema,
+  updateProfileSchema,
+} from "@/schema/profile";
 
-// export const action = createSafeActionClient();
+import { createSafeActionClient } from "next-safe-action";
 
-// export const createStudent = action(
-//   createStudentSchema,
-//   async ({ firstName, lastName, middleName, school, classLevel, email }) => {
-//     const existingSubject = await prisma.stu.findFirst({
-//       where: {
-//         OR: [{ code }, { name }],
-//       },
-//     });
-//     if (existingSubject) {
-//       return {
-//         status: 400,
-//         success: false,
-//         message: "Subject already exists",
-//       };
-//     }
-//     const subject = await prisma.subject.create({
-//       data: {
-//         name,
-//         code,
-//         description,
-//         category,
-//       },
-//     });
-//     if (!subject) {
-//       return {
-//         status: 500,
-//         success: false,
-//         message: "Subject not created",
-//       };
-//     }
-//     revalidatePath("/subjects");
-//     return {
-//       status: 200,
-//       success: true,
-//       message: "Subject created successfully",
-//       data: subject,
-//     };
-//   }
-// );
+export const action = createSafeActionClient();
 
-// export const updateSubject = action(
-//   updateSubjectSchema,
-//   async ({ code, name, description, category }) => {
-//     const existingSubject = await prisma.subject.findFirst({
-//       where: {
-//         OR: [{ code }, { name }],
-//       },
-//     });
-//     if (!existingSubject) {
-//       return {
-//         status: 400,
-//         success: false,
-//         message: "Subject not found",
-//       };
-//     }
-//     const subject = await prisma.subject.update({
-//       where: {
-//         uuid: existingSubject.uuid,
-//       },
-//       data: {
-//         name,
-//         code,
-//         description,
-//         category,
-//       },
-//     });
-//     if (!subject) {
-//       return {
-//         status: 500,
-//         success: false,
-//         message: "Subject not created",
-//       };
-//     }
-//     revalidatePath("/subjects");
-//     return {
-//       status: 200,
-//       success: true,
-//       message: "Subject updated successfully",
-//       data: subject,
-//     };
-//   }
-// );
+export const createStudent = action(
+  createProfileSchema,
+  async ({
+    firstName,
+    lastName,
+    middleName,
+    school,
+    classLevel,
+    email,
+    phoneNumber,
+  }) => {
+    if (email) {
+      const user = await prisma.user.findUnique({
+        where: {
+          email,
+        },
+      });
+      if (user) {
+        return {
+          status: 400,
+          success: false,
+          message: "User already exists",
+        };
+      }
+    }
+    const existingStudent = await prisma.student.findFirst({
+      where: {
+        schoolId: school,
+        classLevel: classLevel,
+      },
+    });
+    if (existingStudent) {
+      return {
+        status: 400,
+        success: false,
+        message: "Student already exists",
+      };
+    }
+    const userName = `${firstName} ${middleName} ${lastName}`;
+    const newUser = await prisma.user.create({
+      data: {
+        name: userName,
+        email,
+        type: "STUDENT",
+      },
+    });
 
-// export const deleteSubject = action(deleteSubjectSchema, async ({ uuid }) => {
-//   const existingSubject = await prisma.subject.findFirst({
-//     where: {
-//       uuid,
-//     },
-//   });
-//   if (!existingSubject) {
-//     return {
-//       status: 400,
-//       success: false,
-//       message: "No subject with this id",
-//     };
-//   }
-//   await prisma.subject.delete({
-//     where: {
-//       uuid,
-//     },
-//   });
+    const newProfile = await prisma.profile.create({
+      data: {
+        schoolId: school,
+        phoneNumber,
+        userId: newUser.id,
+      },
+    });
 
-//   return {
-//     status: 201,
-//     success: true,
-//     message: "Subject delete successfully",
-//   };
-// });
+    const student = await prisma.student.create({
+      data: {
+        profileUserId: newProfile.userId,
+        schoolId: school,
+        classLevel: classLevel!,
+      },
+    });
+    if (!student) {
+      return {
+        status: 500,
+        success: false,
+        message: "Student not created",
+      };
+    }
+    return {
+      status: 201,
+      success: true,
+      message: "Student created successfully",
+      data: student,
+    };
+  }
+);
 
-// export const getSubjects = async () => {
-//   const subjects = await prisma.subject.findMany();
-//   if (!subjects) {
-//     return {
-//       status: 404,
-//       success: false,
-//       message: "Subjects not found",
-//     };
-//   }
-//   return {
-//     status: 200,
-//     success: true,
-//     message: "Subjects fetched successfully",
-//     data: subjects,
-//   };
-// };
+export const updateStudent = action(
+  updateProfileSchema,
+  async ({
+    uuid,
+    firstName,
+    middleName,
+    lastName,
+    email,
+    school,
+    phoneNumber,
+    classLevel,
+    gender,
+  }) => {
+    const existingStudent = await prisma.student.findFirst({
+      where: {
+        profile: {
+          userId: uuid,
+        },
+      },
+    });
+    if (!existingStudent) {
+      return {
+        status: 400,
+        success: false,
+        message: "Student does not exist",
+      };
+    }
 
-// export async function getSubject() {
-//   console.log("getSubject");
-// }
+    const name = `${firstName} ${middleName} ${lastName}`;
+    const user = await prisma.user.update({
+      where: {
+        id: uuid,
+      },
+      data: {
+        name: name,
+        email,
+        type: "STUDENT",
+      },
+    });
+
+    const profile = await prisma.profile.update({
+      where: {
+        userId: uuid,
+      },
+      data: {
+        schoolId: school,
+        phoneNumber,
+        userId: user.id,
+        gender,
+      },
+    });
+
+    const student = await prisma.student.update({
+      where: {
+        profileUserId: profile.userId,
+      },
+      data: {
+        profileUserId: profile.userId,
+        schoolId: school,
+        classLevel,
+      },
+    });
+    if (!student) {
+      return {
+        status: 500,
+        success: false,
+        message: "Something went wrong",
+      };
+    }
+    return {
+      status: 200,
+      success: true,
+      message: "Student updated successfully",
+      data: student,
+    };
+  }
+);
+
+export const deleteStudent = action(deleteProfileSchema, async ({ uuid }) => {
+  const existingStudent = await prisma.student.findFirst({
+    where: {
+      profile: {
+        userId: uuid,
+      },
+    },
+  });
+  if (!existingStudent) {
+    return {
+      status: 400,
+      success: false,
+      message: "Student does not exist",
+    };
+  }
+
+  const profile = await prisma.profile.delete({
+    where: {
+      userId: uuid,
+    },
+  });
+
+  await prisma.user.delete({
+    where: {
+      id: uuid,
+    },
+  });
+
+  await prisma.student.delete({
+    where: {
+      profileUserId: profile.userId,
+    },
+  });
+  return {
+    status: 200,
+    success: true,
+    message: "Student deleted successfully",
+  };
+});

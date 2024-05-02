@@ -1,149 +1,235 @@
-// "use client";
+"use client";
 
-// import { createstudent } from "@/app/home/students/_actions/actions";
-// import ActionButton from "@/components/action-button";
-// import { SelectInput } from "@/components/select-input";
-// import {
-//   Form,
-//   FormControl,
-//   FormField,
-//   FormItem,
-//   FormLabel,
-//   FormMessage,
-// } from "@/components/ui/form";
-// import { Input } from "@/components/ui/input";
-// import { CreatestudentInput, createstudentSchema } from "@/schema/student";
-// import { zodResolver } from "@hookform/resolvers/zod";
-// import { useMutation, useQueryClient } from "@tanstack/react-query";
-// import { Dispatch, SetStateAction, useCallback } from "react";
-// import { useForm } from "react-hook-form";
-// import { toast } from "sonner";
+import ActionButton from "@/components/action-button";
+import { SelectInput } from "@/components/select-input";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Dispatch, SetStateAction, useCallback } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { createStudent } from "../_actions/actions";
+import { CreateProfileInput, createProfileSchema } from "@/schema/profile";
+import useSchools from "@/hooks/useSchools";
+import { Gender, StudentClass } from "@prisma/client";
+import { CLASS_OPTIONS, GENDER_OPTIONS } from "@/lib/constants";
 
-// const student_CATEGORIES = [
-//   {
-//     label: "Art",
-//     value: "ART",
-//   },
-//   {
-//     label: "Science",
-//     value: "SCIENCE",
-//   },
-// ];
+interface CreateStudentProps {
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}
 
-// interface CreatestudentProps {
-//   setOpen: Dispatch<SetStateAction<boolean>>;
-// }
+const CreateStudentForm = ({ setOpen }: CreateStudentProps) => {
+  const form = useForm<CreateProfileInput>({
+    resolver: zodResolver(createProfileSchema),
+    defaultValues: {
+      firstName: "",
+      middleName: "",
+      lastName: "",
+      email: "",
+      phoneNumber: "",
+      school: "",
+      classLevel: "" as StudentClass,
+    },
+  });
 
-// const CreateStudentForm = ({ setOpen }: CreatestudentProps) => {
-//   const form = useForm<CreatestudentInput>({
-//     resolver: zodResolver(createstudentSchema),
-//     defaultValues: {
-//       name: "",
-//       code: "",
-//       description: "",
-//     },
-//   });
-//   const handleOptionChange = useCallback(
-//     (value: string) => {
-//       form.setValue("category", value as "ART" | "SCIENCE");
-//     },
-//     [form]
-//   );
-//   const queryClient = useQueryClient();
+  const { data, isLoading, error } = useSchools();
 
-//   const deleteMutation = useMutation({
-//     mutationFn: createstudent,
-//     onSuccess: async ({ data }) => {
-//       toast.success(data?.message, {
-//         id: "create-new-student",
-//       });
+  const SCHOOLS = data?.data.map((school) => ({
+    label: school.name,
+    value: school.uuid,
+  }));
 
-//       await queryClient.invalidateQueries({
-//         queryKey: ["students"],
-//       });
-//       form.reset();
-//       setOpen((prev) => !prev);
-//     },
-//     onError: () => {
-//       toast.error("Something went wrong", {
-//         id: "create-new-student",
-//       });
-//     },
-//   });
+  const handleSchoolChange = useCallback(
+    (value: string) => {
+      form.setValue("school", value);
+    },
+    [form]
+  );
 
-//   const onSubmit = (data: CreatestudentInput) => {
-//     deleteMutation.mutate(data);
-//   };
-//   return (
-//     <Form {...form}>
-//       <form
-//         className="w-full max-w-lg flex flex-col gap-4"
-//         onSubmit={form.handleSubmit(onSubmit)}
-//       >
-//         <div>
-//           <FormField
-//             control={form.control}
-//             name="name"
-//             render={({ field }) => (
-//               <FormItem>
-//                 <FormLabel>Name</FormLabel>
-//                 <FormControl>
-//                   <Input {...field} placeholder="Kiswahili" />
-//                 </FormControl>
-//                 <FormMessage />
-//               </FormItem>
-//             )}
-//           />
-//           <FormField
-//             control={form.control}
-//             name="code"
-//             render={({ field }) => (
-//               <FormItem>
-//                 <FormLabel>Code</FormLabel>
-//                 <FormControl>
-//                   <Input {...field} placeholder="KSW" />
-//                 </FormControl>
-//                 <FormMessage />
-//               </FormItem>
-//             )}
-//           />
-//           <FormField
-//             control={form.control}
-//             name="description"
-//             render={({ field }) => (
-//               <FormItem>
-//                 <FormLabel>Description</FormLabel>
-//                 <FormControl>
-//                   <Input {...field} placeholder="Description (optional)" />
-//                 </FormControl>
-//                 <FormMessage />
-//               </FormItem>
-//             )}
-//           />
-//           <FormField
-//             control={form.control}
-//             name="category"
-//             render={({ field }) => (
-//               <FormItem className="flex flex-col my-2">
-//                 <FormLabel>Category</FormLabel>
-//                 <FormControl>
-//                   <SelectInput
-//                     onChange={handleOptionChange}
-//                     className="w-full"
-//                     options={student_CATEGORIES}
-//                     label="Category"
-//                   />
-//                 </FormControl>
-//                 <FormMessage />
-//               </FormItem>
-//             )}
-//           />
-//         </div>
+  const handleGenderChange = useCallback(
+    (value: string) => {
+      form.setValue("gender", value as Gender);
+    },
+    [form]
+  );
+  const handleClassChange = useCallback(
+    (value: string) => {
+      form.setValue("classLevel", value as StudentClass);
+    },
+    [form]
+  );
+  const queryClient = useQueryClient();
 
-//         <ActionButton label="Create" status={deleteMutation.status} />
-//       </form>
-//     </Form>
-//   );
-// };
+  const deleteMutation = useMutation({
+    mutationFn: createStudent,
+    onSuccess: async ({ data }) => {
+      toast.success(data?.message, {
+        id: "create-new-student",
+      });
 
-// export default CreateStudentForm;
+      await queryClient.invalidateQueries({
+        queryKey: ["students"],
+      });
+      form.reset();
+      setOpen((prev) => !prev);
+    },
+    onError: () => {
+      toast.error("Something went wrong", {
+        id: "create-new-student",
+      });
+    },
+  });
+
+  const onSubmit = (data: CreateProfileInput) => {
+    deleteMutation.mutate(data);
+  };
+  return (
+    <Form {...form}>
+      <form
+        className="w-full max-w-lg flex flex-col gap-4"
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
+        <div>
+          <FormField
+            control={form.control}
+            name="firstName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>First Name</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="Daud" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="middleName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Middle Name</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="Linus (optional)" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Last Name</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="Namayala" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="gender"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Gender</FormLabel>
+                <FormControl>
+                  <SelectInput
+                    onChange={handleGenderChange}
+                    className="w-full"
+                    options={GENDER_OPTIONS || []}
+                    label="Gender"
+                    placeholder="Select Gender"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder="daudnamayala@gmail.com (optional)"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="phoneNumber"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Phone Number</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="+255712345678" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="school"
+            render={({ field }) => (
+              <FormItem className="flex flex-col my-2">
+                <FormLabel>School</FormLabel>
+                <FormControl className="w-full">
+                  <SelectInput
+                    onChange={handleSchoolChange}
+                    className="w-full"
+                    options={SCHOOLS || []}
+                    label="School"
+                    placeholder="Select School"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="classLevel"
+            render={({ field }) => (
+              <FormItem className="flex flex-col my-2">
+                <FormLabel>Class</FormLabel>
+                <FormControl className="w-full">
+                  <SelectInput
+                    onChange={handleClassChange}
+                    className="w-full"
+                    options={CLASS_OPTIONS}
+                    label="Class"
+                    placeholder="Select class"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <ActionButton label="Create" status={deleteMutation.status} />
+      </form>
+    </Form>
+  );
+};
+
+export default CreateStudentForm;

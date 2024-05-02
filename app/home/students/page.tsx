@@ -1,3 +1,4 @@
+import StudentTable from "./_components/student-table";
 
 export default function Page() {
   return (
@@ -5,6 +6,7 @@ export default function Page() {
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold md:text-2xl">Student</h1>
       </div>
+      <StudentTable />
     </div>
   );
 }

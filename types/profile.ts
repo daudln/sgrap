@@ -1,6 +1,8 @@
 export type UserProfile = {
   type: string;
   phoneNumber: string;
+  userId: string;
+  schoolId: string;
   user: {
     name: string;
     email: string;

@@ -10,21 +10,22 @@ import prisma from "@/lib/utils";
 
 export default async function Dashboard() {
   const schools = await prisma.school.count();
-  const classes = await prisma.class.count();
   const subjects = await prisma.subject.count();
+  const teachers = await prisma.teacher.count();
+  const students = await prisma.student.count();
   return (
     <div className="p-6 grid gap-4">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <DashboardCard
           icon={<PiStudent className="h-5 w-5" />}
           title="Students"
-          subtitle={11023}
+          subtitle={students}
           description="Total student registered"
         />
         <DashboardCard
           icon={<GiTeacher className="h-5 w-5" />}
           title="Teachers"
-          subtitle={45}
+          subtitle={teachers}
           description="Total teachers registered"
         />
         <DashboardCard
@@ -33,12 +34,7 @@ export default async function Dashboard() {
           subtitle={schools}
           description="Total schools registered"
         />
-        <DashboardCard
-          icon={<SiGoogleclassroom className="h-5 w-5" />}
-          title="Classes"
-          subtitle={classes}
-          description="Total classes registered"
-        />
+
         <DashboardCard
           icon={<MdSubject className="h-5 w-5" />}
           title="Subjects"

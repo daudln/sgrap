@@ -18,6 +18,20 @@ enum SubjectCategory {
   ART
 }
 
+enum StudentClass {
+  FORM_ONE
+  FORM_TWO
+  FORM_THREE
+  FORM_FOUR
+  FORM_FIVE
+  FORM_SIX
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
 model User {
   id            String      @id @default(cuid())
   name          String?
@@ -90,16 +104,16 @@ model Subject {
 }
 
 model School {
-  uuid          String    @id @unique @default(cuid()) @db.VarChar(100)
-  motto         String    @db.VarChar(200)
-  name          String    @unique @db.VarChar(100)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  isActive      Boolean   @default(true)
-  Class         Class[]
-  Profile       Profile[]
-  SchoolTeacher Teacher[]
-  Student       Student[]
+  uuid      String    @id @unique @default(cuid()) @db.VarChar(100)
+  motto     String    @db.VarChar(200)
+  name      String    @unique @db.VarChar(100)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  isActive  Boolean   @default(true)
+  Class     Class[]
+  Profile   Profile[]
+  Teacher   Teacher[]
+  Student   Student[]
 
   @@map("school")
 }
@@ -116,18 +130,18 @@ model Class {
 }
 
 model Profile {
-  userId        String      @id @unique
-  uuid          String      @unique @default(cuid()) @db.VarChar(100)
-  type          ProfileType @default(STUDENT)
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-  isActive      Boolean     @default(true)
-  phoneNumber   String?
-  school        School      @relation(fields: [schoolId], references: [uuid])
-  user          User        @relation(fields: [userId], references: [id])
-  schoolId      String
-  SchoolTeacher Teacher?
-  Student       Student?
+  userId      String   @id @unique
+  uuid        String   @unique @default(cuid()) @db.VarChar(100)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  isActive    Boolean  @default(true)
+  phoneNumber String?
+  gender      Gender   @default(MALE)
+  school      School   @relation(fields: [schoolId], references: [uuid])
+  user        User     @relation(fields: [userId], references: [id])
+  schoolId    String
+  Teacher     Teacher?
+  Student     Student?
 
   @@map("profile")
 }
@@ -142,10 +156,11 @@ model Teacher {
 }
 
 model Student {
-  profileUserId String  @id @unique
-  profile       Profile @relation(fields: [profileUserId], references: [userId])
-  school        School  @relation(fields: [schoolId], references: [uuid])
+  profileUserId String       @id @unique
+  profile       Profile      @relation(fields: [profileUserId], references: [userId])
+  school        School       @relation(fields: [schoolId], references: [uuid])
   schoolId      String
+  classLevel    StudentClass
 
-  @@unique([schoolId, profileUserId])
+  @@unique([schoolId, profileUserId, classLevel])
 }

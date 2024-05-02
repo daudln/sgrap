@@ -1,6 +1,5 @@
 "use client";
 
-import { Profile, User } from "@prisma/client";
 import { ColumnDef, FilterFn } from "@tanstack/react-table";
 
 import { useState } from "react";
@@ -19,71 +18,69 @@ import { MoreHorizontal } from "lucide-react";
 import { BsFillExclamationTriangleFill, BsTrash3 } from "react-icons/bs";
 import { LuPencil } from "react-icons/lu";
 
-type ProfileRow = Profile & User;
-
-// function RowActions({ profile }: { profile: ProfileRow }) {
-//   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-//   const [showEditDialog, setShowEditDialog] = useState(false);
-
-//   return (
-//     <>
-//       <DeleteSubjectDialog
-//         open={showDeleteDialog}
-//         setOpen={setShowDeleteDialog}
-//         subjectId={subject.uuid}
-//       />
-//       <UpdateSubjectDialog
-//         setOpen={setShowEditDialog}
-//         open={showEditDialog}
-//         subjectId={subject.uuid}
-//       />
-
-//       <DropdownMenu>
-//         <DropdownMenuTrigger asChild>
-//           <Button variant={"ghost"} className="h-8 w-8 p-0 ">
-//             <span className="sr-only">Open menu</span>
-//             <MoreHorizontal className="h-4 w-4" />
-//           </Button>
-//         </DropdownMenuTrigger>
-//         <DropdownMenuContent align="end">
-//           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-//           <DropdownMenuSeparator />
-//           <DropdownMenuItem
-//             className="flex items-center gap-2 text-destructive cursor-pointer"
-//             onSelect={() => {
-//               setShowDeleteDialog((prev) => !prev);
-//             }}
-//           >
-//             <BsTrash3 className="h-4 w-4" />
-//             Delete
-//           </DropdownMenuItem>
-//           <DropdownMenuItem
-//             className="flex items-center gap-2 text-emerald-500 cursor-pointer"
-//             onSelect={() => {
-//               setShowEditDialog((prev) => !prev);
-//             }}
-//           >
-//             <LuPencil className="h-4 w-4" />
-//             Update
-//           </DropdownMenuItem>
-//         </DropdownMenuContent>
-//       </DropdownMenu>
-//     </>
-//   );
-// }
-
-type ProfileArray = ProfileData[];
-
 import AlertNotication from "@/components/alert-notification";
 import { DataTable } from "@/components/datatable/datas-table";
-import { Badge } from "@/components/ui/badge";
+import useTeachers from "@/hooks/useTeachers";
+import { UserData } from "@/types/user";
 import CreateSubjectDialog from "./create-teacher-dialog";
-import useProfiles from "@/hooks/useProfiles";
-import useSchools from "@/hooks/useSchools";
-import { ProfileData, UserProfile } from "@/types/profile";
+import DeleteTeacherDialog from "./delete-teacher";
+import UpdateTeacherDialog from "./update-teacher-dialog";
+import { useSchoolFilter } from "@/hooks/useSchools";
+import { GENDER_FILTER } from "@/lib/constants";
 
-const filterFn: FilterFn<ProfileData> = (row, id, value: string[] | string) => {
-  const searchableRowContent = `${row.original.profile.user.name} ${row.original.profile.type} ${row.original.profile.phoneNumber} ${row.original.profile.school.name} ${row.original.profile.user.email}`;
+function RowActions({ profile }: { profile: UserData }) {
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+
+  return (
+    <>
+      <DeleteTeacherDialog
+        open={showDeleteDialog}
+        setOpen={setShowDeleteDialog}
+        teacherId={profile.id}
+      />
+      <UpdateTeacherDialog
+        setOpen={setShowEditDialog}
+        open={showEditDialog}
+        profile={profile}
+      />
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant={"ghost"} className="h-8 w-8 p-0 ">
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            className="flex items-center gap-2 text-destructive cursor-pointer"
+            onSelect={() => {
+              setShowDeleteDialog((prev) => !prev);
+            }}
+          >
+            <BsTrash3 className="h-4 w-4" />
+            Delete
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="flex items-center gap-2 text-emerald-500 cursor-pointer"
+            onSelect={() => {
+              setShowEditDialog((prev) => !prev);
+            }}
+          >
+            <LuPencil className="h-4 w-4" />
+            Update
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
+  );
+}
+
+const filterFn: FilterFn<UserData> = (row, id, value: string[] | string) => {
+  const searchableRowContent = `${row.original.name} ${row.original.Profile.phoneNumber} ${row.original.Profile.school.name} ${row.original.email} ${row.original.Profile.school.uuid}`;
 
   if (Array.isArray(value)) {
     return value.some((v) => row.getValue(id) === v);
@@ -91,15 +88,14 @@ const filterFn: FilterFn<ProfileData> = (row, id, value: string[] | string) => {
   return searchableRowContent.toLowerCase().includes(value.toLowerCase());
 };
 
-const getDataForExport = (teacher: ProfileData) => ({
-  name: teacher.profile.user.name,
-  email: teacher.profile.user.email,
-  school: teacher.profile.school.name,
-  type: teacher.profile.type,
-  phoneNumber: teacher.profile.phoneNumber,
+const getDataForExport = (teacher: UserData) => ({
+  name: teacher.name,
+  email: teacher.email,
+  school: teacher.Profile.school.name,
+  phoneNumber: teacher.Profile.phoneNumber,
 });
 
-const columns: ColumnDef<ProfileData>[] = [
+const columns: ColumnDef<UserData>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => (
@@ -108,7 +104,7 @@ const columns: ColumnDef<ProfileData>[] = [
     filterFn: filterFn,
     cell: ({ row }) => (
       <div className="flex gap-2 capitalize">
-        <div className="capitalize">{row.original.profile.user.name}</div>
+        <div className="capitalize">{row.original.name}</div>
       </div>
     ),
   },
@@ -120,7 +116,19 @@ const columns: ColumnDef<ProfileData>[] = [
     filterFn: filterFn,
     cell: ({ row }) => (
       <div className="flex gap-2">
-        <div className="">{row.original.profile.user.email}</div>
+        <div className="">{row.original.email}</div>
+      </div>
+    ),
+  },
+  {
+    accessorKey: "gender",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Gender" />
+    ),
+    filterFn: filterFn,
+    cell: ({ row }) => (
+      <div className="flex gap-2">
+        <div className="">{row.original.Profile.gender}</div>
       </div>
     ),
   },
@@ -132,22 +140,11 @@ const columns: ColumnDef<ProfileData>[] = [
     filterFn: filterFn,
     cell: ({ row }) => (
       <div className="flex gap-2">
-        <div className="">{row.original.profile.phoneNumber}</div>
+        <div className="">{row.original.Profile.phoneNumber}</div>
       </div>
     ),
   },
-  {
-    accessorKey: "type",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Type" />
-    ),
-    filterFn: filterFn,
-    cell: ({ row }) => (
-      <div className="flex gap-2">
-        <div className="">{row.original.profile.type}</div>
-      </div>
-    ),
-  },
+
   {
     accessorKey: "school",
     header: ({ column }) => (
@@ -156,28 +153,22 @@ const columns: ColumnDef<ProfileData>[] = [
     filterFn: filterFn,
     cell: ({ row }) => (
       <div className="flex gap-2">
-        <div className="">{row.original.profile.school.name}</div>
+        <div className="">{row.original.Profile.school.name}</div>
       </div>
     ),
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => <RowActions profile={row.original} />,
   },
 ];
 
 const TeachersTable = () => {
-  const { data, isLoading, error } = useProfiles();
+  const { data, isLoading, error } = useTeachers();
   const [open, setOpen] = useState(false);
-  const { data: schools } = useSchools();
 
-  const SCHOOLS = [
-    {
-      label: "Schools",
-      key: "school",
-      options:
-        schools?.data.map((school) => ({
-          label: school.name,
-          value: school.name,
-        })) || [],
-    },
-  ];
+  const filters = [useSchoolFilter(), GENDER_FILTER];
 
   if (error)
     return (
@@ -199,10 +190,9 @@ const TeachersTable = () => {
       <DataTable
         data={data?.data || []}
         columns={columns}
-        filters={SCHOOLS || []}
-        filterPlaceholder="Filter teachers"
+        filters={filters}
+        filterPlaceholder="Filter teachers..."
         getDataForExport={getDataForExport}
-        isLoading={isLoading}
       />
     </>
   );
