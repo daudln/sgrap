@@ -31,23 +31,25 @@ const CardWrapper = ({
   className,
 }: CardWrapperProps) => {
   return (
-    <Card className={cn("min-w-96 shadow-md", className)}>
-      <CardHeader>
-        <CardTitle className="text-2xl text-center">{headerLabel}</CardTitle>
-        <CardDescription>{cardDescription}</CardDescription>
-      </CardHeader>
-      <CardContent>{children}</CardContent>
-      {showSocialButtons && (
-        <CardFooter>
-          <Social />
-        </CardFooter>
-      )}
-      {backButtonLabel && (
-        <CardFooter>
-          <BackButton label={backButtonLabel} backHref={backButtonHref} />
-        </CardFooter>
-      )}
-    </Card>
+    <div className="p-4 xl:px-32 size-full flex items-center justify-center">
+      <Card className={cn("min-w-96 shadow-md", className)}>
+        <CardHeader>
+          <CardTitle className="text-3xl">{headerLabel}</CardTitle>
+          <CardDescription>{cardDescription}</CardDescription>
+        </CardHeader>
+        <CardContent>{children}</CardContent>
+        {showSocialButtons && (
+          <CardFooter>
+            <Social />
+          </CardFooter>
+        )}
+        {backButtonLabel && (
+          <CardFooter>
+            <BackButton label={backButtonLabel} backHref={backButtonHref} />
+          </CardFooter>
+        )}
+      </Card>
+    </div>
   );
 };
 

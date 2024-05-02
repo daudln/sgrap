@@ -31,7 +31,6 @@ export async function GET(request: NextRequest) {
     },
   });
 
-  console.log(users);
   const response = {
     status: 200,
     success: true,

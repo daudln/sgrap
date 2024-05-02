@@ -1,6 +1,6 @@
 "use client";
 
-import { updateSubject } from "@/app/home/subjects/_actions/actions";
+import { createSubject } from "@/app/(protected)/subjects/_actions/actions";
 import ActionButton from "@/components/action-button";
 import { SelectInput } from "@/components/select-input";
 import {
@@ -12,9 +12,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { UpdateSubjectInput, updateSubjectSchema } from "@/schema/subject";
+import { CreateSubjectInput, createSubjectSchema } from "@/schema/subject";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Subject, SubjectCategory } from "@prisma/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useCallback } from "react";
 import { useForm } from "react-hook-form";
@@ -31,32 +30,29 @@ const SUBJECT_CATEGORIES = [
   },
 ];
 
-interface UpdateSubjectProps {
+interface CreateSubjectProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
-  subject: Subject;
 }
 
-const UpdateSubjectForm = ({ subject, setOpen }: UpdateSubjectProps) => {
-  const form = useForm<UpdateSubjectInput>({
-    resolver: zodResolver(updateSubjectSchema),
+const CreateSubjectForm = ({ setOpen }: CreateSubjectProps & {}) => {
+  const form = useForm<CreateSubjectInput>({
+    resolver: zodResolver(createSubjectSchema),
     defaultValues: {
-      name: subject.name,
-      code: subject.code,
-      description: subject.description ?? undefined,
-      category: subject.category,
-      uuid: subject.uuid,
+      name: "",
+      code: "",
+      description: "",
     },
   });
   const handleOptionChange = useCallback(
     (value: string) => {
-      form.setValue("category", value as SubjectCategory);
+      form.setValue("category", value as "ART" | "SCIENCE");
     },
     [form]
   );
   const queryClient = useQueryClient();
 
-  const updateMutation = useMutation({
-    mutationFn: updateSubject,
+  const deleteMutation = useMutation({
+    mutationFn: createSubject,
     onSuccess: async ({ data }) => {
       toast.success(data?.message, {
         id: "create-new-subject",
@@ -68,15 +64,15 @@ const UpdateSubjectForm = ({ subject, setOpen }: UpdateSubjectProps) => {
       form.reset();
       setOpen((prev) => !prev);
     },
-    onError: (error) => {
+    onError: () => {
       toast.error("Something went wrong", {
         id: "create-new-subject",
       });
     },
   });
 
-  const onSubmit = (data: UpdateSubjectInput) => {
-    updateMutation.mutate(data);
+  const onSubmit = (data: CreateSubjectInput) => {
+    deleteMutation.mutate(data);
   };
   return (
     <Form {...form}>
@@ -136,29 +132,19 @@ const UpdateSubjectForm = ({ subject, setOpen }: UpdateSubjectProps) => {
                     className="w-full"
                     options={SUBJECT_CATEGORIES}
                     label="Category"
+                    placeholder="Select category"
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="uuid"
-            render={({ field }) => (
-              <FormItem hidden>
-                <FormControl>
-                  <Input {...field} hidden readOnly />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
         </div>
-        <ActionButton label="Update" status={updateMutation.status} />
+
+        <ActionButton label="Create" status={deleteMutation.status} />
       </form>
     </Form>
   );
 };
 
-export default UpdateSubjectForm;
+export default CreateSubjectForm;

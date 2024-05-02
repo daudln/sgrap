@@ -7,7 +7,7 @@ const Page = ({
 }) => {
   const token = searchParams?.token;
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="">
       <ResetPasswordForm token={token as string} />
     </div>
   );

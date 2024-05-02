@@ -6,47 +6,46 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { FaSchool } from "react-icons/fa";
 import { RxSection } from "react-icons/rx";
 import { PiExam } from "react-icons/pi";
-import { SiGoogleclassroom } from "react-icons/si";
 
 export const NAVIGATION_LINK = [
   {
     title: "Dashboard",
-    link: "/home/dashboard",
+    link: "/",
     icon: <HomeIcon className="h-5 w-5" />,
   },
   {
     title: "Students",
-    link: "/home/students",
+    link: "/students",
     icon: <PiStudent className="h-5 w-5" />,
   },
   {
     title: "Teachers",
-    link: "/home/teachers",
+    link: "/teachers",
     icon: <FaChalkboardTeacher className="h-5 w-5" />,
   },
   {
     title: "Schools",
-    link: "/home/schools",
+    link: "/schools",
     icon: <FaSchool className="h-5 w-5" />,
   },
   {
     title: "Subjects",
-    link: "/home/subjects",
+    link: "/subjects",
     icon: <MdSubject className="h-5 w-5" />,
   },
   {
     title: "Exams",
-    link: "/home/exams",
+    link: "/exams",
     icon: <PiExam className="h-5 w-5" />,
   },
   {
     title: "Terms",
-    link: "/home/terms",
+    link: "/terms",
     icon: <RxSection className="h-5 w-5" />,
   },
   {
     title: "Settings",
-    link: "/home/settings",
+    link: "/settings",
     icon: <IoSettingsOutline className="h-5 w-5" />,
   },
 ];

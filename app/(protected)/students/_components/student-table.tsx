@@ -127,7 +127,7 @@ const columns: ColumnDef<UserData>[] = [
     filterFn: filterFn,
     cell: ({ row }) => (
       <div className="flex gap-2">
-        <div className="">{row.original.Profile.gender}</div>
+        <div className="">{row.original.Profile.gender || "-"}</div>
       </div>
     ),
   },

@@ -18,19 +18,19 @@ export default auth(
     const isApiAuthRoute = nextUrl.pathname.startsWith(API_AUTH_PREFIX);
     const isAuthRoute = AUTH_ROUTES.includes(req.nextUrl.pathname);
     const isPublicRoute = PUBLIC_ROUTES.includes(req.nextUrl.pathname);
-    // if (isApiAuthRoute) {
-    //   return;
-    // }
+    if (isApiAuthRoute) {
+      return;
+    }
 
-    // if (isAuthRoute) {
-    //   if (isLogin) {
-    //     return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
-    //   }
-    //   return;
-    // }
-    // if (!isLogin && !isPublicRoute) {
-    //   return Response.redirect(new URL(LOGIN_REDIRECT, nextUrl));
-    // }
+    if (isAuthRoute) {
+      if (isLogin) {
+        return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
+      }
+      return;
+    }
+    if (!isLogin && !isPublicRoute) {
+      return Response.redirect(new URL(LOGIN_REDIRECT, nextUrl));
+    }
 
     return;
   }

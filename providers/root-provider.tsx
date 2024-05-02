@@ -11,7 +11,7 @@ const RootProvider = ({ children }: RootProviderProps) => {
     <QueryProvider>
       <ThemeProvider
         attribute="class"
-        defaultTheme="dark"
+        defaultTheme="light"
         enableSystem
         disableTransitionOnChange
       >

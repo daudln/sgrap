@@ -7,7 +7,7 @@ const Page = ({
 }) => {
   const token = searchParams?.token;
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="">
       <VerifyEmail token={token as string} />
     </div>
   );

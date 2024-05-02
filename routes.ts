@@ -2,11 +2,7 @@
  * An array of routes that are public, they don't require authentication
  */
 
-export const PUBLIC_ROUTES = [
-  "/",
-  "/auth/verify-email",
-  "/auth/reset-password",
-];
+export const PUBLIC_ROUTES = ["/auth/verify-email", "/auth/reset-password"];
 
 /**
  * An array of routes that are used for authentication
@@ -27,6 +23,6 @@ export const PROFILE_ROUTES = ["/profile", "/profile", "/settings", "/logout"];
 
 export const API_AUTH_PREFIX = "/api/auth";
 
-export const DEFAULT_LOGIN_REDIRECT = "/home";
+export const DEFAULT_LOGIN_REDIRECT = "/";
 
 export const LOGIN_REDIRECT = "/auth/login";

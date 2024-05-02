@@ -1,4 +1,4 @@
-import SubjectTable from "@/app/home/subjects/_components/subject-table";
+import SubjectTable from "@/app/(protected)/subjects/_components/subject-table";
 
 export default async function Page() {
   return (
