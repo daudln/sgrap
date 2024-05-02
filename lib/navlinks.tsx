@@ -30,11 +30,6 @@ export const NAVIGATION_LINK = [
     icon: <FaSchool className="h-5 w-5" />,
   },
   {
-    title: "Classes",
-    link: "/home/classes",
-    icon: <SiGoogleclassroom className="h-5 w-5" />,
-  },
-  {
     title: "Subjects",
     link: "/home/subjects",
     icon: <MdSubject className="h-5 w-5" />,
