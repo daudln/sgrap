@@ -1,45 +1,28 @@
 "use server";
 
 import prisma from "@/lib/utils";
-import {
-  createProfileSchema,
-  deleteProfileSchema,
-  updateProfileSchema,
-} from "@/schema/profile";
+import { deleteProfileSchema } from "@/schema/profile";
+import { updateStudentSchema, createStudentSchema } from "@/schema/student";
 
 import { createSafeActionClient } from "next-safe-action";
 
 export const action = createSafeActionClient();
 
 export const createStudent = action(
-  createProfileSchema,
-  async ({
-    firstName,
-    lastName,
-    middleName,
-    school,
-    classLevel,
-    email,
-    phoneNumber,
-  }) => {
-    if (email) {
-      const user = await prisma.user.findUnique({
-        where: {
-          email,
-        },
-      });
-      if (user) {
-        return {
-          status: 400,
-          success: false,
-          message: "User already exists",
-        };
-      }
-    }
+  createStudentSchema,
+  async ({ firstName, lastName, middleName, school, classLevel, gender }) => {
     const existingStudent = await prisma.student.findFirst({
       where: {
         schoolId: school,
         classLevel: classLevel,
+        profile: {
+          gender: gender,
+          user: {
+            name: {
+              equals: `${firstName} ${middleName} ${lastName}`,
+            },
+          },
+        },
       },
     });
     if (existingStudent) {
@@ -53,7 +36,6 @@ export const createStudent = action(
     const newUser = await prisma.user.create({
       data: {
         name: userName,
-        email,
         type: "STUDENT",
       },
     });
@@ -61,7 +43,6 @@ export const createStudent = action(
     const newProfile = await prisma.profile.create({
       data: {
         schoolId: school,
-        phoneNumber,
         userId: newUser.id,
       },
     });
@@ -90,15 +71,13 @@ export const createStudent = action(
 );
 
 export const updateStudent = action(
-  updateProfileSchema,
+  updateStudentSchema,
   async ({
     uuid,
     firstName,
     middleName,
     lastName,
-    email,
     school,
-    phoneNumber,
     classLevel,
     gender,
   }) => {
@@ -124,7 +103,6 @@ export const updateStudent = action(
       },
       data: {
         name: name,
-        email,
         type: "STUDENT",
       },
     });
@@ -135,7 +113,6 @@ export const updateStudent = action(
       },
       data: {
         schoolId: school,
-        phoneNumber,
         userId: user.id,
         gender,
       },

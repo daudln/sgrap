@@ -13,7 +13,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { useSchoolOptions } from "@/hooks/useSchools";
 import { CLASS_OPTIONS, GENDER_OPTIONS } from "@/lib/constants";
-import { UpdateProfileInput, updateProfileSchema } from "@/schema/profile";
+import { UpdateProfileInput } from "@/schema/profile";
+import { UpdateStudentInput, updateStudentSchema } from "@/schema/student";
 import { UserData } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Gender, StudentClass } from "@prisma/client";
@@ -30,15 +31,13 @@ interface UpdateProfileProps {
 
 const UpdateStudentForm = ({ profile, setOpen }: UpdateProfileProps) => {
   const [firstName, middleName, lastName] = profile.name?.split(" ")!;
-  const form = useForm<UpdateProfileInput>({
-    resolver: zodResolver(updateProfileSchema),
+  const form = useForm<UpdateStudentInput>({
+    resolver: zodResolver(updateStudentSchema),
     defaultValues: {
       firstName: firstName,
       middleName: middleName,
       lastName: lastName,
-      email: profile.email as string | undefined,
       uuid: profile.id,
-      phoneNumber: profile.Profile?.phoneNumber || "",
       school: profile.Profile?.school?.name || "",
       gender: profile.Profile.gender as Gender,
       classLevel: profile.Profile?.Student?.classLevel || ("" as StudentClass),
@@ -87,7 +86,7 @@ const UpdateStudentForm = ({ profile, setOpen }: UpdateProfileProps) => {
     },
   });
 
-  const onSubmit = (data: UpdateProfileInput) => {
+  const onSubmit = (data: UpdateStudentInput) => {
     updateMutation.mutate(data);
   };
   return (
@@ -155,33 +154,6 @@ const UpdateStudentForm = ({ profile, setOpen }: UpdateProfileProps) => {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder="daudnamayala@gmail.com" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="phoneNumber"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Phone Number</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder="+255712345678" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
           <FormField
             control={form.control}
             name="school"

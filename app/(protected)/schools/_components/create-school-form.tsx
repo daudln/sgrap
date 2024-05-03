@@ -33,7 +33,7 @@ const CreateSchoolForm = ({ setOpen }: CreateSchoolProps) => {
 
   const queryClient = useQueryClient();
 
-  const deleteMutation = useMutation({
+  const createMutation = useMutation({
     mutationFn: createSchool,
     onSuccess: async ({ data }) => {
       toast.success(data?.message, {
@@ -54,7 +54,7 @@ const CreateSchoolForm = ({ setOpen }: CreateSchoolProps) => {
   });
 
   const onSubmit = (data: CreateSchoolInput) => {
-    deleteMutation.mutate(data);
+    createMutation.mutate(data);
   };
   return (
     <Form {...form}>
@@ -91,7 +91,7 @@ const CreateSchoolForm = ({ setOpen }: CreateSchoolProps) => {
           />
         </div>
 
-        <ActionButton label="Create" status={deleteMutation.status} />
+        <ActionButton label="Create" status={createMutation.status} />
       </form>
     </Form>
   );

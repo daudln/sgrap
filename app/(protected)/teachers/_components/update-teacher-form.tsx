@@ -12,7 +12,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import useSchools from "@/hooks/useSchools";
-import { UpdateProfileInput, updateProfileSchema } from "@/schema/profile";
+import { UpdateProfileInput } from "@/schema/profile";
+import { UpdateTeacherInput, updateTeacherSchema } from "@/schema/teacher";
 import { UserData } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -28,8 +29,8 @@ interface UpdateProfileProps {
 
 const UpdateTeacherForm = ({ profile, setOpen }: UpdateProfileProps) => {
   const [firstName, middleName, lastName] = profile.name?.split(" ")!;
-  const form = useForm<UpdateProfileInput>({
-    resolver: zodResolver(updateProfileSchema),
+  const form = useForm<UpdateTeacherInput>({
+    resolver: zodResolver(updateTeacherSchema),
     defaultValues: {
       firstName: firstName,
       middleName: middleName,
@@ -73,7 +74,8 @@ const UpdateTeacherForm = ({ profile, setOpen }: UpdateProfileProps) => {
     },
   });
 
-  const onSubmit = (data: UpdateProfileInput) => {
+  const onSubmit = (data: UpdateTeacherInput) => {
+    console.log("firstName", data);
     updateMutation.mutate(data);
   };
   return (

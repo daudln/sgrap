@@ -107,18 +107,18 @@ const columns: ColumnDef<UserData>[] = [
       </div>
     ),
   },
-  {
-    accessorKey: "email",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Email" />
-    ),
-    filterFn: filterFn,
-    cell: ({ row }) => (
-      <div className="flex gap-2">
-        <div className="">{row.original.email}</div>
-      </div>
-    ),
-  },
+  // {
+  //   accessorKey: "email",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Email" />
+  //   ),
+  //   filterFn: filterFn,
+  //   cell: ({ row }) => (
+  //     <div className="flex gap-2">
+  //       <div className="">{row.original.email}</div>
+  //     </div>
+  //   ),
+  // },
   {
     accessorKey: "gender",
     header: ({ column }) => (
@@ -131,18 +131,18 @@ const columns: ColumnDef<UserData>[] = [
       </div>
     ),
   },
-  {
-    accessorKey: "phone",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Phone" />
-    ),
-    filterFn: filterFn,
-    cell: ({ row }) => (
-      <div className="flex gap-2">
-        <div className="">{row.original.Profile?.phoneNumber || "-"}</div>
-      </div>
-    ),
-  },
+  // {
+  //   accessorKey: "phone",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Phone" />
+  //   ),
+  //   filterFn: filterFn,
+  //   cell: ({ row }) => (
+  //     <div className="flex gap-2">
+  //       <div className="">{row.original.Profile?.phoneNumber || "-"}</div>
+  //     </div>
+  //   ),
+  // },
   {
     accessorKey: "class",
     header: ({ column }) => (

@@ -1,18 +1,23 @@
 "use server";
 
 import prisma from "@/lib/utils";
-import {
-  createProfileSchema,
-  deleteProfileSchema,
-  updateProfileSchema,
-} from "@/schema/profile";
+import { deleteProfileSchema } from "@/schema/profile";
+import { createTeacherSchema, updateTeacherSchema } from "@/schema/teacher";
 import { createSafeActionClient } from "next-safe-action";
 
 export const action = createSafeActionClient();
 
 export const createTeacher = action(
-  createProfileSchema,
-  async ({ firstName, middleName, lastName, email, school, phoneNumber }) => {
+  createTeacherSchema,
+  async ({
+    firstName,
+    middleName,
+    lastName,
+    email,
+    school,
+    phoneNumber,
+    gender,
+  }) => {
     const user = await prisma.user.findUnique({
       where: {
         email,
@@ -24,21 +29,6 @@ export const createTeacher = action(
         status: 400,
         success: false,
         message: "User with email already exists",
-      };
-    }
-
-    const existingTeacher = await prisma.teacher.findFirst({
-      where: {
-        profile: {
-          schoolId: school,
-        },
-      },
-    });
-    if (existingTeacher) {
-      return {
-        status: 400,
-        success: false,
-        message: "Teacher already exists",
       };
     }
 
@@ -56,6 +46,7 @@ export const createTeacher = action(
         schoolId: school,
         phoneNumber,
         userId: newUser.id,
+        gender: gender,
       },
     });
 
@@ -82,7 +73,7 @@ export const createTeacher = action(
 );
 
 export const updateTeacher = action(
-  updateProfileSchema,
+  updateTeacherSchema,
   async ({
     uuid,
     firstName,
@@ -91,6 +82,7 @@ export const updateTeacher = action(
     email,
     school,
     phoneNumber,
+    gender,
   }) => {
     const existingTeacher = await prisma.teacher.findFirst({
       where: {
@@ -127,6 +119,7 @@ export const updateTeacher = action(
         schoolId: school,
         phoneNumber,
         userId: user.id,
+        gender: gender,
       },
     });
 

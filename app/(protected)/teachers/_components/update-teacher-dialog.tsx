@@ -1,13 +1,9 @@
 "use client";
 
 import DialogBox from "@/components/dialog-box";
-import { APIResponse } from "@/services/api.service";
-import { UserProfile } from "@/types/profile";
-import { useQueryClient } from "@tanstack/react-query";
-import { Dispatch, SetStateAction } from "react";
-import { toast } from "sonner";
-import UpdateTeacherForm from "./update-teacher-form";
 import { UserData } from "@/types/user";
+import { Dispatch, SetStateAction } from "react";
+import UpdateTeacherForm from "./update-teacher-form";
 
 interface Props {
   open: boolean;

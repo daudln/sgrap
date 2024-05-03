@@ -1,5 +1,7 @@
 import SubjectTable from "@/app/(protected)/subjects/_components/subject-table";
 
+export const revalidate = 0;
+
 export default async function Page() {
   return (
     <div>

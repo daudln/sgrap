@@ -1,5 +1,7 @@
 import StudentTable from "./_components/student-table";
 
+export const revalidate = 0;
+
 export default function Page() {
   return (
     <div>

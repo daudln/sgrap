@@ -17,7 +17,7 @@ import { Dispatch, SetStateAction, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { createStudent } from "../_actions/actions";
-import { CreateProfileInput, createProfileSchema } from "@/schema/profile";
+import { CreateStudentInput, createStudentSchema } from "@/schema/student";
 import useSchools from "@/hooks/useSchools";
 import { Gender, StudentClass } from "@prisma/client";
 import { CLASS_OPTIONS, GENDER_OPTIONS } from "@/lib/constants";
@@ -27,14 +27,13 @@ interface CreateStudentProps {
 }
 
 const CreateStudentForm = ({ setOpen }: CreateStudentProps) => {
-  const form = useForm<CreateProfileInput>({
-    resolver: zodResolver(createProfileSchema),
+  const form = useForm<CreateStudentInput>({
+    resolver: zodResolver(createStudentSchema),
     defaultValues: {
       firstName: "",
       middleName: "",
       lastName: "",
-      email: "",
-      phoneNumber: "",
+      gender: "" as Gender,
       school: "",
       classLevel: "" as StudentClass,
     },
@@ -68,7 +67,7 @@ const CreateStudentForm = ({ setOpen }: CreateStudentProps) => {
   );
   const queryClient = useQueryClient();
 
-  const deleteMutation = useMutation({
+  const mutation = useMutation({
     mutationFn: createStudent,
     onSuccess: async ({ data }) => {
       toast.success(data?.message, {
@@ -88,8 +87,8 @@ const CreateStudentForm = ({ setOpen }: CreateStudentProps) => {
     },
   });
 
-  const onSubmit = (data: CreateProfileInput) => {
-    deleteMutation.mutate(data);
+  const onSubmit = (data: CreateStudentInput) => {
+    mutation.mutate(data);
   };
   return (
     <Form {...form}>
@@ -156,35 +155,6 @@ const CreateStudentForm = ({ setOpen }: CreateStudentProps) => {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="daudnamayala@gmail.com (optional)"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="phoneNumber"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Phone Number</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder="+255712345678" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
 
           <FormField
             control={form.control}
@@ -226,7 +196,7 @@ const CreateStudentForm = ({ setOpen }: CreateStudentProps) => {
           />
         </div>
 
-        <ActionButton label="Create" status={deleteMutation.status} />
+        <ActionButton label="Create" status={mutation.status} />
       </form>
     </Form>
   );

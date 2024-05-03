@@ -80,7 +80,7 @@ function RowActions({ profile }: { profile: UserData }) {
 }
 
 const filterFn: FilterFn<UserData> = (row, id, value: string[] | string) => {
-  const searchableRowContent = `${row.original.name} ${row.original.Profile.phoneNumber} ${row.original.Profile.school.name} ${row.original.email} ${row.original.Profile.school.uuid}`;
+  const searchableRowContent = `${row.original.name} ${row.original.Profile.phoneNumber} ${row.original.Profile.school.name} ${row.original.email} ${row.original.Profile.school.uuid} ${row.original.Profile.gender}`;
 
   if (Array.isArray(value)) {
     return value.some((v) => row.getValue(id) === v);

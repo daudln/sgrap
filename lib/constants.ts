@@ -25,3 +25,16 @@ export const CLASS_FILTER = {
   key: "class",
   options: CLASS_OPTIONS,
 };
+
+export const SUBJECT_CATEGORY = [
+  { label: "ART", value: "ART" },
+  { label: "SCIENCE", value: "SCIENCE" },
+];
+
+export const SUBJECT_CATEGORY_FILTER = [
+  {
+    label: "Category",
+    key: "category",
+    options: SUBJECT_CATEGORY,
+  },
+];

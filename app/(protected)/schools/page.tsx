@@ -1,5 +1,7 @@
 import SchoolTable from "./_components/school-table";
 
+export const revalidate = 0;
+
 export default async function Page() {
   return (
     <div>

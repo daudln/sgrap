@@ -11,22 +11,24 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useSchoolOptions } from "@/hooks/useSchools";
+import { GENDER_OPTIONS } from "@/lib/constants";
+import { CreateTeacherInput, createTeacherSchema } from "@/schema/teacher";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Gender } from "@prisma/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { createTeacher } from "../_actions/actions";
-import { CreateProfileInput, createProfileSchema } from "@/schema/profile";
-import { useSchoolOptions } from "@/hooks/useSchools";
 
 interface CreateTeacherProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 const CreateTeacherForm = ({ setOpen }: CreateTeacherProps & {}) => {
-  const form = useForm<CreateProfileInput>({
-    resolver: zodResolver(createProfileSchema),
+  const form = useForm<CreateTeacherInput>({
+    resolver: zodResolver(createTeacherSchema),
     defaultValues: {
       firstName: "",
       middleName: "",
@@ -34,6 +36,7 @@ const CreateTeacherForm = ({ setOpen }: CreateTeacherProps & {}) => {
       email: "",
       phoneNumber: "",
       school: "",
+      gender: "" as "MALE" | "FEMALE",
     },
   });
 
@@ -45,6 +48,14 @@ const CreateTeacherForm = ({ setOpen }: CreateTeacherProps & {}) => {
     },
     [form]
   );
+
+  const handleGenderChange = useCallback(
+    (value: string) => {
+      form.setValue("gender", value as Gender);
+    },
+    [form]
+  );
+
   const queryClient = useQueryClient();
 
   const createMutation = useMutation({
@@ -67,7 +78,8 @@ const CreateTeacherForm = ({ setOpen }: CreateTeacherProps & {}) => {
     },
   });
 
-  const onSubmit = (data: CreateProfileInput) => {
+  const onSubmit = (data: CreateTeacherInput) => {
+    console.log(data);
     createMutation.mutate(data);
   };
   return (
@@ -111,6 +123,25 @@ const CreateTeacherForm = ({ setOpen }: CreateTeacherProps & {}) => {
                 <FormLabel>Last Name</FormLabel>
                 <FormControl>
                   <Input {...field} placeholder="Namayala" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="gender"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Gender</FormLabel>
+                <FormControl>
+                  <SelectInput
+                    onChange={handleGenderChange}
+                    className="w-full"
+                    options={GENDER_OPTIONS || []}
+                    label="Gender"
+                    placeholder="Select Gender"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -163,7 +194,6 @@ const CreateTeacherForm = ({ setOpen }: CreateTeacherProps & {}) => {
             )}
           />
         </div>
-
         <ActionButton label="Create" status={createMutation.status} />
       </form>
     </Form>

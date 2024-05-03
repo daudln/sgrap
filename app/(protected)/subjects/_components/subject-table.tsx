@@ -21,6 +21,13 @@ import { BsFillExclamationTriangleFill, BsTrash3 } from "react-icons/bs";
 import { LuPencil } from "react-icons/lu";
 import DeleteSubjectDialog from "./delete-subject";
 
+import AlertNotication from "@/components/alert-notification";
+import { DataTable } from "@/components/datatable/datas-table";
+import { Badge } from "@/components/ui/badge";
+import CreateSubjectDialog from "./create-subject-dialog";
+import UpdateSubjectDialog from "./update-subject-dialog";
+import { SUBJECT_CATEGORY_FILTER } from "@/lib/constants";
+
 type SubjectRow = Subject;
 
 function RowActions({ subject }: { subject: SubjectRow }) {
@@ -74,17 +81,11 @@ function RowActions({ subject }: { subject: SubjectRow }) {
   );
 }
 
-import AlertNotication from "@/components/alert-notification";
-import { DataTable } from "@/components/datatable/datas-table";
-import { Badge } from "@/components/ui/badge";
-import CreateSubjectDialog from "./create-subject-dialog";
-import { filters } from "./filters";
-import UpdateSubjectDialog from "./update-subject-dialog";
-
 const filterFn: FilterFn<Subject> = (row, id, value: string[] | string) => {
   const searchableRowContent = `${row.original.name} ${row.original.category} ${row.original.description} ${row.original.code}`;
 
   if (Array.isArray(value)) {
+    console.log(value);
     return value.some((v) => row.getValue(id) === v);
   }
   return searchableRowContent.toLowerCase().includes(value.toLowerCase());
@@ -93,6 +94,7 @@ const filterFn: FilterFn<Subject> = (row, id, value: string[] | string) => {
 const getDataForExport = (subject: Subject) => ({
   code: subject.code,
   name: subject.name,
+  category: subject.category,
   description: subject.description,
 });
 
@@ -179,7 +181,7 @@ const SubjectTable = () => {
       <DataTable
         data={data?.data || []}
         columns={columns}
-        filters={filters}
+        filters={SUBJECT_CATEGORY_FILTER}
         filterPlaceholder="Filter subjects"
         getDataForExport={getDataForExport}
         isLoading={isLoading}
