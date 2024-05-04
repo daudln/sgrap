@@ -5,7 +5,7 @@ import { ColumnDef, FilterFn } from "@tanstack/react-table";
 import { useState } from "react";
 
 import { DataTableColumnHeader } from "@/components/datatable/ColumnHeader";
-import { DataTable } from "@/components/datatable/datas-table";
+import { DataTable } from "@/components/datatable/data-table";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -195,6 +195,7 @@ const StudentTable = () => {
         filters={filters}
         filterPlaceholder="Filter students..."
         getDataForExport={getDataForExport}
+        isLoading={isLoading}
       />
     </>
   );

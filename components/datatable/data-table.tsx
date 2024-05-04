@@ -1,17 +1,21 @@
-import { ReactNode, useMemo, useState } from "react";
+"use client";
+
 import {
-  useReactTable,
-  SortingState,
-  ColumnFiltersState,
   ColumnDef,
-  FilterFn,
+  ColumnFiltersState,
+  SortingState,
+  VisibilityState,
   flexRender,
   getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  useReactTable,
 } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
+import * as React from "react";
+
 import {
   Table,
   TableBody,
@@ -20,166 +24,78 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { download, generateCsv, mkConfig } from "export-to-csv";
-import { DownloadIcon, MoreHorizontal } from "lucide-react";
-import { BsTrash3 } from "react-icons/bs";
-import DataTableSkeleton from "./data-table-skeleton";
-import { DataTableFacetedFilter } from "./FacetedFilters";
 
-const emptyData: any[] = [];
+import { DataTableToolbar, FilterProps } from "@/components/datatable/toolbar";
+import { DataTablePagination } from "./pagination";
+import SkeletonTableLoading from "../table-skeleton";
+import { DataTableSkeleton } from "./data-table-skeleton";
 
-interface RowActionsProps<T> {
-  item: T;
-}
-
-interface DataTableAction<T> {
-  label: string;
-  icon?: React.ComponentType;
-  onSelect: (row: T) => void;
-}
-
-interface DataTableProps<T> {
-  data: T[];
-  columns: ColumnDef<T>[];
-  getDataForExport: (item: T) => any;
-  rowAction?: DataTableAction<T>[];
-  facetedFilters?: ReactNode[];
+interface DataTableProps<TData, TValue> {
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+  filterPlaceholder?: string;
+  filters?: FilterProps[];
+  getDataForExport?: (item: TData) => any;
   isLoading?: boolean;
-  hasActionColumn?: boolean;
-  actionDialog?: React.ComponentType<{
-    open: boolean;
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    subjectId: string;
-  }>;
-  facetedFiltersOptions?: {
-    label: string;
-    value: string;
-    icon?: React.ComponentType<{ className?: string }>;
-  }[];
 }
 
-const csvConfig = mkConfig({
-  fieldSeparator: ",",
-  decimalSeparator: ".",
-  useKeysAsHeaders: true,
-});
-
-const DataTable = <T,>({
-  data,
+export function DataTable<TData, TValue>({
   columns,
+  data,
+  filterPlaceholder,
+  filters,
   getDataForExport,
-  facetedFilters,
-  rowAction,
-  isLoading = false,
-  facetedFiltersOptions,
-  hasActionColumn,
-  actionDialog,
-}: DataTableProps<T>) => {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const handleExportCSV = (data: any[]) => {
-    const csv = generateCsv(csvConfig)(data);
-    download(csvConfig)(csv);
-  };
+  isLoading,
+}: DataTableProps<TData, TValue>) {
+  const [rowSelection, setRowSelection] = React.useState({});
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
+  const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const table = useReactTable({
-    data: data || emptyData,
+    data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
     state: {
       sorting,
+      columnVisibility,
+      rowSelection,
       columnFilters,
     },
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
-    getSortedRowModel: getSortedRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
-  const actionColumn = useMemo(
-    () => ({
-      id: "actions",
-      enableHiding: false,
-      cell: ({ row }: { row: (typeof columns)[0] }) => (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            {/* ... Your button */}
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {/* ... Your menu items */}
-            {rowAction?.map((action) => (
-              <DropdownMenuItem
-                key={action.label}
-                // ...
-                onSelect={() => {
-                  // action.onSelect(row);
-                }}
-              >
-                {/* ... */}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ),
-    }),
-    [rowAction]
-  );
-
+  if (isLoading) {
+    return <DataTableSkeleton />;
+  }
   return (
-    <div className="w-full">
-      <Input
-        placeholder="Search..."
-        value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-        onChange={(event) =>
-          table.getColumn("name")?.setFilterValue(event.target.value)
-        }
-        className="max-w-sm mt-4"
+    <div className="space-y-4">
+      <DataTableToolbar
+        table={table}
+        placeholder={filterPlaceholder}
+        filters={filters}
+        getDataForExport={getDataForExport}
       />
-      <div className="flex flex-wrap items-end justify-between gap-2 py-4">
-        <div className="flex gap-2">
-          {facetedFiltersOptions && (
-            <DataTableFacetedFilter
-              title="Name"
-              column={table.getColumn("code")}
-              options={facetedFiltersOptions}
-            />
-          )}
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Button
-            variant={"outline"}
-            size={"sm"}
-            className="ml-auto h-8 lg:flex"
-            onClick={() => {
-              const data = table
-                .getFilteredRowModel()
-                .rows.map((row) => getDataForExport(row.original));
-              handleExportCSV(data);
-            }}
-          >
-            <DownloadIcon className="mr-2 h-4 w-4" />
-            Export CSV
-          </Button>
-        </div>
-      </div>
       <div className="rounded-md border">
-        <DataTableSkeleton isLoading={isLoading}>
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead key={header.id} colSpan={header.colSpan}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -187,91 +103,42 @@ const DataTable = <T,>({
                             header.getContext()
                           )}
                     </TableHead>
+                  );
+                })}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
                   ))}
                 </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </DataTableSkeleton>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
-      </div>
+      <DataTablePagination table={table} />
     </div>
   );
-};
-
-const RowActions = <T,>({ item }: RowActionsProps<T>) => {
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-
-  return (
-    <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant={"ghost"} className="h-8 w-8 p-0 ">
-            <span className="sr-only">Open menu</span>
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            className="flex items-center gap-2  text-destructive cursor-pointer"
-            onSelect={() => {
-              setShowDeleteDialog((prev) => !prev);
-            }}
-          >
-            <BsTrash3 className="h-4 w-4" />
-            Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </>
-  );
-};
-
-export default DataTable;
+}

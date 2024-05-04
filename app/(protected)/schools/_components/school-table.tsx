@@ -74,7 +74,7 @@ function RowActions({ school }: { school: SchoolRow }) {
   );
 }
 
-import { DataTable } from "@/components/datatable/datas-table";
+import { DataTable } from "@/components/datatable/data-table";
 import CreateschoolDialog from "./create-school-dialog";
 import UpdatesShoolDialog from "./update-school-dialog";
 

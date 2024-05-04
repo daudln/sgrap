@@ -19,7 +19,7 @@ import { BsFillExclamationTriangleFill, BsTrash3 } from "react-icons/bs";
 import { LuPencil } from "react-icons/lu";
 
 import AlertNotication from "@/components/alert-notification";
-import { DataTable } from "@/components/datatable/datas-table";
+import { DataTable } from "@/components/datatable/data-table";
 import useTeachers from "@/hooks/useTeachers";
 import { UserData } from "@/types/user";
 import CreateSubjectDialog from "./create-teacher-dialog";
@@ -193,6 +193,7 @@ const TeachersTable = () => {
         filters={filters}
         filterPlaceholder="Filter teachers..."
         getDataForExport={getDataForExport}
+        isLoading={isLoading}
       />
     </>
   );

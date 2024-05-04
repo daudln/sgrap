@@ -22,7 +22,7 @@ import { LuPencil } from "react-icons/lu";
 import DeleteSubjectDialog from "./delete-subject";
 
 import AlertNotication from "@/components/alert-notification";
-import { DataTable } from "@/components/datatable/datas-table";
+import { DataTable } from "@/components/datatable/data-table";
 import { Badge } from "@/components/ui/badge";
 import CreateSubjectDialog from "./create-subject-dialog";
 import UpdateSubjectDialog from "./update-subject-dialog";

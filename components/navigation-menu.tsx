@@ -8,12 +8,21 @@ interface NavigationMenuProps {
   title: string;
   icon: React.ReactNode;
   navLink: string;
+  clickCallback?: () => void;
 }
 
-const NavigationMenu = ({ title, icon, navLink }: NavigationMenuProps) => {
+const NavigationMenu = ({
+  title,
+  icon,
+  navLink,
+  clickCallback,
+}: NavigationMenuProps) => {
   const pathname = usePathname();
   return (
     <Link
+      onClick={() => {
+        if (clickCallback) clickCallback();
+      }}
       href={navLink}
       className={cn(
         "flex items-center gap-3 rounded-lg p-4 text-muted-foreground transition-all hover:text-primary hover:bg-secondary group",

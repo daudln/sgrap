@@ -16,6 +16,7 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { NAVIGATION_LINK } from "@/lib/navlinks";
 import { ThemeSwitcher } from "@/components/theme-switcher";
+import Navbar from "@/components/navbar";
 
 export default async function layout({
   children,
@@ -50,30 +51,7 @@ export default async function layout({
         </div>
         <div className="flex flex-col">
           <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="shrink-0 md:hidden"
-                >
-                  <Menu className="h-5 w-5" />
-                  <span className="sr-only">Toggle navigation menu</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="flex flex-col">
-                <nav className="grid gap-2 text-lg font-medium">
-                  {NAVIGATION_LINK.map((link) => (
-                    <NavigationMenu
-                      key={link.link}
-                      navLink={link.link}
-                      title={link.title}
-                      icon={link.icon}
-                    />
-                  ))}
-                </nav>
-              </SheetContent>
-            </Sheet>
+            <Navbar />
             <div className="w-full text-end">
               <p>Hi, {session?.user.name}</p>
             </div>
