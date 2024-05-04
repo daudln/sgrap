@@ -136,7 +136,3 @@ export const getSubjects = async () => {
     data: subjects,
   };
 };
-
-export async function getSubject() {
-  console.log("getSubject");
-}

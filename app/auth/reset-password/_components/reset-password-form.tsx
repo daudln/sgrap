@@ -47,9 +47,6 @@ export function ResetPasswordForm({ token }: { token: string }) {
 
       form.reset();
     },
-    onError: (error) => {
-      console.log(error);
-    },
   });
 
   if (status === "executing") {

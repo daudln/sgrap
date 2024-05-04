@@ -79,7 +79,6 @@ const CreateTeacherForm = ({ setOpen }: CreateTeacherProps & {}) => {
   });
 
   const onSubmit = (data: CreateTeacherInput) => {
-    console.log(data);
     createMutation.mutate(data);
   };
   return (

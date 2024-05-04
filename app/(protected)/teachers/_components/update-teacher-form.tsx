@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import useSchools from "@/hooks/useSchools";
-import { UpdateProfileInput } from "@/schema/profile";
 import { UpdateTeacherInput, updateTeacherSchema } from "@/schema/teacher";
 import { UserData } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,6 +20,8 @@ import { Dispatch, SetStateAction, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { updateTeacher } from "../_actions/actions";
+import { Gender } from "@prisma/client";
+import { GENDER_OPTIONS } from "@/lib/constants";
 
 interface UpdateProfileProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
@@ -38,15 +39,24 @@ const UpdateTeacherForm = ({ profile, setOpen }: UpdateProfileProps) => {
       email: profile.email as string | undefined,
       uuid: profile.id,
       phoneNumber: profile.Profile.phoneNumber,
+      gender: profile.Profile.gender as Gender,
       school: profile.Profile.school.uuid as string | undefined,
     },
   });
-  const handleOptionChange = useCallback(
+  const handleSchoolChange = useCallback(
     (value: string) => {
       form.setValue("school", value);
     },
     [form]
   );
+
+  const handleGenderChange = useCallback(
+    (value: string) => {
+      form.setValue("gender", value as Gender);
+    },
+    [form]
+  );
+
   const queryClient = useQueryClient();
   const { data, isLoading, error } = useSchools();
   const SCHOOLS = data?.data.map((school) => ({
@@ -54,7 +64,7 @@ const UpdateTeacherForm = ({ profile, setOpen }: UpdateProfileProps) => {
     value: school.uuid,
   }));
 
-  const updateMutation = useMutation({
+  const mutation = useMutation({
     mutationFn: updateTeacher,
     onSuccess: async ({ data }) => {
       toast.success(data?.message, {
@@ -75,8 +85,7 @@ const UpdateTeacherForm = ({ profile, setOpen }: UpdateProfileProps) => {
   });
 
   const onSubmit = (data: UpdateTeacherInput) => {
-    console.log("firstName", data);
-    updateMutation.mutate(data);
+    mutation.mutate(data);
   };
   return (
     <Form {...form}>
@@ -126,6 +135,25 @@ const UpdateTeacherForm = ({ profile, setOpen }: UpdateProfileProps) => {
           />
           <FormField
             control={form.control}
+            name="gender"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Gender</FormLabel>
+                <FormControl>
+                  <SelectInput
+                    onChange={handleGenderChange}
+                    className="w-full"
+                    options={GENDER_OPTIONS || []}
+                    label="Gender"
+                    placeholder="Select Gender"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name="email"
             render={({ field }) => (
               <FormItem>
@@ -159,7 +187,7 @@ const UpdateTeacherForm = ({ profile, setOpen }: UpdateProfileProps) => {
                 <FormLabel>School</FormLabel>
                 <FormControl className="w-full">
                   <SelectInput
-                    onChange={handleOptionChange}
+                    onChange={handleSchoolChange}
                     className="w-full"
                     options={SCHOOLS || []}
                     label="School"
@@ -191,7 +219,7 @@ const UpdateTeacherForm = ({ profile, setOpen }: UpdateProfileProps) => {
           />
         </div>
 
-        <ActionButton label="Create" status={updateMutation.status} />
+        <ActionButton label="Create" status={mutation.status} />
       </form>
     </Form>
   );

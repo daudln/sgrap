@@ -12,7 +12,7 @@ interface Props {
 }
 const DashboardCard = ({ icon, title, subtitle, description }: Props) => {
   return (
-    <Card className="shadow-md transition-transform duration-300 hover:scale-[1.02] rounded-xl">
+    <Card className="transition-transform duration-300 hover:scale-[1.02]">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
         {icon}

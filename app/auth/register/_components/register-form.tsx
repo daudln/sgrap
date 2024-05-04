@@ -32,9 +32,6 @@ export function RegisterForm() {
 
       form.reset();
     },
-    onError: (error) => {
-      console.log(error);
-    },
   });
 
   if (status === "executing") {

@@ -30,7 +30,6 @@ export async function GET() {
       },
     },
   });
-  console.log(profiles);
   const response = {
     status: 200,
     success: true,

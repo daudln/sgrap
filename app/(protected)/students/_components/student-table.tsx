@@ -79,7 +79,7 @@ function RowActions({ profile }: { profile: UserData }) {
 }
 
 const filterFn: FilterFn<UserData> = (row, id, value: string[] | string) => {
-  const searchableRowContent = `${row.original.name} ${row.original.type} ${row.original.Profile.phoneNumber} ${row.original.Profile.school.name} ${row.original.email}`;
+  const searchableRowContent = `${row.original.name} ${row.original.Profile.school.name} ${row.original.Profile.gender} ${row.original.Profile.Student?.classLevel}`;
 
   if (Array.isArray(value)) {
     return value.some((v) => row.getValue(id) === v);
@@ -92,6 +92,8 @@ const getDataForExport = (student: UserData) => ({
   email: student.email,
   school: student.Profile.school.name,
   phoneNumber: student.Profile.phoneNumber,
+  gender: student.Profile.gender,
+  class: student.Profile.Student?.classLevel,
 });
 
 const columns: ColumnDef<UserData>[] = [

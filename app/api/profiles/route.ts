@@ -9,7 +9,6 @@ export async function GET() {
       school: true,
     },
   });
-  console.log(profiles);
   const response = {
     status: 200,
     success: true,

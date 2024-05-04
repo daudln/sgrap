@@ -1,6 +1,5 @@
 import nodemailer from "nodemailer";
 const SMTP_PORT = Number(process.env.SMTP_PORT);
-console.log(SMTP_PORT, process.env.EMAIL_HOST);
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST || "localhost",
   port: Number(process.env.SMTP_PORT) || 2525,
@@ -42,9 +41,7 @@ export const sendVerificationEmail = async (
       status: 500,
       message: "Something went wrong",
     };
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 export const sendForgotPasswordEmail = async (

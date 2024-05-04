@@ -1,5 +1,3 @@
-export const MAX_DATE_RANGE_DAYS = 90;
-
 export const CLASS_OPTIONS = [
   { label: "Form One", value: "FORM_ONE" },
   { label: "Form Two", value: "FORM_TWO" },

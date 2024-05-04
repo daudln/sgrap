@@ -88,10 +88,14 @@ export const updateSchool = action(
   }
 );
 
-export const deleteDchool = action(deleteSchoolSchema, async ({ uuid }) => {
+export const deleteSchool = action(deleteSchoolSchema, async ({ uuid }) => {
   const existingSchool = await prisma.school.findFirst({
     where: {
       uuid,
+    },
+    include: {
+      Student: true,
+      Teacher: true,
     },
   });
   if (!existingSchool) {
@@ -99,6 +103,14 @@ export const deleteDchool = action(deleteSchoolSchema, async ({ uuid }) => {
       status: 400,
       success: false,
       message: "No school with this id",
+    };
+  }
+
+  if (existingSchool.Student.length > 0 || existingSchool.Teacher.length > 0) {
+    return {
+      status: 400,
+      success: false,
+      message: "This school cannot be deleted as it has students or teachers.",
     };
   }
   await prisma.school.delete({
@@ -130,7 +142,3 @@ export const getschools = async () => {
     data: schools,
   };
 };
-
-export async function getschool() {
-  console.log("getschool");
-}

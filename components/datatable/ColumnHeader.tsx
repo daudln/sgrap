@@ -48,7 +48,6 @@ export function DataTableColumnHeader<TData, TValue>({
         <DropdownMenuContent align="start">
           <DropdownMenuItem
             onClick={() => {
-              console.log("first");
               column.toggleSorting(false);
             }}
           >

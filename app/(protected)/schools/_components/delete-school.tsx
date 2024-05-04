@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { deleteDchool } from "../_actions/actions";
+import { deleteSchool } from "../_actions/actions";
 
 interface Props {
   open: boolean;
@@ -24,11 +24,17 @@ function DeleteSubjectDialog({ open, setOpen, schoolId }: Props) {
   const queryClient = useQueryClient();
 
   const deleteMutation = useMutation({
-    mutationFn: deleteDchool,
+    mutationFn: deleteSchool,
     onSuccess: async ({ data }) => {
-      toast.success(data?.message, {
-        id: schoolId,
-      });
+      if (!data?.success) {
+        toast.error(data?.message, {
+          id: schoolId,
+        });
+      } else {
+        toast.success(data?.message, {
+          id: schoolId,
+        });
+      }
 
       await queryClient.invalidateQueries({
         queryKey: ["schools"],
@@ -47,7 +53,7 @@ function DeleteSubjectDialog({ open, setOpen, schoolId }: Props) {
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will permanently delete this
-            subject
+            school
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

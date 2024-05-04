@@ -85,7 +85,6 @@ const filterFn: FilterFn<Subject> = (row, id, value: string[] | string) => {
   const searchableRowContent = `${row.original.name} ${row.original.category} ${row.original.description} ${row.original.code}`;
 
   if (Array.isArray(value)) {
-    console.log(value);
     return value.some((v) => row.getValue(id) === v);
   }
   return searchableRowContent.toLowerCase().includes(value.toLowerCase());

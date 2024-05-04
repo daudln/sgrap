@@ -40,7 +40,7 @@ export function LoginForm() {
       if (data?.success) {
         toast.dismiss("logging-in");
         toast.success(data?.message);
-        router.push("/home/dashboard");
+        router.push("/");
       }
 
       form.reset();
