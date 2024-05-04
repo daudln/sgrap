@@ -1,52 +1,63 @@
-// import React from "react";
-// export default function layout({
-//   children,
-// }: Readonly<{
-//   children: React.ReactNode;
-// }>) {
-//   return (
-//     <div className="grid grid-cols-1 md:grid-cols-3 h-screen gap-3 justify-center items-center p-32">
-//       <div className=" col-span-2">
-//         <h1 className="text-md md:text-3xl font-semibold text-center my-4">
-//           SGRAP - Student Grading, Reporting, and Assessment Platform
-//         </h1>
-//         <p className="text-balance text-start md:text-lg md:text-center hidden md:block">
-//           A comprehensive platform designed for managing student grading,
-//           reporting, and assessments. It provides teachers and administrators
-//           with the tools they need to create, grade, and analyze assessments,
-//           while also offering students insight into their performance and
-//           progress.
-//         </p>
-//       </div>
-//       <div className="col-span-1">{children}</div>
-//     </div>
-//   );
-// }
+import Link from "next/link";
+import { TbSchool } from "react-icons/tb";
 
-import Image from "next/image";
-
-export default function RootLayout({
-  children,
-}: Readonly<{
+interface AuthenticationLayoutProps {
   children: React.ReactNode;
-}>) {
+}
+
+export default function AuthenticationLayout({
+  children,
+}: AuthenticationLayoutProps) {
   return (
-    <main className="flex min-h-screen w-full justify-between font-inter">
-      {children}
-      <div className="flex items-center justify-center bg-blue-500/10">
-        <div className=" col-span-2">
-          <h1 className="text-md md:text-3xl font-semibold text-center my-4">
-            SGRAP - Student Grading, Reporting, and Assessment Platform
-          </h1>
-          <p className="text-balance text-start md:text-lg md:text-center hidden md:block">
-            A comprehensive platform designed for managing student grading,
-            reporting, and assessments. It provides teachers and administrators
-            with the tools they need to create, grade, and analyze assessments,
-            while also offering students insight into their performance and
-            progress.
-          </p>
+    <>
+      {/* <div className="md:hidden">
+        <Image
+          src="/examples/authentication-light.png"
+          width={1280}
+          height={843}
+          alt="Authentication"
+          className="block dark:hidden"
+        />
+        <Image
+          src="/examples/authentication-dark.png"
+          width={1280}
+          height={843}
+          alt="Authentication"
+          className="hidden dark:block"
+        />
+      </div> */}
+      <div className="container relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
+        <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
+          <div className="absolute inset-0 bg-zinc-900" />
+          <div className="relative z-20 flex items-center text-lg font-medium">
+            <Link
+              href="/"
+              className="relative flex items-center gap-2.5"
+              aria-label="Home"
+            >
+              <TbSchool className="h-6 w-6" />
+              <span>SGRAP</span>
+            </Link>
+          </div>
+          <div className="relative z-20 mt-auto">
+            <blockquote className="space-y-2">
+              <p className="text-lg">
+                A comprehensive platform designed for managing student grading,
+                reporting, and assessments. It provides teachers and
+                administrators with the tools they need to create, grade, and
+                analyze assessments, while also offering students insight into
+                their performance and progress.
+              </p>
+              <footer className="text-sm">SGRAP</footer>
+            </blockquote>
+          </div>
+        </div>
+        <div className="lg:p-8">
+          <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+            {children}
+          </div>
         </div>
       </div>
-    </main>
+    </>
   );
 }

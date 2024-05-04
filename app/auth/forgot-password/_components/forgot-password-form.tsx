@@ -50,7 +50,7 @@ export function ForgotPasswordForm() {
     <CardWrapper
       headerLabel="Forgot Password"
       backButtonLabel="Don't have an account?"
-      backButtonHref="/auth/register"
+      // backButtonHref="/auth/register"
       cardDescription="Provide your details below to reset your password"
     >
       <Form {...form}>

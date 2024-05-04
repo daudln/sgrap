@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import ActionButton from "@/components/action-button";
 import CardWrapper from "@/components/card-wrapper";
 import { RegisterInput, registerSchema } from "@/schema/auth";
-import { register } from "../../_actions/actions";
+import { register } from "../../../_actions/actions";
 import { toast } from "sonner";
 
 export function RegisterForm() {
@@ -55,7 +55,7 @@ export function RegisterForm() {
   };
   return (
     <CardWrapper
-      headerLabel="Register"
+      headerLabel="Register to SGRAP"
       backButtonLabel="Already have an account? Sign in"
       cardDescription="Provide your details below to create an account"
       backButtonHref="/auth/login"

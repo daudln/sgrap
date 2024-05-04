@@ -52,11 +52,11 @@ export function LoginForm() {
   };
   return (
     <CardWrapper
-      headerLabel="Login"
+      headerLabel="Login to SGRAP"
       backButtonLabel="Don't have an account?"
-      backButtonHref="/auth/register"
+      // backButtonHref="/auth/register"
       cardDescription="Provide your details below to sign in"
-      showSocialButtons
+      // showSocialButtons
     >
       <Form {...form}>
         <form className="grid gap-4" onSubmit={form.handleSubmit(onSubmit)}>
