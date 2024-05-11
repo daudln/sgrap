@@ -1,12 +1,12 @@
 "use client";
 
 import useSubjects from "@/hooks/useSubjects";
-import { Subject } from "@prisma/client";
+import { Prisma, Subject } from "@prisma/client";
 import { ColumnDef, FilterFn } from "@tanstack/react-table";
 
 import { useState } from "react";
 
-import { DataTableColumnHeader } from "@/components/datatable/ColumnHeader";
+import { DataTableColumnHeader } from "@/components/datatable/column-header";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -27,8 +27,17 @@ import { Badge } from "@/components/ui/badge";
 import CreateSubjectDialog from "./create-subject-dialog";
 import UpdateSubjectDialog from "./update-subject-dialog";
 import { SUBJECT_CATEGORY_FILTER } from "@/lib/constants";
+import ViewData from "@/components/view-data";
 
-type SubjectRow = Subject;
+type SubjectRow = Prisma.SubjectGetPayload<{
+  select: {
+    id: true;
+    code: true;
+    name: true;
+    category: true;
+    description: true;
+  };
+}>;
 
 function RowActions({ subject }: { subject: SubjectRow }) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -39,12 +48,12 @@ function RowActions({ subject }: { subject: SubjectRow }) {
       <DeleteSubjectDialog
         open={showDeleteDialog}
         setOpen={setShowDeleteDialog}
-        subjectId={subject.uuid}
+        subjectId={subject.id}
       />
       <UpdateSubjectDialog
         setOpen={setShowEditDialog}
         open={showEditDialog}
-        subjectId={subject.uuid}
+        subjectId={subject.id}
       />
 
       <DropdownMenu>
@@ -75,13 +84,16 @@ function RowActions({ subject }: { subject: SubjectRow }) {
             <LuPencil className="h-4 w-4" />
             Update
           </DropdownMenuItem>
+          <DropdownMenuItem className="flex items-center gap-2 text-emerald-500 cursor-pointer">
+            <ViewData link={`/subjects/${subject.id}`} />
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </>
   );
 }
 
-const filterFn: FilterFn<Subject> = (row, id, value: string[] | string) => {
+const filterFn: FilterFn<SubjectRow> = (row, id, value: string[] | string) => {
   const searchableRowContent = `${row.original.name} ${row.original.category} ${row.original.description} ${row.original.code}`;
 
   if (Array.isArray(value)) {
@@ -90,7 +102,7 @@ const filterFn: FilterFn<Subject> = (row, id, value: string[] | string) => {
   return searchableRowContent.toLowerCase().includes(value.toLowerCase());
 };
 
-const getDataForExport = (subject: Subject) => ({
+const getDataForExport = (subject: SubjectRow) => ({
   code: subject.code,
   name: subject.name,
   category: subject.category,
@@ -181,7 +193,7 @@ const SubjectTable = () => {
         data={data?.data || []}
         columns={columns}
         filters={SUBJECT_CATEGORY_FILTER}
-        filterPlaceholder="Filter subjects"
+        filterPlaceholder="Filter subjects..."
         getDataForExport={getDataForExport}
         isLoading={isLoading}
       />

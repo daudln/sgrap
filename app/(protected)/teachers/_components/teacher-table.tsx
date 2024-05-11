@@ -4,7 +4,7 @@ import { ColumnDef, FilterFn } from "@tanstack/react-table";
 
 import { useState } from "react";
 
-import { DataTableColumnHeader } from "@/components/datatable/ColumnHeader";
+import { DataTableColumnHeader } from "@/components/datatable/column-header";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,

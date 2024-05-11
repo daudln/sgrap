@@ -7,6 +7,13 @@ export interface APIResponse<T> {
   data: T[];
 }
 
+export interface SingeAPIResponse<T> {
+  status: number;
+  success: boolean;
+  message: string;
+  data: T;
+}
+
 const axiosInstance = axios.create({
   baseURL: process.env.DOMAIN_URL,
 });
@@ -21,7 +28,9 @@ class APIClient<T> {
     return response.data;
   };
   get = async (id: number | string) => {
-    const response = await axiosInstance.get<T>(`${this.endpoint}/${id}`);
+    const response = await axiosInstance.get<SingeAPIResponse<T>>(
+      `${this.endpoint}/${id}`
+    );
     return response.data;
   };
 }

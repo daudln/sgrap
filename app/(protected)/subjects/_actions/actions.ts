@@ -53,10 +53,10 @@ export const createSubject = action(
 
 export const updateSubject = action(
   updateSubjectSchema,
-  async ({ code, name, description, category, uuid }) => {
+  async ({ code, name, description, category, id }) => {
     const existingSubject = await prisma.subject.findFirst({
       where: {
-        uuid,
+        id,
       },
     });
     if (!existingSubject) {
@@ -68,7 +68,7 @@ export const updateSubject = action(
     }
     const subject = await prisma.subject.update({
       where: {
-        uuid: existingSubject.uuid,
+        id: existingSubject.id,
       },
       data: {
         name,
@@ -94,10 +94,10 @@ export const updateSubject = action(
   }
 );
 
-export const deleteSubject = action(deleteSubjectSchema, async ({ uuid }) => {
+export const deleteSubject = action(deleteSubjectSchema, async ({ id }) => {
   const existingSubject = await prisma.subject.findFirst({
     where: {
-      uuid,
+      id,
     },
   });
   if (!existingSubject) {
@@ -109,7 +109,7 @@ export const deleteSubject = action(deleteSubjectSchema, async ({ uuid }) => {
   }
   await prisma.subject.delete({
     where: {
-      uuid,
+      id,
     },
   });
 

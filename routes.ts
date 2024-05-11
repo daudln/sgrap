@@ -21,7 +21,7 @@ export const AUTH_ROUTES = [
 
 export const PROFILE_ROUTES = ["/profile", "/profile", "/settings", "/logout"];
 
-export const API_AUTH_PREFIX = "/api/auth";
+export const API_AUTH_PREFIX = "/api";
 
 export const DEFAULT_LOGIN_REDIRECT = "/";
 

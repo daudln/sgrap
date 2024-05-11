@@ -4,9 +4,7 @@ export async function GET() {
   const profiles = await prisma.teacher.findMany({
     where: {
       profile: {
-        user: {
-          type: "TEACHER",
-        },
+        type: "TEACHER",
       },
     },
     select: {

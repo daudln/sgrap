@@ -6,7 +6,7 @@ import { ColumnDef, FilterFn } from "@tanstack/react-table";
 
 import { useState } from "react";
 
-import { DataTableColumnHeader } from "@/components/datatable/ColumnHeader";
+import { DataTableColumnHeader } from "@/components/datatable/column-header";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -68,6 +68,14 @@ function RowActions({ school }: { school: SchoolRow }) {
             <LuPencil className="h-4 w-4" />
             Update
           </DropdownMenuItem>
+          <DropdownMenuItem
+            className="flex items-center gap-2 text-emerald-500 cursor-pointer"
+            onSelect={() => {
+              setShowEditDialog((prev) => !prev);
+            }}
+          >
+            <ViewData link={`/schools/${school.uuid}`} />
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </>
@@ -77,6 +85,7 @@ function RowActions({ school }: { school: SchoolRow }) {
 import { DataTable } from "@/components/datatable/data-table";
 import CreateschoolDialog from "./create-school-dialog";
 import UpdatesShoolDialog from "./update-school-dialog";
+import ViewData from "@/components/view-data";
 
 const filterFn: FilterFn<School> = (
   row,

@@ -23,7 +23,7 @@ export const updateSubjectSchema = z.object({
   category: z.enum(["ART", "SCIENCE"], {
     errorMap: () => ({ message: "Subject category is required" }),
   }),
-  uuid: z.string(),
+  id: z.string(),
 });
 
 export type UpdateSubjectInput = z.infer<typeof updateSubjectSchema>;
@@ -35,7 +35,7 @@ export const getSubjectSchema = z.object({
 export type GetSubjectInput = z.infer<typeof getSubjectSchema>;
 
 export const deleteSubjectSchema = z.object({
-  uuid: z.string().min(1),
+  id: z.string().min(1),
 });
 
 export type DeleteSubjectInput = z.infer<typeof deleteSubjectSchema>;

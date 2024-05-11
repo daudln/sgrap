@@ -1,10 +1,16 @@
-import subjectClient from "@/services/subjects.service";
+import { trpc } from "@/lib/hono";
 import { useQuery } from "@tanstack/react-query";
 
 const useSubjects = () =>
   useQuery({
     queryKey: ["subjects"],
-    queryFn: subjectClient.getAll,
+    queryFn: async () => {
+      const response = await trpc.api.subjects.$get();
+      if (!response.ok) {
+        throw new Error((await response.json()).message);
+      }
+      return response.json();
+    },
   });
 
 export default useSubjects;

@@ -27,7 +27,6 @@ import {
 
 import { DataTableToolbar, FilterProps } from "@/components/datatable/toolbar";
 import { DataTablePagination } from "./pagination";
-import SkeletonTableLoading from "../table-skeleton";
 import { DataTableSkeleton } from "./data-table-skeleton";
 
 interface DataTableProps<TData, TValue> {
