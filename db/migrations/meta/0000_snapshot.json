@@ -1,10 +1,10 @@
 {
-  "id": "9a54febe-a33c-49b3-b851-42a0cb9fa1e9",
+  "id": "8c6248ca-ed44-4bb0-8e2c-b3b1fe755013",
   "prevId": "00000000-0000-0000-0000-000000000000",
-  "version": "5",
-  "dialect": "pg",
+  "version": "6",
+  "dialect": "postgresql",
   "tables": {
-    "profile": {
+    "public.profile": {
       "name": "profile",
       "schema": "",
       "columns": {
@@ -23,6 +23,7 @@
         "gender": {
           "name": "gender",
           "type": "gender",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
         },
@@ -35,6 +36,7 @@
         "profile_type": {
           "name": "profile_type",
           "type": "profile_type",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
           "default": "'STUDENT'"
@@ -99,7 +101,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "school": {
+    "public.school": {
       "name": "school",
       "schema": "",
       "columns": {
@@ -148,7 +150,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "student": {
+    "public.student": {
       "name": "student",
       "schema": "",
       "columns": {
@@ -161,6 +163,7 @@
         "class_level": {
           "name": "class_level",
           "type": "classLevel",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
         },
@@ -205,7 +208,48 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "teacher": {
+    "public.subject": {
+      "name": "subject",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(100)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "code": {
+          "name": "code",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "category": {
+          "name": "category",
+          "type": "subject_category",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.teacher": {
       "name": "teacher",
       "schema": "",
       "columns": {
@@ -256,14 +300,14 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "password_reset_token": {
+    "public.password_reset_token": {
       "name": "password_reset_token",
       "schema": "",
       "columns": {
-        "token": {
-          "name": "token",
+        "id": {
+          "name": "id",
           "type": "varchar(100)",
-          "primaryKey": false,
+          "primaryKey": true,
           "notNull": true
         },
         "email": {
@@ -281,15 +325,7 @@
       },
       "indexes": {},
       "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "password_reset_token_token_email_pk": {
-          "name": "password_reset_token_token_email_pk",
-          "columns": [
-            "token",
-            "email"
-          ]
-        }
-      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "password_reset_token_email_unique": {
           "name": "password_reset_token_email_unique",
@@ -300,7 +336,7 @@
         }
       }
     },
-    "session": {
+    "public.session": {
       "name": "session",
       "schema": "",
       "columns": {
@@ -342,13 +378,13 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "user": {
+    "public.user": {
       "name": "user",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar(100)",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
@@ -364,16 +400,15 @@
           "primaryKey": false,
           "notNull": true
         },
-        "role": {
-          "name": "role",
-          "type": "user_type",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'USER'"
-        },
-        "emai_verified": {
-          "name": "emai_verified",
+        "email_verified": {
+          "name": "email_verified",
           "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image": {
+          "name": "image",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
@@ -383,26 +418,34 @@
           "primaryKey": false,
           "notNull": false
         },
-        "created_at": {
-          "name": "created_at",
+        "createdAt": {
+          "name": "createdAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "updated_at": {
-          "name": "updated_at",
+        "updatedAt": {
+          "name": "updatedAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "is_active": {
-          "name": "is_active",
+        "isActive": {
+          "name": "isActive",
           "type": "boolean",
           "primaryKey": false,
           "notNull": true,
           "default": true
+        },
+        "role": {
+          "name": "role",
+          "type": "user_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'USER'"
         }
       },
       "indexes": {},
@@ -418,19 +461,19 @@
         }
       }
     },
-    "email_verification_token": {
-      "name": "email_verification_token",
+    "public.verification_token": {
+      "name": "verification_token",
       "schema": "",
       "columns": {
-        "token": {
-          "name": "token",
-          "type": "varchar",
-          "primaryKey": false,
+        "id": {
+          "name": "id",
+          "type": "varchar(100)",
+          "primaryKey": true,
           "notNull": true
         },
         "email": {
           "name": "email",
-          "type": "text",
+          "type": "varchar(100)",
           "primaryKey": false,
           "notNull": true
         },
@@ -443,18 +486,10 @@
       },
       "indexes": {},
       "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "email_verification_token_token_email_pk": {
-          "name": "email_verification_token_token_email_pk",
-          "columns": [
-            "token",
-            "email"
-          ]
-        }
-      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "email_verification_token_email_unique": {
-          "name": "email_verification_token_email_unique",
+        "verification_token_email_unique": {
+          "name": "verification_token_email_unique",
           "nullsNotDistinct": false,
           "columns": [
             "email"
@@ -464,37 +499,49 @@
     }
   },
   "enums": {
-    "gender": {
+    "public.gender": {
       "name": "gender",
-      "values": {
-        "MALE": "MALE",
-        "FEMALE": "FEMALE"
-      }
+      "schema": "public",
+      "values": [
+        "MALE",
+        "FEMALE"
+      ]
     },
-    "profile_type": {
+    "public.profile_type": {
       "name": "profile_type",
-      "values": {
-        "STUDENT": "STUDENT",
-        "TEACHER": "TEACHER"
-      }
+      "schema": "public",
+      "values": [
+        "STUDENT",
+        "TEACHER"
+      ]
     },
-    "classLevel": {
+    "public.classLevel": {
       "name": "classLevel",
-      "values": {
-        "FORM_ONE": "FORM_ONE",
-        "FORM_TWO": "FORM_TWO",
-        "FORM_THREE": "FORM_THREE",
-        "FORM_FOUR": "FORM_FOUR",
-        "FORM_FIVE": "FORM_FIVE",
-        "FORM_SIX": "FORM_SIX"
-      }
+      "schema": "public",
+      "values": [
+        "FORM_ONE",
+        "FORM_TWO",
+        "FORM_THREE",
+        "FORM_FOUR",
+        "FORM_FIVE",
+        "FORM_SIX"
+      ]
     },
-    "user_type": {
+    "public.subject_category": {
+      "name": "subject_category",
+      "schema": "public",
+      "values": [
+        "ART",
+        "SCIENCE"
+      ]
+    },
+    "public.user_type": {
       "name": "user_type",
-      "values": {
-        "ADMIN": "ADMIN",
-        "USER": "USER"
-      }
+      "schema": "public",
+      "values": [
+        "ADMIN",
+        "USER"
+      ]
     }
   },
   "schemas": {},

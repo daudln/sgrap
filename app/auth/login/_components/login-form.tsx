@@ -54,7 +54,7 @@ export function LoginForm() {
     <CardWrapper
       headerLabel="Login to SGRAP"
       backButtonLabel="Don't have an account?"
-      // backButtonHref="/auth/register"
+      backButtonHref="/auth/register"
       cardDescription="Provide your details below to sign in"
       // showSocialButtons
     >

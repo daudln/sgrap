@@ -1,7 +1,5 @@
 "use client";
 
-import useSubjects from "@/hooks/useSubjects";
-import { Prisma, Subject } from "@prisma/client";
 import { ColumnDef, FilterFn } from "@tanstack/react-table";
 
 import { useState } from "react";
@@ -26,34 +24,52 @@ import { DataTable } from "@/components/datatable/data-table";
 import { Badge } from "@/components/ui/badge";
 import CreateSubjectDialog from "./create-subject-dialog";
 import UpdateSubjectDialog from "./update-subject-dialog";
-import { SUBJECT_CATEGORY_FILTER } from "@/lib/constants";
+import { SUBJECT_CATEGORY_FILTER, VARIANTS } from "@/lib/constants";
 import ViewData from "@/components/view-data";
+import { z } from "zod";
+import { createSubjectSchema } from "@/db/schema/subject";
+import useGetSubjects from "@/hooks/subject/use-get-subjects";
+import useConfirm from "@/hooks/use-confirm";
+import { Checkbox } from "@/components/ui/checkbox";
+import useBulkDeleteSubject from "@/hooks/subject/use-bulk-delete-subject";
+import useDeleteSubject from "@/hooks/subject/use-delete-subject";
+import ImportCard from "@/components/import-card";
+import useCreateSubjects from "@/hooks/subject/use-create-subjects";
+import { useStore } from "@/store/store";
 
-type SubjectRow = Prisma.SubjectGetPayload<{
-  select: {
-    id: true;
-    code: true;
-    name: true;
-    category: true;
-    description: true;
-  };
-}>;
+type SubjectRow = z.infer<typeof createSubjectSchema>;
 
 function RowActions({ subject }: { subject: SubjectRow }) {
+  const mutation = useDeleteSubject(subject.id);
+  const [ConfirmDialog, confirm] = useConfirm(
+    "Delete Subject",
+    "Are you sure you want to delete this subject?",
+    "Cancel",
+    "Delete",
+    "default",
+    "destructive"
+  );
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
 
+  const onDelete = async () => {
+    const ok = await confirm();
+    if (ok) {
+      mutation.mutate();
+    }
+  };
   return (
     <>
+      <ConfirmDialog />
       <DeleteSubjectDialog
         open={showDeleteDialog}
         setOpen={setShowDeleteDialog}
-        subjectId={subject.id}
+        subjectId={subject.id!}
       />
       <UpdateSubjectDialog
         setOpen={setShowEditDialog}
         open={showEditDialog}
-        subjectId={subject.id}
+        subjectId={subject.id!}
       />
 
       <DropdownMenu>
@@ -68,9 +84,7 @@ function RowActions({ subject }: { subject: SubjectRow }) {
           <DropdownMenuSeparator />
           <DropdownMenuItem
             className="flex items-center gap-2 text-destructive cursor-pointer"
-            onSelect={() => {
-              setShowDeleteDialog((prev) => !prev);
-            }}
+            onSelect={onDelete}
           >
             <BsTrash3 className="h-4 w-4" />
             Delete
@@ -110,6 +124,29 @@ const getDataForExport = (subject: SubjectRow) => ({
 });
 
 const columns: ColumnDef<SubjectRow>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        className="rounded-sm"
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     accessorKey: "code",
     header: ({ column }) => (
@@ -171,8 +208,31 @@ const columns: ColumnDef<SubjectRow>[] = [
 ];
 
 const SubjectTable = () => {
-  const { data, isLoading, error } = useSubjects();
+  const { data, isLoading, error } = useGetSubjects();
+  const deleteSubjects = useBulkDeleteSubject();
+  const createSubjects = useCreateSubjects();
   const [open, setOpen] = useState(false);
+  const isDisabled =
+    isLoading || deleteSubjects.isPending || createSubjects.isPending;
+
+  const variant = useStore((s) => s.variant);
+  const importResults = useStore((s) => s.importResults);
+  const onCancelImport = useStore((s) => s.onCancelImport);
+
+  type subjectValues = Omit<z.infer<typeof createSubjectSchema>, "id">;
+
+  const onSubmitImport = (values: subjectValues[]) => {
+    createSubjects.mutate(values);
+  };
+
+  if (variant === VARIANTS.IMPORT) {
+    return (
+      <>
+        <ImportCard data={importResults.data} onSubmit={onSubmitImport} />
+      </>
+    );
+  }
+
   if (error)
     return (
       <AlertNotication
@@ -196,6 +256,13 @@ const SubjectTable = () => {
         filterPlaceholder="Filter subjects..."
         getDataForExport={getDataForExport}
         isLoading={isLoading}
+        hasColumnSelection={true}
+        hasUploadButton={true}
+        disabled={isDisabled}
+        onDelete={(row) => {
+          const ids = row.map((r) => r.original.id);
+          deleteSubjects.mutate({ ids });
+        }}
       />
     </>
   );

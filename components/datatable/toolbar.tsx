@@ -1,7 +1,7 @@
 "use client";
 
 import { RxCross2 } from "react-icons/rx";
-import { Table } from "@tanstack/react-table";
+import { Row, Table } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +22,8 @@ interface DataTableToolbarProps<TData> {
   filters?: FilterProps[];
   searchColumn?: string;
   getDataForExport?: (item: TData) => any;
+  onDelete?: (rows: Row<TData>[]) => void;
+  hasUploadButton?: boolean;
 }
 
 export function DataTableToolbar<TData>({
@@ -30,6 +32,8 @@ export function DataTableToolbar<TData>({
   placeholder,
   getDataForExport,
   searchColumn,
+  onDelete,
+  hasUploadButton,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
   const column = table.getVisibleLeafColumns().map((column) => column.id)[0];
@@ -67,7 +71,12 @@ export function DataTableToolbar<TData>({
           </Button>
         )}
       </div>
-      <DataTableViewOptions table={table} getDataForExport={getDataForExport} />
+      <DataTableViewOptions
+        onDelete={onDelete}
+        table={table}
+        getDataForExport={getDataForExport}
+        hasUploadButton={hasUploadButton}
+      />
     </div>
   );
 }

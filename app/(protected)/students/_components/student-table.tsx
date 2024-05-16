@@ -15,7 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import useStudents from "@/hooks/useStudents";
+import useStudents from "@/hooks/student/useGetStudents";
 import { UserData } from "@/types/user";
 import { MoreHorizontal } from "lucide-react";
 import { BsTrash3 } from "react-icons/bs";
@@ -25,7 +25,12 @@ import DeleteStudentDialog from "./delete-student";
 import UpdateStudentDialog from "./update-student-dialog";
 import { useSchoolFilter } from "@/hooks/useSchools";
 import { formatClassName } from "@/lib/helpers";
-import { CLASS_FILTER, GENDER_FILTER } from "@/lib/constants";
+import {
+  CLASS_FILTER,
+  GENDER_FILTER,
+  INITIAL_IMPORT_RESULTS,
+  VARIANTS,
+} from "@/lib/constants";
 
 function RowActions({ profile }: { profile: UserData }) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -183,20 +188,25 @@ const StudentTable = () => {
   const { data, isLoading, error } = useStudents();
   const [open, setOpen] = useState(false);
   const filters = [useSchoolFilter(), GENDER_FILTER, CLASS_FILTER];
+  const [variant, setVariant] = useState<VARIANTS>(VARIANTS.LIST);
+  const onUpload = (results: typeof INITIAL_IMPORT_RESULTS) => {
+    setVariant(VARIANTS.IMPORT);
+  };
+
   return (
     <>
       <div className="flex justify-end mb-4">
         <CreateStudentDialog open={open} setOpen={setOpen} />
       </div>
 
-      <DataTable
-        data={data?.data || []}
+      {/* <DataTable
+        data={data || []}
         columns={columns}
         filters={filters}
         filterPlaceholder="Filter students..."
         getDataForExport={getDataForExport}
         isLoading={isLoading}
-      />
+      /> */}
     </>
   );
 };

@@ -58,7 +58,7 @@ function DeleteSubjectDialog({ open, setOpen, subjectId }: Props) {
               toast.loading("Deleting subject...", {
                 id: subjectId,
               });
-              deleteMutation.mutate({ uuid: subjectId });
+              deleteMutation.mutate({ id: subjectId });
             }}
           >
             Continue

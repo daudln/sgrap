@@ -36,3 +36,14 @@ export const SUBJECT_CATEGORY_FILTER = [
     options: SUBJECT_CATEGORY,
   },
 ];
+
+export const INITIAL_IMPORT_RESULTS = {
+  data: [],
+  errors: [],
+  meta: {},
+};
+
+export enum VARIANTS {
+  LIST = "LIST",
+  IMPORT = "IMPORT",
+}

@@ -1,57 +1,65 @@
-import NextAuth from "next-auth";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import prisma from "@/lib/utils";
-import authconfig from "@/auth.config";
-import { getUserById } from "@/lib/auth";
+import { Lucia, User, Session } from "lucia";
+import adapter from "@/lib/lucia/adapter";
+import { cookies } from "next/headers";
+import { cache } from "react";
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
-  session: {
-    strategy: "jwt",
+export const lucia = new Lucia(adapter, {
+  getUserAttributes(attributes) {
+    return {
+      name: attributes.name,
+    };
   },
-  ...authconfig,
-  pages: {
-    signIn: "/auth/login",
-  },
-  callbacks: {
-    async jwt({ token }) {
-      if (!token.sub) return token;
-      const user = await getUserById(token.sub);
-      if (!user) return token;
-      const userProfile = await prisma.profile.findFirst({
-        where: {
-          userId: user.id,
-        },
-      });
-      if (!userProfile) return token;
-      token.profile = userProfile;
-
-      return token;
-    },
-    async session({ session, token, user }) {
-      if (token.sub && session.user) {
-        session.user.id = token.sub;
-      }
-      if (token.profile) {
-        session.user.profile = token.profile;
-      }
-
-      return session;
-    },
-
-    async signIn({ user, account }) {
-      if (account?.provider !== "credentials") return true;
-      const existingUser = await getUserById(user.id!);
-
-      // Prevent sign in if email is not verified
-      if (!existingUser?.emailVerified) return false;
-
-      //TODO: Implement 2FA
-
-      return true;
-    },
-    async redirect({ url, baseUrl }) {
-      return baseUrl;
+  sessionCookie: {
+    attributes: {
+      secure: process.env.NODE_ENV === "production",
     },
   },
 });
+
+export const validateRequest = cache(
+  async (): Promise<
+    { user: User; session: Session } | { user: null; session: null }
+  > => {
+    const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null;
+    if (!sessionId) {
+      return {
+        user: null,
+        session: null,
+      };
+    }
+
+    const result = await lucia.validateSession(sessionId);
+    // next.js throws when you attempt to set cookie when rendering page
+    try {
+      if (result.session && result.session.fresh) {
+        const sessionCookie = lucia.createSessionCookie(result.session.id);
+        cookies().set(
+          sessionCookie.name,
+          sessionCookie.value,
+          sessionCookie.attributes
+        );
+      }
+      if (!result.session) {
+        const sessionCookie = lucia.createBlankSessionCookie();
+        cookies().set(
+          sessionCookie.name,
+          sessionCookie.value,
+          sessionCookie.attributes
+        );
+      }
+    } catch {}
+    return result;
+  }
+);
+
+// IMPORTANT!
+declare module "lucia" {
+  interface Register {
+    Lucia: typeof lucia;
+    DatabaseUserAttributes: DatabaseUserAttributes;
+  }
+}
+
+interface DatabaseUserAttributes {
+  name: string;
+}

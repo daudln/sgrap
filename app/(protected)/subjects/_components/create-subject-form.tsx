@@ -12,9 +12,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import useCreateSubject from "@/hooks/subject/use-create-subject";
 import { CreateSubjectInput, createSubjectSchema } from "@/schema/subject";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -32,16 +33,17 @@ const SUBJECT_CATEGORIES = [
 
 interface CreateSubjectProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
+  defaultValues?: CreateSubjectInput;
 }
 
-const CreateSubjectForm = ({ setOpen }: CreateSubjectProps & {}) => {
+const CreateSubjectForm = ({
+  setOpen,
+  defaultValues,
+}: CreateSubjectProps & {}) => {
+  const mutation = useCreateSubject();
   const form = useForm<CreateSubjectInput>({
     resolver: zodResolver(createSubjectSchema),
-    defaultValues: {
-      name: "",
-      code: "",
-      description: "",
-    },
+    defaultValues: defaultValues,
   });
   const handleOptionChange = useCallback(
     (value: string) => {
@@ -49,7 +51,6 @@ const CreateSubjectForm = ({ setOpen }: CreateSubjectProps & {}) => {
     },
     [form]
   );
-  const queryClient = useQueryClient();
 
   const deleteMutation = useMutation({
     mutationFn: createSubject,
@@ -58,9 +59,6 @@ const CreateSubjectForm = ({ setOpen }: CreateSubjectProps & {}) => {
         id: "create-new-subject",
       });
 
-      await queryClient.invalidateQueries({
-        queryKey: ["subjects"],
-      });
       form.reset();
       setOpen((prev) => !prev);
     },
@@ -72,7 +70,7 @@ const CreateSubjectForm = ({ setOpen }: CreateSubjectProps & {}) => {
   });
 
   const onSubmit = (data: CreateSubjectInput) => {
-    deleteMutation.mutate(data);
+    mutation.mutate(data);
   };
   return (
     <Form {...form}>

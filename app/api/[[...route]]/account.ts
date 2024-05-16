@@ -1,10 +1,10 @@
-import prisma from "@/lib/utils";
-import { getAuthUser } from "@hono/auth-js";
+import db from "@/db";
+import { validateRequest } from "@/auth";
 import { Hono } from "hono";
 
 const accountRoute = new Hono().basePath("/account").get("/", async (c) => {
-  const auth = await getAuthUser(c);
-  if (!auth?.token?.sub)
+  const { user } = await validateRequest();
+  if (!user?.id)
     return c.json(
       {
         status: 401,
@@ -13,15 +13,13 @@ const accountRoute = new Hono().basePath("/account").get("/", async (c) => {
       },
       401
     );
-  const account = await prisma.user.findUnique({
-    where: {
-      id: auth.token.sub,
-    },
-    select: {
+  const id = user.id;
+  const account = await db.query.user.findFirst({
+    where: (user, { eq }) => eq(user.id, id),
+    columns: {
       id: true,
       name: true,
       email: true,
-      type: true,
     },
   });
   return c.json({

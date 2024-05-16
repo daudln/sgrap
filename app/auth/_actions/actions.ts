@@ -1,15 +1,17 @@
 "use server";
 
-import prisma from "@/lib/utils";
+import { lucia } from "@/auth";
+import db from "@/db";
 import {
-  forgotPasswordSchema,
-  loginSchema,
-  registerSchema,
-  resetPasswordSchema,
-  verifyEmailSchema,
-} from "@/schema/auth";
-import { createSafeActionClient } from "next-safe-action";
+  resetPasswordToken,
+  signInSchema,
+  signUpSchema,
+  user,
+  verificationToken,
+} from "@/db/schema/uaa";
+import { sendForgotPasswordEmail, sendVerificationEmail } from "@/email/mail";
 import {
+  comparePassword,
   generateResetPasswordToken,
   generateVerificationToken,
   getResetPasswordTokenByToken,
@@ -17,14 +19,22 @@ import {
   getVerificationTokenByToken,
   hashPassword,
 } from "@/lib/auth";
-import { signIn } from "@/auth";
-import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
-import { AuthError } from "next-auth";
-import { sendForgotPasswordEmail, sendVerificationEmail } from "@/email/mail";
+import { validateRequest } from "@/auth";
+import ms from "@/lib/ms";
+import {
+  forgotPasswordSchema,
+  resetPasswordSchema,
+  verifyEmailSchema,
+} from "@/schema/auth";
+import { eq } from "drizzle-orm";
+import { generateId } from "lucia";
+import { createSafeActionClient } from "next-safe-action";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export const action = createSafeActionClient();
 
-export const login = action(loginSchema, async ({ email, password }) => {
+export const login = action(signInSchema, async ({ email, password }) => {
   const user = await getUserByEmail(email);
   if (!user || !user.email || !user.password) {
     return {
@@ -44,7 +54,7 @@ export const login = action(loginSchema, async ({ email, password }) => {
         message: "Something went wrong",
       };
     }
-    const verificationLink = `${process.env.DOMAIN_URL}/auth/verify-email?token=${verificationToken.token}`;
+    const verificationLink = `${process.env.NEXT_PUBLIC_APP_URL}/auth/verify-email?token=${verificationToken.token}`;
     const emailContent = `<p>Click <a href="${verificationLink}">here</a> to verify your email</p>`;
     await sendVerificationEmail(user.email, "Email Verification", emailContent);
     return {
@@ -54,67 +64,52 @@ export const login = action(loginSchema, async ({ email, password }) => {
     };
   }
 
-  try {
-    await signIn("credentials", {
-      email,
-      password,
-      redirectTo: DEFAULT_LOGIN_REDIRECT,
-    });
-  } catch (error) {
-    if (error instanceof AuthError) {
-      switch (error.type) {
-        case "CredentialsSignin":
-          return {
-            status: 403,
-            success: false,
-            message: "Invalid Credentials",
-          };
-        default:
-          return {
-            status: 403,
-            success: false,
-            message: "Something went wrong",
-          };
-      }
-    }
-    throw error;
+  const isValidPassword = await comparePassword(password, user.password);
+  if (!isValidPassword) {
+    return {
+      status: 403,
+      success: false,
+      message: "Invalid Credentials",
+    };
   }
+
+  const session = await lucia.createSession(user.id, ms("1h"));
+  const sessionCookie = lucia.createSessionCookie(session.id);
+  cookies().set(
+    sessionCookie.name,
+    sessionCookie.value,
+    sessionCookie.attributes
+  );
+  return redirect("/");
 });
 
-export const register = action(
-  registerSchema,
-  async ({ name, email, password }) => {
-    const existingUser = await prisma.user.findFirst({
-      where: {
-        OR: [{ email }, { name }],
-      },
-    });
+export const signUp = action(signUpSchema, async (values) => {
+  const existingUser = await getUserByEmail(values.email);
+  if (existingUser) {
+    return {
+      status: 403,
+      success: false,
+      message: "User with this email already exists",
+    };
+  }
+  const hashedPassword = await hashPassword(values.password);
+  const userId = generateId(15);
 
-    if (existingUser) {
-      return {
-        status: 403,
-        success: false,
-        message: "User with this email or name already exists",
-      };
-    }
-    const hashedPassword = await hashPassword(password);
-    const user = await prisma.user.create({
-      data: {
-        name,
-        email,
+  try {
+    await db
+      .insert(user)
+      .values({
+        id: userId,
+        email: values.email,
+        name: values.name,
         password: hashedPassword,
-      },
-    });
+      })
+      .returning({
+        id: user.id,
+        email: user.email,
+      });
 
-    if (!user) {
-      return {
-        status: 403,
-        success: false,
-        message: "Something went wrong",
-      };
-    }
-
-    const verificationToken = await generateVerificationToken(email);
+    const verificationToken = await generateVerificationToken(values.email);
     if (!verificationToken) {
       return {
         status: 500,
@@ -122,21 +117,53 @@ export const register = action(
         message: "Something went wrong",
       };
     }
+
     await sendVerificationEmail(
-      email,
+      values.email,
       "Email verification",
-      `<p>Please click <a href="${process.env.DOMAIN_URL}/auth/verify-email?token=${verificationToken?.token}">here</a> to verify your email</p>`,
+      `<p>Please click <a href="${process.env.NEXT_PUBLIC_APP_URL}/auth/verify-email?token=${verificationToken?.token}">here</a> to verify your email</p>`,
       verificationToken?.token!
     );
 
     return {
-      status: 200,
       success: true,
-      message: "User created successfully. Verified your email.",
-      data: user,
+      message: "Success! Please check your email to verify your account.",
+      data: {
+        userId,
+      },
+    };
+  } catch (error: any) {
+    return {
+      error: error?.message,
     };
   }
-);
+});
+
+export const signOut = async () => {
+  try {
+    const { session } = await validateRequest();
+
+    if (!session) {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
+    await lucia.invalidateSession(session.id);
+
+    const sessionCookie = lucia.createBlankSessionCookie();
+
+    cookies().set(
+      sessionCookie.name,
+      sessionCookie.value,
+      sessionCookie.attributes
+    );
+  } catch (error: any) {
+    return {
+      error: error?.message,
+    };
+  }
+};
 
 export const resetPassword = action(
   resetPasswordSchema,
@@ -148,15 +175,18 @@ export const resetPassword = action(
         message: "Missing token",
       };
     }
-    const resetPasswordToken = await getResetPasswordTokenByToken(token);
-    if (!resetPasswordToken) {
+    const existingResetPasswordToken = await getResetPasswordTokenByToken(
+      token
+    );
+    if (!existingResetPasswordToken) {
       return {
         status: 403,
         success: false,
         message: "Invalid token or expired",
       };
     }
-    const hasExpired = new Date(resetPasswordToken.expires) < new Date();
+    const hasExpired =
+      new Date(existingResetPasswordToken.expires) < new Date();
     if (hasExpired) {
       return {
         status: 403,
@@ -164,8 +194,8 @@ export const resetPassword = action(
         message: "Invalid token or expired",
       };
     }
-    const user = await getUserByEmail(resetPasswordToken.email);
-    if (!user) {
+    const existingUser = await getUserByEmail(existingResetPasswordToken.email);
+    if (!existingUser) {
       return {
         status: 403,
         success: false,
@@ -174,20 +204,17 @@ export const resetPassword = action(
     }
 
     const hashedPassword = await hashPassword(password);
-    await prisma.user.update({
-      where: {
-        email: resetPasswordToken.email,
-      },
-      data: {
+    await db
+      .update(user)
+      .set({
         password: hashedPassword,
-        email: resetPasswordToken.email,
-      },
-    });
-    await prisma.resetPasswordToken.delete({
-      where: {
-        id: resetPasswordToken.id,
-      },
-    });
+        email: existingResetPasswordToken.email,
+      })
+      .where(eq(user.email, existingResetPasswordToken.email));
+
+    await db
+      .delete(resetPasswordToken)
+      .where(eq(resetPasswordToken.token, token));
     return {
       status: 200,
       success: true,
@@ -199,10 +226,8 @@ export const resetPassword = action(
 export const forgotPassword = action(
   forgotPasswordSchema,
   async ({ email }) => {
-    const existingUser = await prisma.user.findFirst({
-      where: {
-        email,
-      },
+    const existingUser = await db.query.user.findFirst({
+      where: (user, { eq }) => eq(user.email, email),
     });
 
     if (!existingUser) {
@@ -214,7 +239,7 @@ export const forgotPassword = action(
     }
 
     const token = await generateResetPasswordToken(email);
-    const resetLink = `<p>Click <a href="${process.env.DOMAIN_URL}/auth/reset-password?token=${token?.token}">here</a> to reset your password</p>`;
+    const resetLink = `<p>Click <a href="${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password?token=${token?.token}">here</a> to reset your password</p>`;
     await sendForgotPasswordEmail(email, "Reset Password", resetLink);
     return {
       status: 200,
@@ -232,15 +257,15 @@ export const verifyEmail = action(verifyEmailSchema, async ({ token }) => {
       message: "Missing token",
     };
   }
-  const verificationToken = await getVerificationTokenByToken(token);
-  if (!verificationToken) {
+  const existingToken = await getVerificationTokenByToken(token);
+  if (!existingToken) {
     return {
       status: 403,
       success: false,
       message: "Invalid token or expired",
     };
   }
-  const hasExpired = new Date(verificationToken.expires) < new Date();
+  const hasExpired = new Date(existingToken.expires) < new Date();
   if (hasExpired) {
     return {
       status: 403,
@@ -249,30 +274,22 @@ export const verifyEmail = action(verifyEmailSchema, async ({ token }) => {
     };
   }
 
-  const user = await getUserByEmail(verificationToken.email);
-  if (!user) {
+  const existingUser = await getUserByEmail(existingToken.email);
+  if (!existingUser) {
     return {
       status: 403,
       success: false,
       message: "Email associated with this token does not exist",
     };
   }
-  await prisma.user.update({
-    where: {
-      id: user.id,
-    },
-    data: {
-      emailVerified: new Date(),
-      email: verificationToken.email,
-    },
-  });
+  await db
+    .update(user)
+    .set({ emailVerified: new Date(), email: existingToken.email })
+    .where(eq(user.id, existingUser.id));
 
-  await prisma.verificationToken.delete({
-    where: {
-      id: verificationToken.id,
-    },
-  });
-
+  await db
+    .delete(verificationToken)
+    .where(eq(verificationToken.email, verificationToken.email));
   return {
     status: 200,
     success: true,

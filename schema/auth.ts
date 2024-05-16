@@ -7,7 +7,7 @@ export const loginSchema = z.object({
 
 export const registerSchema = loginSchema
   .extend({
-    name: z.string().min(1, { message: "Username is required" }),
+    name: z.string().min(1, { message: "Name is required" }),
     passwordConfirmation: z.string().min(1, {
       message: "Password confirmation is required",
     }),

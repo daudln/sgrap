@@ -15,11 +15,11 @@ import { useForm } from "react-hook-form";
 import ActionButton from "@/components/action-button";
 import CardWrapper from "@/components/card-wrapper";
 import { RegisterInput, registerSchema } from "@/schema/auth";
-import { register } from "../../../_actions/actions";
+import { signUp } from "../../_actions/actions";
 import { toast } from "sonner";
 
 export function RegisterForm() {
-  const { execute, status } = useAction(register, {
+  const { execute, status } = useAction(signUp, {
     onSuccess: (data) => {
       if (!data.success) {
         toast.dismiss("registering-user");
@@ -69,9 +69,9 @@ export function RegisterForm() {
               name="name"
               render={({ field }) => (
                 <FormItem className="grid gap-2">
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="student" />
+                    <Input {...field} placeholder="Daud Linus Namayala" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -89,7 +89,7 @@ export function RegisterForm() {
                     <Input
                       {...field}
                       type="email"
-                      placeholder="student@example.com"
+                      placeholder="daudnamayala@example.com"
                     />
                   </FormControl>
                   <FormMessage />

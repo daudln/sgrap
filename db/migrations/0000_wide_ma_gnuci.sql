@@ -1,23 +1,29 @@
 DO $$ BEGIN
- CREATE TYPE "gender" AS ENUM('MALE', 'FEMALE');
+ CREATE TYPE "public"."gender" AS ENUM('MALE', 'FEMALE');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- CREATE TYPE "profile_type" AS ENUM('STUDENT', 'TEACHER');
+ CREATE TYPE "public"."profile_type" AS ENUM('STUDENT', 'TEACHER');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- CREATE TYPE "classLevel" AS ENUM('FORM_ONE', 'FORM_TWO', 'FORM_THREE', 'FORM_FOUR', 'FORM_FIVE', 'FORM_SIX');
+ CREATE TYPE "public"."classLevel" AS ENUM('FORM_ONE', 'FORM_TWO', 'FORM_THREE', 'FORM_FOUR', 'FORM_FIVE', 'FORM_SIX');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- CREATE TYPE "user_type" AS ENUM('ADMIN', 'USER');
+ CREATE TYPE "public"."subject_category" AS ENUM('ART', 'SCIENCE');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ CREATE TYPE "public"."user_type" AS ENUM('ADMIN', 'USER');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -51,6 +57,14 @@ CREATE TABLE IF NOT EXISTS "student" (
 	"is_active" boolean DEFAULT true NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "subject" (
+	"id" varchar(100) PRIMARY KEY NOT NULL,
+	"code" varchar(100) NOT NULL,
+	"name" varchar(100) NOT NULL,
+	"description" varchar(100),
+	"category" "subject_category" NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "teacher" (
 	"profile_id" varchar(100) PRIMARY KEY NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -59,10 +73,9 @@ CREATE TABLE IF NOT EXISTS "teacher" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "password_reset_token" (
-	"token" varchar(100) NOT NULL,
+	"id" varchar(100) PRIMARY KEY NOT NULL,
 	"email" varchar(100) NOT NULL,
 	"expires" timestamp NOT NULL,
-	CONSTRAINT "password_reset_token_token_email_pk" PRIMARY KEY("token","email"),
 	CONSTRAINT "password_reset_token_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
@@ -73,52 +86,52 @@ CREATE TABLE IF NOT EXISTS "session" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "user" (
-	"id" varchar(100) PRIMARY KEY NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"name" text,
 	"email" text NOT NULL,
-	"role" "user_type" DEFAULT 'USER' NOT NULL,
-	"emai_verified" timestamp,
+	"email_verified" timestamp,
+	"image" text,
 	"password" text,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"is_active" boolean DEFAULT true NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL,
+	"isActive" boolean DEFAULT true NOT NULL,
+	"role" "user_type" DEFAULT 'USER' NOT NULL,
 	CONSTRAINT "user_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "email_verification_token" (
-	"token" varchar NOT NULL,
-	"email" text NOT NULL,
+CREATE TABLE IF NOT EXISTS "verification_token" (
+	"id" varchar(100) PRIMARY KEY NOT NULL,
+	"email" varchar(100) NOT NULL,
 	"expires" timestamp NOT NULL,
-	CONSTRAINT "email_verification_token_token_email_pk" PRIMARY KEY("token","email"),
-	CONSTRAINT "email_verification_token_email_unique" UNIQUE("email")
+	CONSTRAINT "verification_token_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "profile" ADD CONSTRAINT "profile_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "profile" ADD CONSTRAINT "profile_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "profile" ADD CONSTRAINT "profile_school_id_school_id_fk" FOREIGN KEY ("school_id") REFERENCES "school"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "profile" ADD CONSTRAINT "profile_school_id_school_id_fk" FOREIGN KEY ("school_id") REFERENCES "public"."school"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "student" ADD CONSTRAINT "student_profile_id_profile_user_id_fk" FOREIGN KEY ("profile_id") REFERENCES "profile"("user_id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "student" ADD CONSTRAINT "student_profile_id_profile_user_id_fk" FOREIGN KEY ("profile_id") REFERENCES "public"."profile"("user_id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "teacher" ADD CONSTRAINT "teacher_profile_id_profile_user_id_fk" FOREIGN KEY ("profile_id") REFERENCES "profile"("user_id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "teacher" ADD CONSTRAINT "teacher_profile_id_profile_user_id_fk" FOREIGN KEY ("profile_id") REFERENCES "public"."profile"("user_id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

@@ -1,5 +1,4 @@
 import { zValidator } from "@hono/zod-validator";
-import prisma from "@/lib/utils";
 import { Hono } from "hono";
 import { getEntitySchema } from "./schema";
 import db from "@/db";
@@ -8,22 +7,21 @@ import { school } from "@/db/schema/school";
 const schoolsRoute = new Hono()
   .basePath("/schools")
   .get("/", async (c) => {
-    const schools = await db.select().from(school);
+    const schools = await db
+      .select({ id: school.id, name: school.name, motto: school.motto })
+      .from(school);
     const response = {
       status: 200,
-      success: true,
-      message: "Schools fetched successfully",
       data: schools,
     };
+    console.log(schools);
     return c.json(response);
   })
   .get("/:id", zValidator("param", getEntitySchema), async (c) => {
     const { id } = c.req.valid("param");
-    const school = await prisma.school.findUnique({
-      where: {
-        id: id,
-      },
-      select: {
+    const school = await db.query.school.findFirst({
+      where: (school, { eq }) => eq(school.id, id),
+      columns: {
         id: true,
         name: true,
         motto: true,

@@ -4,10 +4,10 @@ import env from "@/env";
 export default defineConfig({
   schema: "./db/schema",
   out: "./db/migrations",
-  driver: "pg",
+  dialect: "postgresql",
   dbCredentials: {
-    connectionString: env.DATABASE_URL,
+    url: env.DATABASE_URL,
   },
-  verbose: true,
+  verbose: env.NODE_ENV === "development",
   strict: true,
 });

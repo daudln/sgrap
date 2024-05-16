@@ -3,6 +3,7 @@ import { createId as cuid } from "@paralleldrive/cuid2";
 
 export const school = pgTable("school", {
   id: varchar("id", { length: 100 })
+    .notNull()
     .primaryKey()
     .$defaultFn(() => cuid()),
   name: varchar("name", { length: 100 }).notNull(),

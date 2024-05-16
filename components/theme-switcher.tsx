@@ -26,19 +26,19 @@ export function ThemeSwitcher() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem
-          onClick={() => setTheme("light")}
+          onSelect={() => setTheme("light")}
           className="cursor-pointer"
         >
           Light
         </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={() => setTheme("dark")}
+          onSelect={() => setTheme("dark")}
           className="cursor-pointer"
         >
           Dark
         </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={() => setTheme("system")}
+          onSelect={() => setTheme("system")}
           className="cursor-pointer"
         >
           System

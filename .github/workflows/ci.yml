@@ -12,7 +12,7 @@ on:
 env:
   DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/sgrap_db?schema=public"
   AUTH_SECRET: "/bDrPSf/91hB1NdUrudEhZgSMLsEwfcivgLMupwsXtA="
-  DOMAIN_URL: "http://localhost:3000"
+  NEXT_PUBLIC_APP_URL: "http://localhost:3000"
 
 jobs:
   build:

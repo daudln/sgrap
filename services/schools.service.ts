@@ -1,6 +1,6 @@
-import { School } from "@prisma/client";
-import APIClient from "./api.service";
+// import { School } from "@prisma/client";
+// import APIClient from "./api.service";
 
-const schoolClient = new APIClient<School>("/api/schools");
+// const schoolClient = new APIClient<School>("/api/schools");
 
-export default schoolClient;
+// export default schoolClient;

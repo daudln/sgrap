@@ -1,6 +1,8 @@
+import db from "@/db";
+import { resetPasswordToken, user, verificationToken } from "@/db/schema/uaa";
 import ms from "@/lib/ms";
-import prisma from "@/lib/utils";
 import bcrypt from "bcryptjs";
+import { eq } from "drizzle-orm";
 
 export const hashPassword = async (password: string) => {
   try {
@@ -25,29 +27,27 @@ export const comparePassword = async (
 };
 
 export const getUserByEmail = async (email: string) => {
-  const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-  });
-  return user;
+  const [_user] = await db.select().from(user).where(eq(user.email, email));
+  return _user;
 };
 
 export const getUserById = async (id: string) => {
-  const user = await prisma.user.findUnique({
-    where: {
-      id,
-    },
-  });
-  return user;
+  const [_user] = await db
+    .select({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      name: user.name,
+    })
+    .from(user)
+    .where(eq(user.id, id));
+  return _user;
 };
 
 export const getVerificationTokenByEmail = async (email: string) => {
   try {
-    const verificationToken = await prisma.verificationToken.findFirst({
-      where: {
-        email,
-      },
+    const verificationToken = await db.query.verificationToken.findFirst({
+      where: (token, { eq }) => eq(token.email, email),
     });
     return verificationToken;
   } catch (error) {
@@ -57,12 +57,10 @@ export const getVerificationTokenByEmail = async (email: string) => {
 
 export const getResetPasswordTokenByEmail = async (email: string) => {
   try {
-    const verificationToken = await prisma.resetPasswordToken.findFirst({
-      where: {
-        email,
-      },
+    const resetPasswordToken = await db.query.resetPasswordToken.findFirst({
+      where: (token, { eq }) => eq(token.email, email),
     });
-    return verificationToken;
+    return resetPasswordToken;
   } catch (error) {
     return null;
   }
@@ -70,12 +68,10 @@ export const getResetPasswordTokenByEmail = async (email: string) => {
 
 export const getResetPasswordTokenByToken = async (token: string) => {
   try {
-    const verificationToken = await prisma.resetPasswordToken.findUnique({
-      where: {
-        token,
-      },
+    const resetPasswordToken = await db.query.resetPasswordToken.findFirst({
+      where: (tb, { eq }) => eq(tb.token, token),
     });
-    return verificationToken;
+    return resetPasswordToken;
   } catch (error) {
     return null;
   }
@@ -83,10 +79,8 @@ export const getResetPasswordTokenByToken = async (token: string) => {
 
 export const getVerificationTokenByToken = async (token: string) => {
   try {
-    const verificationToken = await prisma.verificationToken.findUnique({
-      where: {
-        token,
-      },
+    const verificationToken = await db.query.verificationToken.findFirst({
+      where: (tb, { eq }) => eq(tb.token, token),
     });
     return verificationToken;
   } catch (error) {
@@ -96,22 +90,21 @@ export const getVerificationTokenByToken = async (token: string) => {
 
 export const generateVerificationToken = async (email: string) => {
   try {
-    const verificationToken = await getVerificationTokenByEmail(email);
-    if (verificationToken) {
-      await prisma.verificationToken.delete({
-        where: {
-          id: verificationToken.id,
-        },
-      });
+    const token = await getVerificationTokenByEmail(email);
+    console.log(token);
+    if (token) {
+      await db
+        .delete(verificationToken)
+        .where(eq(verificationToken.email, token.email));
     }
-
-    const token = await prisma.verificationToken.create({
-      data: {
+    const [newToken] = await db
+      .insert(verificationToken)
+      .values({
         email,
         expires: new Date(Date.now() + ms("24h")),
-      },
-    });
-    return token;
+      })
+      .returning();
+    return newToken;
   } catch (error) {
     return null;
   }
@@ -119,22 +112,20 @@ export const generateVerificationToken = async (email: string) => {
 
 export const generateResetPasswordToken = async (email: string) => {
   try {
-    const resetPasswordToken = await getResetPasswordTokenByEmail(email);
-    if (resetPasswordToken) {
-      await prisma.resetPasswordToken.delete({
-        where: {
-          id: resetPasswordToken.id,
-        },
-      });
+    const token = await getResetPasswordTokenByEmail(email);
+    if (token) {
+      await db
+        .delete(resetPasswordToken)
+        .where(eq(resetPasswordToken.email, token.email));
     }
-
-    const token = await prisma.resetPasswordToken.create({
-      data: {
+    const [newToken] = await db
+      .insert(resetPasswordToken)
+      .values({
         email,
         expires: new Date(Date.now() + ms("24h")),
-      },
-    });
-    return token;
+      })
+      .returning();
+    return newToken;
   } catch (error) {
     return null;
   }

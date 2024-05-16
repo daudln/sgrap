@@ -10,7 +10,7 @@ variables:
   POSTGRES_INITDB_ARGS: "--encoding=UTF8 --data-checksums"
   DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/sgrap_db?schema=public"
   AUTH_SECRET: "j1fjpU7H9ozNamG4Nn2r1UDF7r4VzcuwSe3Ve6XtWac="
-  DOMAIN_URL: "http://localhost:3000"
+  NEXT_PUBLIC_APP_URL: "http://localhost:3000"
 
 default:
   services:

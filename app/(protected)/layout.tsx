@@ -1,9 +1,11 @@
-import { Bell, CircleUser, Menu, Package2 } from "lucide-react";
+import { CircleUser, Package2 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
-import { auth, signOut } from "@/auth";
+import { signOut } from "@/app/auth/_actions/actions";
+import Navbar from "@/components/navbar";
 import NavigationMenu from "@/components/navigation-menu";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,17 +15,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { validateRequest } from "@/auth";
 import { NAVIGATION_LINK } from "@/lib/navlinks";
-import { ThemeSwitcher } from "@/components/theme-switcher";
-import Navbar from "@/components/navbar";
+import { redirect } from "next/navigation";
 
 export default async function layout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth();
+  const { user } = await validateRequest();
+  if (!user) {
+    return redirect("auth/login");
+  }
+
   return (
     <div>
       <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -53,7 +58,7 @@ export default async function layout({
           <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
             <Navbar />
             <div className="w-full text-end">
-              <p>Hi, {session?.user.name}</p>
+              <p>Hi, {user.name}</p>
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -74,12 +79,7 @@ export default async function layout({
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="cursor-pointer hover:text-red-500 transition-all">
-                  <form
-                    action={async () => {
-                      "use server";
-                      await signOut();
-                    }}
-                  >
+                  <form action={signOut}>
                     <Button
                       type="submit"
                       variant="link"

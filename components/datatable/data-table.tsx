@@ -3,6 +3,7 @@
 import {
   ColumnDef,
   ColumnFiltersState,
+  Row,
   SortingState,
   VisibilityState,
   flexRender,
@@ -26,8 +27,8 @@ import {
 } from "@/components/ui/table";
 
 import { DataTableToolbar, FilterProps } from "@/components/datatable/toolbar";
-import { DataTablePagination } from "./pagination";
-import { DataTableSkeleton } from "./data-table-skeleton";
+import { DataTablePagination } from "@/components/datatable/pagination";
+import { DataTableSkeleton } from "@/components/datatable/data-table-skeleton";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -36,6 +37,10 @@ interface DataTableProps<TData, TValue> {
   filters?: FilterProps[];
   getDataForExport?: (item: TData) => any;
   isLoading?: boolean;
+  hasColumnSelection?: boolean;
+  onDelete?: (rows: Row<TData>[]) => void;
+  disabled?: boolean;
+  hasUploadButton?: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -45,6 +50,10 @@ export function DataTable<TData, TValue>({
   filters,
   getDataForExport,
   isLoading,
+  hasColumnSelection = false,
+  onDelete,
+  disabled,
+  hasUploadButton,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -86,6 +95,8 @@ export function DataTable<TData, TValue>({
         placeholder={filterPlaceholder}
         filters={filters}
         getDataForExport={getDataForExport}
+        onDelete={onDelete}
+        hasUploadButton={hasUploadButton}
       />
       <div className="rounded-md border">
         <Table>
@@ -137,7 +148,10 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} />
+      <DataTablePagination
+        hasColumnSelection={hasColumnSelection}
+        table={table}
+      />
     </div>
   );
 }

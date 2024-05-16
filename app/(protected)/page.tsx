@@ -1,42 +1,26 @@
+import { validateRequest } from "@/auth";
 import DashboardCard from "@/components/dashboard-card";
-import React from "react";
-import { PiStudent } from "react-icons/pi";
+import db from "@/db";
+import { school } from "@/db/schema/school";
+import { subject } from "@/db/schema/subject";
+import teacher from "@/db/schema/teacher";
+import { count } from "drizzle-orm";
+import { redirect } from "next/navigation";
 import { GiTeacher } from "react-icons/gi";
-import { MdSubject } from "react-icons/md";
 import { LiaSchoolSolid } from "react-icons/lia";
-import prisma from "@/lib/utils";
-import PieChartComponent from "@/components/pie-chart";
-import { Card } from "@/components/ui/card";
+import { MdSubject } from "react-icons/md";
+import { PiStudent } from "react-icons/pi";
 
 export default async function Dashboard() {
-  const schools = await prisma.school.count();
-  const subjects = await prisma.subject.count();
-  const teachers = await prisma.teacher.count();
-  const students = await prisma.student.count();
-  const maleStudentCount = await prisma.profile.count({
-    where: {
-      gender: "MALE",
-      type: "STUDENT",
-    },
-  });
-  const femaleStudentCount = await prisma.profile.count({
-    where: {
-      gender: "FEMALE",
-      type: "STUDENT",
-    },
-  });
-  console.log(femaleStudentCount);
+  const [schools] = await db.select({ count: count() }).from(school);
+  const [subjects] = await db.select({ count: count() }).from(subject);
+  const [teachers] = await db.select({ count: count() }).from(teacher);
+  const { user } = await validateRequest();
+  if (!user) {
+    return redirect("auth/login");
+  }
+  const [students] = await db.select({ count: count() }).from(school);
 
-  const studentPieChartData = [
-    {
-      name: "Male",
-      value: 30,
-    },
-    {
-      name: "Female",
-      value: 2,
-    },
-  ];
   const colors = ["#FF8042", "#AF19FF"];
   return (
     <div className="p-6 grid gap-4">
@@ -44,32 +28,32 @@ export default async function Dashboard() {
         <DashboardCard
           icon={<PiStudent className="h-5 w-5" />}
           title="Students"
-          subtitle={students}
+          subtitle={students.count}
           description="Total student registered"
         />
         <DashboardCard
           icon={<GiTeacher className="h-5 w-5" />}
           title="Teachers"
-          subtitle={teachers}
+          subtitle={teachers.count}
           description="Total teachers registered"
         />
         <DashboardCard
           icon={<LiaSchoolSolid className="h-5 w-5" />}
           title="Schools"
-          subtitle={schools}
+          subtitle={schools.count}
           description="Total schools registered"
         />
 
         <DashboardCard
           icon={<MdSubject className="h-5 w-5" />}
           title="Subjects"
-          subtitle={subjects}
+          subtitle={subjects.count}
           description="Total subjects registered"
         />
       </div>
-      <Card>
+      {/* <Card>
         <PieChartComponent data={studentPieChartData} colors={colors} />
-      </Card>
+      </Card> */}
     </div>
   );
 }

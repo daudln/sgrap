@@ -7,11 +7,11 @@ services:
       # NODE_ENV: production
       DATABASE_URL: postgres://postgres:postgres@db:5432/sgrap_db
       AUTH_SECRET: 8d3c8782320c95debf217e6363308f3ea670e1952733a261b0efdf0c2b9e9a5a
-      DOMAIN_URL: http://localhost:3000
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
       DEFAULT_EMAIL_FROM: admin@localhost.com
       EMAIL_HOST: smtp4dev
-      EMAIL_HOST_USER: 
-      EMAIL_HOST_PASSWORD: 
+      EMAIL_HOST_USER:
+      EMAIL_HOST_PASSWORD:
       SMTP_PORT: 2525
     ports:
       - 3000:3000
