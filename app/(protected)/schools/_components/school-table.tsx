@@ -1,7 +1,6 @@
 "use client";
 
-import useSchools from "@/hooks/useSchools";
-import { School } from "@prisma/client";
+// import useSchools from "@/hooks/useSchools";
 import { ColumnDef, FilterFn } from "@tanstack/react-table";
 
 import { useState } from "react";
@@ -21,7 +20,13 @@ import { BsTrash3 } from "react-icons/bs";
 import { LuPencil } from "react-icons/lu";
 import DeleteSchoolDialog from "./delete-school";
 
-type SchoolRow = School;
+type SchoolRow = {
+  name: string;
+  motto: string;
+  id: string;
+};
+
+type School = SchoolRow;
 
 function RowActions({ school }: { school: SchoolRow }) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -32,12 +37,12 @@ function RowActions({ school }: { school: SchoolRow }) {
       <DeleteSchoolDialog
         open={showDeleteDialog}
         setOpen={setShowDeleteDialog}
-        schoolId={school.uuid}
+        schoolId={school.id}
       />
       <UpdatesShoolDialog
         setOpen={setShowEditDialog}
         open={showEditDialog}
-        schoolId={school.uuid}
+        schoolId={school.id}
       />
 
       <DropdownMenu>
@@ -74,7 +79,7 @@ function RowActions({ school }: { school: SchoolRow }) {
               setShowEditDialog((prev) => !prev);
             }}
           >
-            <ViewData link={`/schools/${school.uuid}`} />
+            <ViewData link={`/schools/${school.id}`} />
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -86,6 +91,7 @@ import { DataTable } from "@/components/datatable/data-table";
 import CreateschoolDialog from "./create-school-dialog";
 import UpdatesShoolDialog from "./update-school-dialog";
 import ViewData from "@/components/view-data";
+import useGetSchools from "@/hooks/school/use-get-schools";
 
 const filterFn: FilterFn<School> = (
   row,
@@ -141,7 +147,7 @@ const columns: ColumnDef<SchoolRow>[] = [
 ];
 
 const SchoolTable = () => {
-  const { data, isLoading, error } = useSchools();
+  const { data, isLoading } = useGetSchools();
   const [open, setOpen] = useState(false);
 
   return (

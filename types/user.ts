@@ -1,28 +1,38 @@
-import { School, Student, Teacher, User } from "@prisma/client";
-
-export interface ProfileData {
-  userId: string;
-  uuid: string;
-  createdAt: Date;
-  updatedAt: Date;
-  isActive: true;
-  phoneNumber: string;
-  schoolId: string;
-  gender: string;
-  Student: Student | null;
-  Teacher: Teacher | null;
-  school: School;
-}
-
-export interface UserData {
-  id: string;
+export type User = {
   name: string | null;
   email: string | null;
-  type: "STUDENT" | "TEACHER";
-  emailVerified: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
-  isActive: boolean;
+  id: string;
+};
+
+export type Profile = {
+  id: string;
   image: string | null;
-  Profile: ProfileData;
-}
+  gender: "MALE" | "FEMALE";
+  phoneNumber: string | null;
+};
+
+export type School = {
+  name: string;
+  motto: string;
+};
+
+export type Student = {
+  classLevel: string;
+};
+
+export type StudentData = {
+  profile: Profile;
+  user: User;
+  student: Student;
+  school: School;
+};
+
+export type Teacher = {
+  teacher: Omit<StudentData, "student">;
+};
+
+export type TeacherData = {
+  profile: Profile;
+  user: User;
+  school: School;
+};

@@ -11,41 +11,42 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useSchoolOptions } from "@/hooks/useSchools";
-import { CLASS_OPTIONS, GENDER_OPTIONS } from "@/lib/constants";
-import { UpdateProfileInput } from "@/schema/profile";
-import { UpdateStudentInput, updateStudentSchema } from "@/schema/student";
-import { UserData } from "@/types/user";
+import { createStudentSchema } from "@/db/schema/student";
+import { useSchoolOptions } from "@/hooks/school/use-get-schools";
+import { useUpdateStudent } from "@/hooks/student/use-update-student";
+import {
+  CLASS_OPTIONS,
+  Gender,
+  GENDER_OPTIONS,
+  StudentClassLevel,
+} from "@/lib/constants";
+import { StudentData } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Gender, StudentClass } from "@prisma/client";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useCallback } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { updateStudent } from "../_actions/actions";
+import { z } from "zod";
 
 interface UpdateProfileProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
-  profile: UserData;
+  profile: StudentData;
 }
 
 const UpdateStudentForm = ({ profile, setOpen }: UpdateProfileProps) => {
-  const [firstName, middleName, lastName] = profile.name?.split(" ")!;
-  const form = useForm<UpdateStudentInput>({
-    resolver: zodResolver(updateStudentSchema),
+  const [firstName, middleName, lastName] = profile.user.name?.split(" ")!;
+  const form = useForm<z.infer<typeof createStudentSchema>>({
+    resolver: zodResolver(createStudentSchema),
     defaultValues: {
       firstName: firstName,
       middleName: middleName,
       lastName: lastName,
-      uuid: profile.id,
-      school: profile.Profile?.school?.name || "",
-      gender: profile.Profile.gender as Gender,
-      classLevel: profile.Profile?.Student?.classLevel || ("" as StudentClass),
+      schoolId: profile.school.name || "",
+      gender: profile.profile.gender as Gender,
+      classLevel: profile.student?.classLevel as StudentClassLevel,
     },
   });
   const handleSchoolChange = useCallback(
     (value: string) => {
-      form.setValue("school", value);
+      form.setValue("schoolId", value);
     },
     [form]
   );
@@ -59,35 +60,16 @@ const UpdateStudentForm = ({ profile, setOpen }: UpdateProfileProps) => {
 
   const handleClassChange = useCallback(
     (value: string) => {
-      form.setValue("classLevel", value as StudentClass);
+      form.setValue("classLevel", value as StudentClassLevel);
     },
     [form]
   );
-  const queryClient = useQueryClient();
   const SCHOOLS = useSchoolOptions();
 
-  const updateMutation = useMutation({
-    mutationFn: updateStudent,
-    onSuccess: async ({ data }) => {
-      toast.success(data?.message, {
-        id: "update-profile",
-      });
+  const mutation = useUpdateStudent(profile.user.id);
 
-      await queryClient.invalidateQueries({
-        queryKey: ["students"],
-      });
-      form.reset();
-      setOpen((prev) => !prev);
-    },
-    onError: (error) => {
-      toast.error("Something went wrong", {
-        id: "update-profile",
-      });
-    },
-  });
-
-  const onSubmit = (data: UpdateStudentInput) => {
-    updateMutation.mutate(data);
+  const onSubmit = (data: z.infer<typeof createStudentSchema>) => {
+    mutation.mutate(data);
   };
   return (
     <Form {...form}>
@@ -156,7 +138,7 @@ const UpdateStudentForm = ({ profile, setOpen }: UpdateProfileProps) => {
           />
           <FormField
             control={form.control}
-            name="school"
+            name="schoolId"
             render={({ field }) => (
               <FormItem className="flex flex-col my-2">
                 <FormLabel>School</FormLabel>
@@ -195,7 +177,7 @@ const UpdateStudentForm = ({ profile, setOpen }: UpdateProfileProps) => {
           />
         </div>
 
-        <ActionButton label="Create" status={updateMutation.status} />
+        <ActionButton label="Create" status={mutation.status} />
       </form>
     </Form>
   );

@@ -10,16 +10,15 @@ import {
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
-import { profile } from "./profile";
+import { profile } from "@/db/schema/profile";
 
 export const userRole = pgEnum("user_type", ["ADMIN", "USER"]);
 
 export const user = pgTable("user", {
   id: text("id").notNull().primaryKey(),
   name: text("name"),
-  email: text("email").notNull().unique(),
+  email: text("email").unique(),
   emailVerified: timestamp("email_verified", { mode: "date" }),
-  image: text("image"),
   password: text("password"),
   createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
   updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
@@ -57,6 +56,8 @@ export const resetPasswordToken = pgTable("password_reset_token", {
 export const usersRelations = relations(user, ({ one }) => ({
   profile: one(profile),
 }));
+
+export const userSchema = createInsertSchema(user);
 
 export const createUserSchema = createInsertSchema(user)
   .extend({

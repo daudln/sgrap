@@ -36,7 +36,7 @@ const CreateSchoolForm = ({ setOpen }: CreateSchoolProps) => {
   const createMutation = useMutation({
     mutationFn: createSchool,
     onSuccess: async ({ data }) => {
-      toast.success(data?.message, {
+      toast.success("Hello", {
         id: "create-new-school",
       });
 

@@ -1,4 +1,3 @@
-import prisma from "@/lib/utils";
 import React from "react";
 import SchoolDetail from "../_components/school-detail";
 

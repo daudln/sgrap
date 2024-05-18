@@ -15,15 +15,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import useStudents from "@/hooks/student/useGetStudents";
-import { UserData } from "@/types/user";
+import { StudentData } from "@/types/user";
 import { MoreHorizontal } from "lucide-react";
 import { BsTrash3 } from "react-icons/bs";
 import { LuPencil } from "react-icons/lu";
 import CreateStudentDialog from "./create-student-dialog";
 import DeleteStudentDialog from "./delete-student";
 import UpdateStudentDialog from "./update-student-dialog";
-import { useSchoolFilter } from "@/hooks/useSchools";
 import { formatClassName } from "@/lib/helpers";
 import {
   CLASS_FILTER,
@@ -31,8 +29,9 @@ import {
   INITIAL_IMPORT_RESULTS,
   VARIANTS,
 } from "@/lib/constants";
+import useGetStudents from "@/hooks/student/use-get-students";
 
-function RowActions({ profile }: { profile: UserData }) {
+function RowActions({ profile }: { profile: StudentData }) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
 
@@ -41,7 +40,7 @@ function RowActions({ profile }: { profile: UserData }) {
       <DeleteStudentDialog
         open={showDeleteDialog}
         setOpen={setShowDeleteDialog}
-        id={profile.id}
+        id={profile.user.id}
       />
       <UpdateStudentDialog
         setOpen={setShowEditDialog}
@@ -83,8 +82,8 @@ function RowActions({ profile }: { profile: UserData }) {
   );
 }
 
-const filterFn: FilterFn<UserData> = (row, id, value: string[] | string) => {
-  const searchableRowContent = `${row.original.name} ${row.original.Profile.school.name} ${row.original.Profile.gender} ${row.original.Profile.Student?.classLevel}`;
+const filterFn: FilterFn<StudentData> = (row, id, value: string[] | string) => {
+  const searchableRowContent = `${row.original.user.email} ${row.original.school.motto} ${row.original.school.name} ${row.original.profile.gender} ${row.original.student.classLevel}`;
 
   if (Array.isArray(value)) {
     return value.some((v) => row.getValue(id) === v);
@@ -92,16 +91,15 @@ const filterFn: FilterFn<UserData> = (row, id, value: string[] | string) => {
   return searchableRowContent.toLowerCase().includes(value.toLowerCase());
 };
 
-const getDataForExport = (student: UserData) => ({
-  name: student.name,
-  email: student.email,
-  school: student.Profile.school.name,
-  phoneNumber: student.Profile.phoneNumber,
-  gender: student.Profile.gender,
-  class: student.Profile.Student?.classLevel,
+const getDataForExport = (student: StudentData) => ({
+  name: student.user.name,
+  email: student.user.email,
+  school: student.school.name,
+  gender: student.profile.gender,
+  class: student.student.classLevel,
 });
 
-const columns: ColumnDef<UserData>[] = [
+const columns: ColumnDef<StudentData>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => (
@@ -110,22 +108,22 @@ const columns: ColumnDef<UserData>[] = [
     filterFn: filterFn,
     cell: ({ row }) => (
       <div className="flex gap-2 capitalize">
-        <div className="capitalize">{row.original.name}</div>
+        <div className="capitalize">{row.original.user.name}</div>
       </div>
     ),
   },
-  // {
-  //   accessorKey: "email",
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="Email" />
-  //   ),
-  //   filterFn: filterFn,
-  //   cell: ({ row }) => (
-  //     <div className="flex gap-2">
-  //       <div className="">{row.original.email}</div>
-  //     </div>
-  //   ),
-  // },
+  {
+    accessorKey: "email",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Email" />
+    ),
+    filterFn: filterFn,
+    cell: ({ row }) => (
+      <div className="flex gap-2">
+        <div className="">{row.original.user.email}</div>
+      </div>
+    ),
+  },
   {
     accessorKey: "gender",
     header: ({ column }) => (
@@ -134,22 +132,22 @@ const columns: ColumnDef<UserData>[] = [
     filterFn: filterFn,
     cell: ({ row }) => (
       <div className="flex gap-2">
-        <div className="">{row.original.Profile.gender || "-"}</div>
+        <div className="">{row.original.profile.gender || "-"}</div>
       </div>
     ),
   },
-  // {
-  //   accessorKey: "phone",
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="Phone" />
-  //   ),
-  //   filterFn: filterFn,
-  //   cell: ({ row }) => (
-  //     <div className="flex gap-2">
-  //       <div className="">{row.original.Profile?.phoneNumber || "-"}</div>
-  //     </div>
-  //   ),
-  // },
+  {
+    accessorKey: "phone",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Phone" />
+    ),
+    filterFn: filterFn,
+    cell: ({ row }) => (
+      <div className="flex gap-2">
+        <div className="">{row.original.profile?.phoneNumber || "-"}</div>
+      </div>
+    ),
+  },
   {
     accessorKey: "class",
     header: ({ column }) => (
@@ -159,7 +157,7 @@ const columns: ColumnDef<UserData>[] = [
     cell: ({ row }) => (
       <div className="flex gap-2">
         <div className="">
-          {formatClassName(row.original.Profile?.Student?.classLevel || "-")}
+          {formatClassName(row.original.student.classLevel || "-")}
         </div>
       </div>
     ),
@@ -172,7 +170,7 @@ const columns: ColumnDef<UserData>[] = [
     filterFn: filterFn,
     cell: ({ row }) => (
       <div className="flex gap-2">
-        <div className="">{row.original.Profile?.school?.name || "-"}</div>
+        <div className="">{row.original.school.name || "-"}</div>
       </div>
     ),
   },
@@ -185,9 +183,9 @@ const columns: ColumnDef<UserData>[] = [
 ];
 
 const StudentTable = () => {
-  const { data, isLoading, error } = useStudents();
+  const { data, isLoading, error } = useGetStudents();
   const [open, setOpen] = useState(false);
-  const filters = [useSchoolFilter(), GENDER_FILTER, CLASS_FILTER];
+  const filters = [GENDER_FILTER, CLASS_FILTER];
   const [variant, setVariant] = useState<VARIANTS>(VARIANTS.LIST);
   const onUpload = (results: typeof INITIAL_IMPORT_RESULTS) => {
     setVariant(VARIANTS.IMPORT);
@@ -199,14 +197,14 @@ const StudentTable = () => {
         <CreateStudentDialog open={open} setOpen={setOpen} />
       </div>
 
-      {/* <DataTable
+      <DataTable
         data={data || []}
         columns={columns}
         filters={filters}
         filterPlaceholder="Filter students..."
         getDataForExport={getDataForExport}
         isLoading={isLoading}
-      /> */}
+      />
     </>
   );
 };

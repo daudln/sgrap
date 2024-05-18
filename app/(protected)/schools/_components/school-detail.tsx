@@ -8,13 +8,11 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import StudentTable from "../../students/_components/student-table";
 import TeachersTable from "../../teachers/_components/teacher-table";
-import prisma from "@/lib/utils";
+import db from "@/db";
 
 const SchoolDetails = async ({ id }: { id: string }) => {
-  const school = await prisma.school.findUnique({
-    where: {
-      uuid: id,
-    },
+  const school = await db.query.school.findFirst({
+    where: (table, { eq }) => eq(table.id, id),
   });
   return (
     <Tabs defaultValue="students" className="w-full">

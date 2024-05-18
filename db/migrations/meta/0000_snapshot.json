@@ -1,5 +1,5 @@
 {
-  "id": "8c6248ca-ed44-4bb0-8e2c-b3b1fe755013",
+  "id": "8afd129a-f8e1-4e40-b6b6-c980e29e710d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "6",
   "dialect": "postgresql",
@@ -8,8 +8,8 @@
       "name": "profile",
       "schema": "",
       "columns": {
-        "user_id": {
-          "name": "user_id",
+        "id": {
+          "name": "id",
           "type": "varchar(100)",
           "primaryKey": true,
           "notNull": true
@@ -32,14 +32,6 @@
           "type": "varchar(12)",
           "primaryKey": false,
           "notNull": false
-        },
-        "profile_type": {
-          "name": "profile_type",
-          "type": "profile_type",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'STUDENT'"
         },
         "school_id": {
           "name": "school_id",
@@ -71,12 +63,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "profile_user_id_user_id_fk": {
-          "name": "profile_user_id_user_id_fk",
+        "profile_id_user_id_fk": {
+          "name": "profile_id_user_id_fk",
           "tableFrom": "profile",
           "tableTo": "user",
           "columnsFrom": [
-            "user_id"
+            "id"
           ],
           "columnsTo": [
             "id"
@@ -154,15 +146,15 @@
       "name": "student",
       "schema": "",
       "columns": {
-        "profile_id": {
-          "name": "profile_id",
+        "id": {
+          "name": "id",
           "type": "varchar(100)",
           "primaryKey": true,
           "notNull": true
         },
         "class_level": {
           "name": "class_level",
-          "type": "classLevel",
+          "type": "class_level",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
@@ -191,15 +183,15 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "student_profile_id_profile_user_id_fk": {
-          "name": "student_profile_id_profile_user_id_fk",
+        "student_id_profile_id_fk": {
+          "name": "student_id_profile_id_fk",
           "tableFrom": "student",
           "tableTo": "profile",
           "columnsFrom": [
-            "profile_id"
+            "id"
           ],
           "columnsTo": [
-            "user_id"
+            "id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -283,15 +275,15 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "teacher_profile_id_profile_user_id_fk": {
-          "name": "teacher_profile_id_profile_user_id_fk",
+        "teacher_profile_id_profile_id_fk": {
+          "name": "teacher_profile_id_profile_id_fk",
           "tableFrom": "teacher",
           "tableTo": "profile",
           "columnsFrom": [
             "profile_id"
           ],
           "columnsTo": [
-            "user_id"
+            "id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -398,17 +390,11 @@
           "name": "email",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "email_verified": {
           "name": "email_verified",
           "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "image": {
-          "name": "image",
-          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
@@ -507,16 +493,8 @@
         "FEMALE"
       ]
     },
-    "public.profile_type": {
-      "name": "profile_type",
-      "schema": "public",
-      "values": [
-        "STUDENT",
-        "TEACHER"
-      ]
-    },
-    "public.classLevel": {
-      "name": "classLevel",
+    "public.class_level": {
+      "name": "class_level",
       "schema": "public",
       "values": [
         "FORM_ONE",

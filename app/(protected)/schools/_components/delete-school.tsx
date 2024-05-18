@@ -26,12 +26,12 @@ function DeleteSubjectDialog({ open, setOpen, schoolId }: Props) {
   const deleteMutation = useMutation({
     mutationFn: deleteSchool,
     onSuccess: async ({ data }) => {
-      if (!data?.success) {
-        toast.error(data?.message, {
+      if ("!data?.success") {
+        toast.error("data?.message", {
           id: schoolId,
         });
       } else {
-        toast.success(data?.message, {
+        toast.success("data?.message", {
           id: schoolId,
         });
       }

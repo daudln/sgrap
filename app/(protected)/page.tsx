@@ -3,7 +3,7 @@ import DashboardCard from "@/components/dashboard-card";
 import db from "@/db";
 import { school } from "@/db/schema/school";
 import { subject } from "@/db/schema/subject";
-import teacher from "@/db/schema/teacher";
+import { teacher } from "@/db/schema/teacher";
 import { count } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { GiTeacher } from "react-icons/gi";

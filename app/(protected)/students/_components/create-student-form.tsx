@@ -12,43 +12,47 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useCallback } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { createStudent } from "../_actions/actions";
-import { CreateStudentInput, createStudentSchema } from "@/schema/student";
-import useSchools from "@/hooks/useSchools";
-import { Gender, StudentClass } from "@prisma/client";
-import { CLASS_OPTIONS, GENDER_OPTIONS } from "@/lib/constants";
+import {
+  CLASS_OPTIONS,
+  Gender,
+  GENDER_OPTIONS,
+  StudentClassLevel,
+} from "@/lib/constants";
+import useGetSchools from "@/hooks/school/use-get-schools";
+import useCreateStudent from "@/hooks/student/use-create-student";
+import { z } from "zod";
+import { createStudentSchema } from "@/db/schema/student";
 
 interface CreateStudentProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 const CreateStudentForm = ({ setOpen }: CreateStudentProps) => {
-  const form = useForm<CreateStudentInput>({
+  const form = useForm<z.infer<typeof createStudentSchema>>({
     resolver: zodResolver(createStudentSchema),
     defaultValues: {
       firstName: "",
       middleName: "",
       lastName: "",
       gender: "" as Gender,
-      school: "",
-      classLevel: "" as StudentClass,
+      schoolId: "",
+      classLevel: "" as StudentClassLevel,
     },
   });
 
-  const { data, isLoading, error } = useSchools();
+  const { data, isLoading, error } = useGetSchools();
 
   const SCHOOLS = data?.data.map((school) => ({
     label: school.name,
-    value: school.uuid,
+    value: school.id,
   }));
 
   const handleSchoolChange = useCallback(
     (value: string) => {
-      form.setValue("school", value);
+      form.setValue("schoolId", value);
     },
     [form]
   );
@@ -61,40 +65,22 @@ const CreateStudentForm = ({ setOpen }: CreateStudentProps) => {
   );
   const handleClassChange = useCallback(
     (value: string) => {
-      form.setValue("classLevel", value as StudentClass);
+      form.setValue("classLevel", value as StudentClassLevel);
     },
     [form]
   );
   const queryClient = useQueryClient();
 
-  const mutation = useMutation({
-    mutationFn: createStudent,
-    onSuccess: async ({ data }) => {
-      toast.success(data?.message, {
-        id: "create-new-student",
-      });
+  const mutation = useCreateStudent();
 
-      await queryClient.invalidateQueries({
-        queryKey: ["students"],
-      });
-      form.reset();
-      setOpen((prev) => !prev);
-    },
-    onError: () => {
-      toast.error("Something went wrong", {
-        id: "create-new-student",
-      });
-    },
-  });
-
-  const onSubmit = (data: CreateStudentInput) => {
+  const onSubmit = (data: z.infer<typeof createStudentSchema>) => {
     mutation.mutate(data);
   };
   return (
     <Form {...form}>
       <form
         className="w-full max-w-lg flex flex-col gap-4"
-        onSubmit={form.handleSubmit(onSubmit)}
+        // onSubmit={form.handleSubmit(onSubmit)}
       >
         <div>
           <FormField
@@ -158,7 +144,7 @@ const CreateStudentForm = ({ setOpen }: CreateStudentProps) => {
 
           <FormField
             control={form.control}
-            name="school"
+            name="schoolId"
             render={({ field }) => (
               <FormItem className="flex flex-col my-2">
                 <FormLabel>School</FormLabel>

@@ -10,12 +10,13 @@ const schoolsRoute = new Hono()
     const schools = await db
       .select({ id: school.id, name: school.name, motto: school.motto })
       .from(school);
-    const response = {
-      status: 200,
-      data: schools,
-    };
-    console.log(schools);
-    return c.json(response);
+
+    return c.json(
+      {
+        data: schools,
+      },
+      200
+    );
   })
   .get("/:id", zValidator("param", getEntitySchema), async (c) => {
     const { id } = c.req.valid("param");
@@ -40,8 +41,6 @@ const schoolsRoute = new Hono()
 
     return c.json(
       {
-        success: true,
-        message: "School fetched successfully",
         data: school,
       },
       200

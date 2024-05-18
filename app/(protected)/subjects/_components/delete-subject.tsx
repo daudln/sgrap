@@ -10,9 +10,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import useDeleteStudent from "@/hooks/student/use-delete-student";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { deleteSubject } from "../_actions/actions";
 
 interface Props {
   open: boolean;
@@ -23,23 +23,7 @@ interface Props {
 function DeleteSubjectDialog({ open, setOpen, subjectId }: Props) {
   const queryClient = useQueryClient();
 
-  const deleteMutation = useMutation({
-    mutationFn: deleteSubject,
-    onSuccess: async ({ data }) => {
-      toast.success(data?.message, {
-        id: subjectId,
-      });
-
-      await queryClient.invalidateQueries({
-        queryKey: ["subjects"],
-      });
-    },
-    onError: () => {
-      toast.error("Something went wrong", {
-        id: subjectId,
-      });
-    },
-  });
+  const mutation = useDeleteStudent(subjectId);
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogContent>
@@ -58,7 +42,7 @@ function DeleteSubjectDialog({ open, setOpen, subjectId }: Props) {
               toast.loading("Deleting subject...", {
                 id: subjectId,
               });
-              deleteMutation.mutate({ id: subjectId });
+              mutation.mutate();
             }}
           >
             Continue

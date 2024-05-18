@@ -6,7 +6,7 @@ import {
   LOGIN_REDIRECT,
 } from "@/routes";
 import { NextRequest } from "next/server";
-import { validateRequest } from "@/lib/lucia";
+import { validateRequest } from "./auth";
 
 export async function middleware(req: NextRequest) {
   // const { user } = await validateRequest();

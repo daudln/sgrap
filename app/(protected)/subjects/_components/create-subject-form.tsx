@@ -1,6 +1,5 @@
 "use client";
 
-import { createSubject } from "@/app/(protected)/subjects/_actions/actions";
 import ActionButton from "@/components/action-button";
 import { SelectInput } from "@/components/select-input";
 import {
@@ -15,10 +14,8 @@ import { Input } from "@/components/ui/input";
 import useCreateSubject from "@/hooks/subject/use-create-subject";
 import { CreateSubjectInput, createSubjectSchema } from "@/schema/subject";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useCallback } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 const SUBJECT_CATEGORIES = [
   {
@@ -51,23 +48,6 @@ const CreateSubjectForm = ({
     },
     [form]
   );
-
-  const deleteMutation = useMutation({
-    mutationFn: createSubject,
-    onSuccess: async ({ data }) => {
-      toast.success(data?.message, {
-        id: "create-new-subject",
-      });
-
-      form.reset();
-      setOpen((prev) => !prev);
-    },
-    onError: () => {
-      toast.error("Something went wrong", {
-        id: "create-new-subject",
-      });
-    },
-  });
 
   const onSubmit = (data: CreateSubjectInput) => {
     mutation.mutate(data);
@@ -139,7 +119,7 @@ const CreateSubjectForm = ({
           />
         </div>
 
-        <ActionButton label="Create" status={deleteMutation.status} />
+        <ActionButton label="Create" status={mutation.status} />
       </form>
     </Form>
   );

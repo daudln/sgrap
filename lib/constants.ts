@@ -47,3 +47,15 @@ export enum VARIANTS {
   LIST = "LIST",
   IMPORT = "IMPORT",
 }
+
+export type Gender = "MALE" | "FEMALE";
+
+export type StudentClassLevel =
+  | "FORM_ONE"
+  | "FORM_TWO"
+  | "FORM_THREE"
+  | "FORM_FOUR"
+  | "FORM_FIVE"
+  | "FORM_SIX";
+
+export type Category = "ART" | "SCIENCE";

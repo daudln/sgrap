@@ -1,8 +1,7 @@
 "use client";
 
 import DialogBox from "@/components/dialog-box";
-import { APIResponse } from "@/services/api.service";
-import { School } from "@prisma/client";
+import { CreateSchoolInput } from "@/schema/school";
 import { useQueryClient } from "@tanstack/react-query";
 import { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
@@ -14,13 +13,14 @@ interface Props {
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
+export type School = CreateSchoolInput & {
+  id: string;
+};
 function UpdateSchoolDialog({ schoolId, open, setOpen }: Props) {
   const queryClient = useQueryClient();
-  const schools = queryClient.getQueryData<APIResponse<School>>([
-    "schools",
-  ])?.data;
+  const schools = queryClient.getQueryData<School[]>(["schools"]);
 
-  const school = schools?.find((school) => school.uuid === schoolId) as
+  const school = schools?.find((school) => school.id === schoolId) as
     | School
     | undefined;
   if (!school)

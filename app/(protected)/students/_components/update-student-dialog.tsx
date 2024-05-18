@@ -1,13 +1,13 @@
 "use client";
 
 import DialogBox from "@/components/dialog-box";
-import { UserData } from "@/types/user";
 import { Dispatch, SetStateAction } from "react";
 import UpdateStudentForm from "./update-student-form";
+import { StudentData } from "@/types/user";
 
 interface Props {
   open: boolean;
-  profile: UserData;
+  profile: StudentData;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 

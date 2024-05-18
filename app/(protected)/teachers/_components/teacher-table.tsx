@@ -20,15 +20,14 @@ import { LuPencil } from "react-icons/lu";
 
 import AlertNotication from "@/components/alert-notification";
 import { DataTable } from "@/components/datatable/data-table";
-import useTeachers from "@/hooks/useTeachers";
-import { UserData } from "@/types/user";
 import CreateSubjectDialog from "./create-teacher-dialog";
 import DeleteTeacherDialog from "./delete-teacher";
 import UpdateTeacherDialog from "./update-teacher-dialog";
-import { useSchoolFilter } from "@/hooks/useSchools";
 import { GENDER_FILTER } from "@/lib/constants";
+import { TeacherData } from "@/types/user";
+import useGetTeachers from "@/hooks/teacher/use-get-teachers";
 
-function RowActions({ profile }: { profile: UserData }) {
+function RowActions({ profile }: { profile: TeacherData }) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
 
@@ -37,7 +36,7 @@ function RowActions({ profile }: { profile: UserData }) {
       <DeleteTeacherDialog
         open={showDeleteDialog}
         setOpen={setShowDeleteDialog}
-        teacherId={profile.id}
+        teacherId={profile.user.id}
       />
       <UpdateTeacherDialog
         setOpen={setShowEditDialog}
@@ -79,8 +78,8 @@ function RowActions({ profile }: { profile: UserData }) {
   );
 }
 
-const filterFn: FilterFn<UserData> = (row, id, value: string[] | string) => {
-  const searchableRowContent = `${row.original.name} ${row.original.Profile.phoneNumber} ${row.original.Profile.school.name} ${row.original.email} ${row.original.Profile.school.uuid} ${row.original.Profile.gender}`;
+const filterFn: FilterFn<TeacherData> = (row, id, value: string[] | string) => {
+  const searchableRowContent = `${row.original.user.name} ${row.original.profile.phoneNumber} ${row.original.school.name} ${row.original.profile.gender}`;
 
   if (Array.isArray(value)) {
     return value.some((v) => row.getValue(id) === v);
@@ -88,14 +87,14 @@ const filterFn: FilterFn<UserData> = (row, id, value: string[] | string) => {
   return searchableRowContent.toLowerCase().includes(value.toLowerCase());
 };
 
-const getDataForExport = (teacher: UserData) => ({
-  name: teacher.name,
-  email: teacher.email,
-  school: teacher.Profile.school.name,
-  phoneNumber: teacher.Profile.phoneNumber,
+const getDataForExport = (teacher: TeacherData) => ({
+  name: teacher.user.name,
+  email: teacher.user.email,
+  school: teacher.school.name,
+  phoneNumber: teacher.profile.phoneNumber,
 });
 
-const columns: ColumnDef<UserData>[] = [
+const columns: ColumnDef<TeacherData>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => (
@@ -104,7 +103,7 @@ const columns: ColumnDef<UserData>[] = [
     filterFn: filterFn,
     cell: ({ row }) => (
       <div className="flex gap-2 capitalize">
-        <div className="capitalize">{row.original.name}</div>
+        <div className="capitalize">{row.original.user.name}</div>
       </div>
     ),
   },
@@ -116,7 +115,7 @@ const columns: ColumnDef<UserData>[] = [
     filterFn: filterFn,
     cell: ({ row }) => (
       <div className="flex gap-2">
-        <div className="">{row.original.email}</div>
+        <div className="">{row.original.user.email}</div>
       </div>
     ),
   },
@@ -128,7 +127,7 @@ const columns: ColumnDef<UserData>[] = [
     filterFn: filterFn,
     cell: ({ row }) => (
       <div className="flex gap-2">
-        <div className="">{row.original.Profile.gender}</div>
+        <div className="">{row.original.profile.gender}</div>
       </div>
     ),
   },
@@ -140,7 +139,7 @@ const columns: ColumnDef<UserData>[] = [
     filterFn: filterFn,
     cell: ({ row }) => (
       <div className="flex gap-2">
-        <div className="">{row.original.Profile.phoneNumber}</div>
+        <div className="">{row.original.profile.phoneNumber}</div>
       </div>
     ),
   },
@@ -153,7 +152,7 @@ const columns: ColumnDef<UserData>[] = [
     filterFn: filterFn,
     cell: ({ row }) => (
       <div className="flex gap-2">
-        <div className="">{row.original.Profile.school.name}</div>
+        <div className="">{row.original.school.name}</div>
       </div>
     ),
   },
@@ -165,10 +164,10 @@ const columns: ColumnDef<UserData>[] = [
 ];
 
 const TeachersTable = () => {
-  const { data, isLoading, error } = useTeachers();
+  const { data, isLoading, error } = useGetTeachers();
   const [open, setOpen] = useState(false);
 
-  const filters = [useSchoolFilter(), GENDER_FILTER];
+  const filters = [GENDER_FILTER];
 
   if (error)
     return (
@@ -188,7 +187,7 @@ const TeachersTable = () => {
       </div>
 
       <DataTable
-        data={data?.data || []}
+        data={data || []}
         columns={columns}
         filters={filters}
         filterPlaceholder="Filter teachers..."

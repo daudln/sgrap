@@ -5,11 +5,12 @@ const useGetStudents = () =>
   useQuery({
     queryKey: ["students"],
     queryFn: async () => {
-      const response = await client.api.subjects.$get();
+      const response = await client.api.students.$get();
       if (!response.ok) {
         throw new Error("Something went wrong");
       }
-      return response.json();
+      const data = await response.json();
+      return data;
     },
   });
 

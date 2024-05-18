@@ -1,29 +1,22 @@
+import { pgTable, varchar, timestamp, boolean } from "drizzle-orm/pg-core";
 import { InferSelectModel, relations } from "drizzle-orm";
-import { boolean, pgTable, timestamp, varchar } from "drizzle-orm/pg-core";
-import { profile } from "./profile";
+import { profile } from "@/db/schema/profile";
 
-export const teacher = pgTable(
-  "teacher",
-  {
-    profileId: varchar("profile_id", { length: 100 })
-      .notNull()
-      .references(() => profile.userId, { onDelete: "cascade" })
-      .primaryKey(),
+export const teacher = pgTable("teacher", {
+  id: varchar("profile_id", { length: 100 })
+    .primaryKey()
+    .notNull()
+    .references(() => profile.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
+  isActive: boolean("is_active").notNull().default(true),
+});
 
-    createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
-    updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
-    isActive: boolean("is_active").notNull().default(true),
-  },
-  (teacher) => ({})
-);
-
-export const teacherRelations = relations(teacher, ({ one, many }) => ({
+export const teacherRelations = relations(teacher, ({ one }) => ({
   profile: one(profile, {
-    fields: [teacher.profileId],
-    references: [profile.userId],
+    fields: [teacher.id],
+    references: [profile.id],
   }),
 }));
-
-export default teacher;
 
 export type Teacher = InferSelectModel<typeof teacher>;

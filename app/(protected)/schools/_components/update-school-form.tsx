@@ -12,12 +12,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { UpdateSchoolInput, updateSchoolSchema } from "@/schema/school";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { School } from "@prisma/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { updateSchool } from "../_actions/actions";
+import { School } from "./update-school-dialog";
 
 interface UpdateSchoolProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
@@ -30,7 +30,7 @@ const UpdateSchoolForm = ({ school, setOpen }: UpdateSchoolProps) => {
     defaultValues: {
       name: school.name,
       motto: school.motto,
-      uuid: school.uuid,
+      uuid: school.id,
     },
   });
 
@@ -39,7 +39,7 @@ const UpdateSchoolForm = ({ school, setOpen }: UpdateSchoolProps) => {
   const updateMutation = useMutation({
     mutationFn: updateSchool,
     onSuccess: async ({ data }) => {
-      toast.success(data?.message, {
+      toast.success("Subject created", {
         id: "create-new-subject",
       });
 
