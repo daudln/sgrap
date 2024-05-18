@@ -50,7 +50,7 @@ jobs:
         run: npm install
 
       - name: Migrate database
-        run: npx prisma db push
+        run: npx drizzle-kit db migrate
 
       - name: Lint
         run: npm run lint
