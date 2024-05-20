@@ -319,7 +319,7 @@ export const subjectsData: Subject[] = [
 
 async function seedDataFromJSON(): Promise<void> {
   try {
-    await db.insert(subject).values(subjectsData);
+    await db.insert(school).values(schools);
   } catch (error) {
     console.error("Error inserting data:", error);
   }

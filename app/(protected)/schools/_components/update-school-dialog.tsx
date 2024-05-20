@@ -5,7 +5,7 @@ import { CreateSchoolInput } from "@/schema/school";
 import { useQueryClient } from "@tanstack/react-query";
 import { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
-import UpdateSchoolForm from "./update-school-form";
+import UpdateSchoolForm from "@/app/(protected)/schools/_components/update-school-form";
 
 interface Props {
   open: boolean;
@@ -18,9 +18,9 @@ export type School = CreateSchoolInput & {
 };
 function UpdateSchoolDialog({ schoolId, open, setOpen }: Props) {
   const queryClient = useQueryClient();
-  const schools = queryClient.getQueryData<School[]>(["schools"]);
 
-  const school = schools?.find((school) => school.id === schoolId) as
+  const schools = queryClient.getQueryData<{ data: School[] }>(["schools"]);
+  const school = schools?.data?.find((school) => school.id === schoolId) as
     | School
     | undefined;
   if (!school)

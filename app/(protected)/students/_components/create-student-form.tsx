@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import {
@@ -43,7 +42,7 @@ const CreateStudentForm = ({ setOpen }: CreateStudentProps) => {
     },
   });
 
-  const { data, isLoading, error } = useGetSchools();
+  const { data } = useGetSchools();
 
   const SCHOOLS = data?.data.map((school) => ({
     label: school.name,
@@ -69,7 +68,6 @@ const CreateStudentForm = ({ setOpen }: CreateStudentProps) => {
     },
     [form]
   );
-  const queryClient = useQueryClient();
 
   const mutation = useCreateStudent();
 
@@ -80,7 +78,7 @@ const CreateStudentForm = ({ setOpen }: CreateStudentProps) => {
     <Form {...form}>
       <form
         className="w-full max-w-lg flex flex-col gap-4"
-        // onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(onSubmit)}
       >
         <div>
           <FormField

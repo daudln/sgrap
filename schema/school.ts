@@ -30,7 +30,7 @@ export const getSchoolSchema = z.object({
 export type GetSchoolInput = z.infer<typeof getSchoolSchema>;
 
 export const deleteSchoolSchema = z.object({
-  uuid: z.string().min(1),
+  id: z.string().min(1),
 });
 
 export type DeleteSchoolInput = z.infer<typeof deleteSchoolSchema>;

@@ -139,41 +139,44 @@ const studentRoute = new Hono()
       if (!existingStudent) {
         return c.json(
           {
-            message: "student not found",
+            message: "Student not found",
           },
           404
         );
       }
       const [updatedUser] = await db
-        .insert(user)
-        .values({
-          name: `${body.firstName}  ${body.lastName}`,
-          id: id,
+        .update(user)
+        .set({
+          id: existingStudent.user.id,
+          name: `${body.firstName} ${body.middleName} ${body.lastName}`,
         })
+        .where(eq(user.id, existingStudent.user.id))
         .returning({
           id: user.id,
           name: user.name,
         });
-      const [newProfile] = await db
-        .insert(profile)
-        .values({
+      const [updatedProfile] = await db
+        .update(profile)
+        .set({
           id: updatedUser.id,
           schoolId: body.schoolId,
           gender: body.gender,
         })
+        .where(eq(profile.id, existingStudent.profile.id))
         .returning();
 
-      const [newStudent] = await db
-        .insert(student)
-        .values({
-          id: newProfile.id,
+      const [updatedStudent] = await db
+        .update(student)
+        .set({
+          id: updatedProfile.id,
           classLevel: body.classLevel,
         })
+        .where(eq(student.id, updatedProfile.id))
         .returning();
 
       return c.json(
         {
-          data: { ...updatedUser, ...newProfile, ...newStudent },
+          data: { ...updatedUser, ...updatedProfile, ...updatedStudent },
         },
         201
       );

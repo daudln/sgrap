@@ -1,109 +1,88 @@
 "use server";
 
-import {
-  createSchoolSchema,
-  updateSchoolSchema,
-  deleteSchoolSchema,
-} from "@/schema/school";
+import { eq } from "drizzle-orm";
+
+import db from "@/db";
+import { deleteSchoolSchema } from "@/schema/school";
 import { createSafeActionClient } from "next-safe-action";
-import { revalidatePath } from "next/cache";
+import { createSchoolSchema, school } from "@/db/schema/school";
 
 export const action = createSafeActionClient();
 
-export const createSchool = action(
-  createSchoolSchema,
-  async ({ name, motto }) => {
-    // const existingSchool = await prisma.school.findFirst({
-    //   where: {
-    //     name,
-    //   },
-    // });
-    // if (existingSchool) {
-    //   return {
-    //     status: 400,
-    //     success: false,
-    //     message: "School already exists",
-    //   };
-    // }
-    // const school = await prisma.school.create({
-    //   data: {
-    //     name,
-    //     motto,
-    //   },
-    // });
-    // if (!school) {
-    //   return {
-    //     status: 500,
-    //     success: false,
-    //     message: "school not created",
-    //   };
-    // }
-    // revalidatePath("/schools");
-    // return {
-    //   status: 200,
-    //   success: true,
-    //   message: "school created successfully",
-    //   data: school,
-    // };
-  }
-);
-
 export const updateSchool = action(
-  updateSchoolSchema,
-  async ({ name, motto, uuid }) => {
-    // const existingSchool = await prisma.school.findFirst({
-    //   where: { uuid },
-    // });
-    // if (!existingSchool) {
-    //   return {
-    //     status: 400,
-    //     success: false,
-    //     message: "school not found",
-    //   };
-    // }
-    // const school = await prisma.school.update({
-    //   where: {
-    //     uuid: existingSchool.uuid,
-    //   },
-    //   data: {
-    //     name,
-    //     motto,
-    //   },
-    // });
-    // if (!school) {
-    //   return {
-    //     status: 500,
-    //     success: false,
-    //     message: "school not created",
-    //   };
-    // }
-    // revalidatePath("/schools");
-    // return {
-    //   status: 200,
-    //   success: true,
-    //   message: "school updated successfully",
-    //   data: school,
-    // };
+  createSchoolSchema,
+  async ({ name, motto, id }) => {
+    const existingSchool = await db.query.school.findFirst({
+      where: (table, { eq }) => eq(table.id, id!),
+    });
+
+    if (!existingSchool) {
+      return {
+        status: 400,
+        success: false,
+        message: "school not found",
+      };
+    }
+    const [updatedSchool] = await db
+      .update(school)
+      .set({
+        name,
+        motto,
+      })
+      .where(eq(school.id, id!))
+      .returning();
+    console.log(updatedSchool);
+    if (!updatedSchool) {
+      return {
+        status: 500,
+        success: false,
+        message: "school not created",
+      };
+    }
+    return {
+      status: 200,
+      success: true,
+      message: "school updated successfully",
+      data: updatedSchool,
+    };
   }
 );
 
-export const deleteSchool = action(deleteSchoolSchema, async ({ uuid }) => {
-  // const existingSchool = await prisma.school.findFirst({
-  //   where: {
-  //     uuid,
-  //   },
-  //   include: {
-  //     Student: true,
-  //     Teacher: true,
-  //   },
-  // });
-  // if (!existingSchool) {
+export const deleteSchool = action(deleteSchoolSchema, async ({ id }) => {
+  const existingSchool = await db.query.school.findFirst({
+    where: (table, { eq }) => eq(table.id, id!),
+    with: {
+      profiles: true,
+    },
+  });
+  console.log(existingSchool?.profiles, "Profiles");
+  if (!existingSchool) {
+    return {
+      status: 400,
+      success: false,
+      message: "school not found",
+    };
+  }
+
+  // if (existingSchool.profiles.length > 0 || existingSchool.Teacher.length > 0) {
   //   return {
   //     status: 400,
   //     success: false,
-  //     message: "No school with this id",
+  //     message: "This school cannot be deleted as it has students or teachers.",
   //   };
   // }
+
+  const [deletedSchool] = await db
+    .delete(school)
+    .where(eq(school.id, id!))
+    .returning();
+  if (!deletedSchool) {
+    return {
+      status: 500,
+      success: false,
+      message: "school not created",
+    };
+  }
   // if (existingSchool.Student.length > 0 || existingSchool.Teacher.length > 0) {
   //   return {
   //     status: 400,
@@ -116,26 +95,9 @@ export const deleteSchool = action(deleteSchoolSchema, async ({ uuid }) => {
   //     uuid,
   //   },
   // });
-  // return {
-  //   status: 201,
-  //   success: true,
-  //   message: "school delete successfully",
-  // };
+  return {
+    status: 201,
+    success: true,
+    message: "school delete successfully",
+  };
 });
-
-export const getschools = async () => {
-  // const schools = await prisma.school.findMany();
-  // if (!schools) {
-  //   return {
-  //     status: 404,
-  //     success: false,
-  //     message: "schools not found",
-  //   };
-  // }
-  // return {
-  //   status: 200,
-  //   success: true,
-  //   message: "schools fetched successfully",
-  //   data: schools,
-  // };
-};

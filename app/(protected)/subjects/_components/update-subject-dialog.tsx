@@ -17,13 +17,14 @@ import {
   Subject,
   subjectCategory,
 } from "@/db/schema/subject";
-import useUpdateSubject from "@/hooks/subject/use-update-subject";
 import { UpdateSubjectInput } from "@/schema/subject";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { updateSubject } from "../_actions/actions";
+import { toast } from "sonner";
 
 interface Props {
   open: boolean;
@@ -43,7 +44,21 @@ const SUBJECT_CATEGORIES = [
 ];
 
 function UpdateSubjectDialog({ subjectId, open, setOpen }: Props) {
-  const mutation = useUpdateSubject();
+  const mutation = useMutation({
+    mutationFn: updateSubject,
+    onSuccess: () => {
+      setOpen(false);
+      toast.success("Subject updated successfully", {
+        id: subjectId,
+      });
+      queryClient.invalidateQueries({ queryKey: ["subjects"] });
+    },
+    onError: () => {
+      toast.error("Something went wrong", {
+        id: subjectId,
+      });
+    },
+  });
   const queryClient = useQueryClient();
   const data = queryClient.getQueryData<{ data: Subject[] }>(["subjects"]);
   const subject = data?.data?.find((subject) => subject.id === subjectId);

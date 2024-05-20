@@ -10,7 +10,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { UpdateSchoolInput, updateSchoolSchema } from "@/schema/school";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Dispatch, SetStateAction } from "react";
@@ -18,6 +17,8 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { updateSchool } from "../_actions/actions";
 import { School } from "./update-school-dialog";
+import { createSchoolSchema } from "@/db/schema/school";
+import { z } from "zod";
 
 interface UpdateSchoolProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
@@ -25,12 +26,12 @@ interface UpdateSchoolProps {
 }
 
 const UpdateSchoolForm = ({ school, setOpen }: UpdateSchoolProps) => {
-  const form = useForm<UpdateSchoolInput>({
-    resolver: zodResolver(updateSchoolSchema),
+  const form = useForm<z.infer<typeof createSchoolSchema>>({
+    resolver: zodResolver(createSchoolSchema),
     defaultValues: {
       name: school.name,
       motto: school.motto,
-      uuid: school.id,
+      id: school.id,
     },
   });
 
@@ -56,7 +57,7 @@ const UpdateSchoolForm = ({ school, setOpen }: UpdateSchoolProps) => {
     },
   });
 
-  const onSubmit = (data: UpdateSchoolInput) => {
+  const onSubmit = (data: z.infer<typeof createSchoolSchema>) => {
     updateMutation.mutate(data);
   };
   return (
@@ -94,7 +95,7 @@ const UpdateSchoolForm = ({ school, setOpen }: UpdateSchoolProps) => {
           />
           <FormField
             control={form.control}
-            name="uuid"
+            name="id"
             render={({ field }) => (
               <FormItem hidden>
                 <FormLabel>UUID</FormLabel>

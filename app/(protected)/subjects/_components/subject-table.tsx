@@ -146,6 +146,7 @@ const columns: ColumnDef<SubjectRow>[] = [
     ),
     enableSorting: false,
     enableHiding: false,
+    filterFn: filterFn,
   },
   {
     accessorKey: "code",

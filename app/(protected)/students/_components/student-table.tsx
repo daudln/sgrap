@@ -120,7 +120,7 @@ const columns: ColumnDef<StudentData>[] = [
     filterFn: filterFn,
     cell: ({ row }) => (
       <div className="flex gap-2">
-        <div className="">{row.original.user.email}</div>
+        <div className="">{row.original.user.email || "-"}</div>
       </div>
     ),
   },
@@ -179,6 +179,7 @@ const columns: ColumnDef<StudentData>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => <RowActions profile={row.original} />,
+    filterFn: filterFn,
   },
 ];
 
@@ -186,10 +187,6 @@ const StudentTable = () => {
   const { data, isLoading, error } = useGetStudents();
   const [open, setOpen] = useState(false);
   const filters = [GENDER_FILTER, CLASS_FILTER];
-  const [variant, setVariant] = useState<VARIANTS>(VARIANTS.LIST);
-  const onUpload = (results: typeof INITIAL_IMPORT_RESULTS) => {
-    setVariant(VARIANTS.IMPORT);
-  };
 
   return (
     <>
@@ -204,6 +201,9 @@ const StudentTable = () => {
         filterPlaceholder="Filter students..."
         getDataForExport={getDataForExport}
         isLoading={isLoading}
+        onDelete={() => {}}
+        hasUploadButton
+        hasColumnSelection
       />
     </>
   );

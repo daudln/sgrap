@@ -29,6 +29,7 @@ export function VerifyEmail({ token }: { token: string }) {
       if (!data.success) {
         toast.dismiss("verifying-email");
         toast.error(data.message);
+        router.push("/auth/login");
       }
       if (data.success) {
         toast.dismiss("verifying-email");

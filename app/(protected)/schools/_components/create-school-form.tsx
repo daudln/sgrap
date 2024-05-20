@@ -10,51 +10,29 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { CreateSchoolInput, createSchoolSchema } from "@/schema/school";
+import { createSchoolSchema } from "@/db/schema/school";
+import useCreateSchool from "@/hooks/school/use-create-school";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { createSchool } from "../_actions/actions";
+import { z } from "zod";
 
 interface CreateSchoolProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 const CreateSchoolForm = ({ setOpen }: CreateSchoolProps) => {
-  const form = useForm<CreateSchoolInput>({
+  const form = useForm<z.infer<typeof createSchoolSchema>>({
     resolver: zodResolver(createSchoolSchema),
     defaultValues: {
       name: "",
       motto: "",
     },
   });
+  const mutation = useCreateSchool();
 
-  const queryClient = useQueryClient();
-
-  const createMutation = useMutation({
-    mutationFn: createSchool,
-    onSuccess: async ({ data }) => {
-      toast.success("Hello", {
-        id: "create-new-school",
-      });
-
-      await queryClient.invalidateQueries({
-        queryKey: ["schools"],
-      });
-      form.reset();
-      setOpen((prev) => !prev);
-    },
-    onError: () => {
-      toast.error("Something went wrong", {
-        id: "create-new-school",
-      });
-    },
-  });
-
-  const onSubmit = (data: CreateSchoolInput) => {
-    createMutation.mutate(data);
+  const onSubmit = (data: z.infer<typeof createSchoolSchema>) => {
+    mutation.mutate(data);
   };
   return (
     <Form {...form}>
@@ -91,7 +69,7 @@ const CreateSchoolForm = ({ setOpen }: CreateSchoolProps) => {
           />
         </div>
 
-        <ActionButton label="Create" status={createMutation.status} />
+        <ActionButton label="Create" status={mutation.status} />
       </form>
     </Form>
   );

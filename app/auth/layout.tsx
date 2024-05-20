@@ -1,13 +1,19 @@
+import { validateRequest } from "@/auth";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { TbSchool } from "react-icons/tb";
 
 interface AuthenticationLayoutProps {
   children: React.ReactNode;
 }
 
-export default function AuthenticationLayout({
+export default async function AuthenticationLayout({
   children,
 }: AuthenticationLayoutProps) {
+  const { user } = await validateRequest();
+  if (user) {
+    return redirect("/");
+  }
   return (
     <>
       {/* <div className="md:hidden">
