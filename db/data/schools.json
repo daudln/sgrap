@@ -1,0 +1,492 @@
+[
+  {
+    "name": "Arusha High School",
+    "registrationNumber": "S.0001",
+    "address": "P.O. Box 123, Arusha",
+    "phone": "0755000001",
+    "email": "info@arushahigh.ac.tz",
+    "website": "https://arushahigh.ac.tz",
+
+    "type": "GOVERNMENT",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Dodoma Modern Primary",
+    "registrationNumber": "P.0002",
+    "address": "P.O. Box 456, Dodoma",
+    "phone": "0755000002",
+    "email": "admin@dodomaprim.ac.tz",
+    "website": "https://dodomaprim.ac.tz",
+
+    "type": "PRIVATE",
+    "level": "PRIMARY"
+  },
+  {
+    "name": "Everest Academy",
+    "registrationNumber": "REG-0001",
+    "address": "100 Everest St, Dodoma",
+    "phone": "0754100000",
+    "email": "info@everest-academy.ac.tz",
+    "website": "https://everest-academy.ac.tz",
+    "motto": "Reach New Heights",
+
+    "type": "GOVERNMENT",
+    "level": "PRIMARY"
+  },
+  {
+    "name": "Golden Horizon High School",
+    "registrationNumber": "REG-0002",
+    "address": "101 Golden St, Dodoma",
+    "phone": "0754100001",
+    "email": "info@golden-horizon-high-school.ac.tz",
+    "website": "https://golden-horizon-high-school.ac.tz",
+    "motto": "Shine Bright, Aim High",
+
+    "type": "PRIVATE",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Victory Heights Secondary School",
+    "registrationNumber": "REG-0003",
+    "address": "102 Victory St, Dodoma",
+    "phone": "0754100002",
+    "email": "info@victory-heights-secondary-school.ac.tz",
+    "website": "https://victory-heights-secondary-school.ac.tz",
+    "motto": "Striving for Excellence",
+
+    "type": "GOVERNMENT",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Eagle Crest Institute",
+    "registrationNumber": "REG-0004",
+    "address": "103 Eagle St, Dodoma",
+    "phone": "0754100003",
+    "email": "info@eagle-crest-institute.ac.tz",
+    "website": "https://eagle-crest-institute.ac.tz",
+    "motto": "Soar to Success",
+
+    "type": "PRIVATE",
+    "level": "PRIMARY"
+  },
+  {
+    "name": "Phoenix Preparatory School",
+    "registrationNumber": "REG-0005",
+    "address": "104 Phoenix St, Dodoma",
+    "phone": "0754100004",
+    "email": "info@phoenix-preparatory-school.ac.tz",
+    "website": "https://phoenix-preparatory-school.ac.tz",
+    "motto": "Rise from the Ashes",
+
+    "type": "GOVERNMENT",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Infinity High",
+    "registrationNumber": "REG-0006",
+    "address": "105 Infinity St, Dodoma",
+    "phone": "0754100005",
+    "email": "info@infinity-high.ac.tz",
+    "website": "https://infinity-high.ac.tz",
+    "motto": "Unlimited Potential, Infinite Possibilities",
+
+    "type": "PRIVATE",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Harmony Academy",
+    "registrationNumber": "REG-0007",
+    "address": "106 Harmony St, Dodoma",
+    "phone": "0754100006",
+    "email": "info@harmony-academy.ac.tz",
+    "website": "https://harmony-academy.ac.tz",
+    "motto": "Unity in Knowledge, Harmony in Achievement",
+
+    "type": "GOVERNMENT",
+    "level": "PRIMARY"
+  },
+  {
+    "name": "Royal Crown Secondary School",
+    "registrationNumber": "REG-0008",
+    "address": "107 Royal St, Dodoma",
+    "phone": "0754100007",
+    "email": "info@royal-crown-secondary-school.ac.tz",
+    "website": "https://royal-crown-secondary-school.ac.tz",
+    "motto": "Excellence with Dignity",
+
+    "type": "PRIVATE",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Astro Academy",
+    "registrationNumber": "REG-0009",
+    "address": "108 Astro St, Dodoma",
+    "phone": "0754100008",
+    "email": "info@astro-academy.ac.tz",
+    "website": "https://astro-academy.ac.tz",
+    "motto": "Reach for the Stars",
+
+    "type": "GOVERNMENT",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Vanguard Secondary School",
+    "registrationNumber": "REG-0010",
+    "address": "109 Vanguard St, Dodoma",
+    "phone": "0754100009",
+    "email": "info@vanguard-secondary-school.ac.tz",
+    "website": "https://vanguard-secondary-school.ac.tz",
+    "motto": "Leading the Way in Education",
+
+    "type": "PRIVATE",
+    "level": "PRIMARY"
+  },
+  {
+    "name": "Zenith High",
+    "registrationNumber": "REG-0011",
+    "address": "110 Zenith St, Dodoma",
+    "phone": "0754100010",
+    "email": "info@zenith-high.ac.tz",
+    "website": "https://zenith-high.ac.tz",
+    "motto": "Towards the Pinnacle of Success",
+
+    "type": "GOVERNMENT",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Aurora Academy",
+    "registrationNumber": "REG-0012",
+    "address": "111 Aurora St, Dodoma",
+    "phone": "0754100011",
+    "email": "info@aurora-academy.ac.tz",
+    "website": "https://aurora-academy.ac.tz",
+    "motto": "Illuminate the Path to Knowledge",
+
+    "type": "PRIVATE",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Supreme Scholars Secondary School",
+    "registrationNumber": "REG-0013",
+    "address": "112 Supreme St, Dodoma",
+    "phone": "0754100012",
+    "email": "info@supreme-scholars-secondary-school.ac.tz",
+    "website": "https://supreme-scholars-secondary-school.ac.tz",
+    "motto": "Where Excellence Reigns Supreme",
+
+    "type": "GOVERNMENT",
+    "level": "PRIMARY"
+  },
+  {
+    "name": "Pinnacle Preparatory Institute",
+    "registrationNumber": "REG-0014",
+    "address": "113 Pinnacle St, Dodoma",
+    "phone": "0754100013",
+    "email": "info@pinnacle-preparatory-institute.ac.tz",
+    "website": "https://pinnacle-preparatory-institute.ac.tz",
+    "motto": "Scaling New Heights of Achievement",
+
+    "type": "PRIVATE",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Paragon High School",
+    "registrationNumber": "REG-0015",
+    "address": "114 Paragon St, Dodoma",
+    "phone": "0754100014",
+    "email": "info@paragon-high-school.ac.tz",
+    "website": "https://paragon-high-school.ac.tz",
+    "motto": "Striving for Perfection",
+
+    "type": "GOVERNMENT",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Olympus Secondary School",
+    "registrationNumber": "REG-0016",
+    "address": "115 Olympus St, Dodoma",
+    "phone": "0754100015",
+    "email": "info@olympus-secondary-school.ac.tz",
+    "website": "https://olympus-secondary-school.ac.tz",
+    "motto": "Aim for Greatness",
+
+    "type": "PRIVATE",
+    "level": "PRIMARY"
+  },
+  {
+    "name": "Celestial Heights High",
+    "registrationNumber": "REG-0017",
+    "address": "116 Celestial St, Dodoma",
+    "phone": "0754100016",
+    "email": "info@celestial-heights-high.ac.tz",
+    "website": "https://celestial-heights-high.ac.tz",
+    "motto": "Rising Above, Soaring Beyond",
+
+    "type": "GOVERNMENT",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Sovereign Secondary School",
+    "registrationNumber": "REG-0018",
+    "address": "117 Sovereign St, Dodoma",
+    "phone": "0754100017",
+    "email": "info@sovereign-secondary-school.ac.tz",
+    "website": "https://sovereign-secondary-school.ac.tz",
+    "motto": "Empowering Tomorrow's Leaders",
+
+    "type": "PRIVATE",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Enigma High",
+    "registrationNumber": "REG-0019",
+    "address": "118 Enigma St, Dodoma",
+    "phone": "0754100018",
+    "email": "info@enigma-high.ac.tz",
+    "website": "https://enigma-high.ac.tz",
+    "motto": "Unlocking Potential, Solving Challenges",
+
+    "type": "GOVERNMENT",
+    "level": "PRIMARY"
+  },
+  {
+    "name": "Galaxy Grove Secondary School",
+    "registrationNumber": "REG-0020",
+    "address": "119 Galaxy St, Dodoma",
+    "phone": "0754100019",
+    "email": "info@galaxy-grove-secondary-school.ac.tz",
+    "website": "https://galaxy-grove-secondary-school.ac.tz",
+    "motto": "Exploring New Frontiers of Knowledge",
+
+    "type": "PRIVATE",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Majestic Minds Academy",
+    "registrationNumber": "REG-0021",
+    "address": "120 Majestic St, Dodoma",
+    "phone": "0754100020",
+    "email": "info@majestic-minds-academy.ac.tz",
+    "website": "https://majestic-minds-academy.ac.tz",
+    "motto": "Cultivating Brilliance, Nurturing Talent",
+
+    "type": "GOVERNMENT",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Elysium Elite Secondary School",
+    "registrationNumber": "REG-0022",
+    "address": "121 Elysium St, Dodoma",
+    "phone": "0754100021",
+    "email": "info@elysium-elite-secondary-school.ac.tz",
+    "website": "https://elysium-elite-secondary-school.ac.tz",
+    "motto": "Where Dreams Take Flight",
+
+    "type": "PRIVATE",
+    "level": "PRIMARY"
+  },
+  {
+    "name": "Genesis High",
+    "registrationNumber": "REG-0023",
+    "address": "122 Genesis St, Dodoma",
+    "phone": "0754100022",
+    "email": "info@genesis-high.ac.tz",
+    "website": "https://genesis-high.ac.tz",
+    "motto": "Creating Futures, Shaping Destinies",
+
+    "type": "GOVERNMENT",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Ascendancy Academy",
+    "registrationNumber": "REG-0024",
+    "address": "123 Ascendancy St, Dodoma",
+    "phone": "0754100023",
+    "email": "info@ascendancy-academy.ac.tz",
+    "website": "https://ascendancy-academy.ac.tz",
+    "motto": "Ascending to Greatness",
+
+    "type": "PRIVATE",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Zenith Zenith High School",
+    "registrationNumber": "REG-0025",
+    "address": "124 Zenith St, Dodoma",
+    "phone": "0754100024",
+    "email": "info@zenith-zenith-high-school.ac.tz",
+    "website": "https://zenith-zenith-high-school.ac.tz",
+    "motto": "Beyond the Summit",
+
+    "type": "GOVERNMENT",
+    "level": "PRIMARY"
+  },
+  {
+    "name": "Equinox Institute",
+    "registrationNumber": "REG-0026",
+    "address": "125 Equinox St, Dodoma",
+    "phone": "0754100025",
+    "email": "info@equinox-institute.ac.tz",
+    "website": "https://equinox-institute.ac.tz",
+    "motto": "Balanced Excellence",
+
+    "type": "PRIVATE",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Momentum High",
+    "registrationNumber": "REG-0027",
+    "address": "126 Momentum St, Dodoma",
+    "phone": "0754100026",
+    "email": "info@momentum-high.ac.tz",
+    "website": "https://momentum-high.ac.tz",
+    "motto": "Driving Success Forward",
+
+    "type": "GOVERNMENT",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Astral Academy",
+    "registrationNumber": "REG-0028",
+    "address": "127 Astral St, Dodoma",
+    "phone": "0754100027",
+    "email": "info@astral-academy.ac.tz",
+    "website": "https://astral-academy.ac.tz",
+    "motto": "Guiding Stars to Success",
+
+    "type": "PRIVATE",
+    "level": "PRIMARY"
+  },
+  {
+    "name": "Epiphany Secondary School",
+    "registrationNumber": "REG-0029",
+    "address": "128 Epiphany St, Dodoma",
+    "phone": "0754100028",
+    "email": "info@epiphany-secondary-school.ac.tz",
+    "website": "https://epiphany-secondary-school.ac.tz",
+    "motto": "Revelation in Learning",
+
+    "type": "GOVERNMENT",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Virtuoso Valley High",
+    "registrationNumber": "REG-0030",
+    "address": "129 Virtuoso St, Dodoma",
+    "phone": "0754100029",
+    "email": "info@virtuoso-valley-high.ac.tz",
+    "website": "https://virtuoso-valley-high.ac.tz",
+    "motto": "Where Talent Meets Opportunity",
+
+    "type": "PRIVATE",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Legacy Lane Secondary School",
+    "registrationNumber": "REG-0031",
+    "address": "130 Legacy St, Dodoma",
+    "phone": "0754100030",
+    "email": "info@legacy-lane-secondary-school.ac.tz",
+    "website": "https://legacy-lane-secondary-school.ac.tz",
+    "motto": "Honoring Tradition, Embracing Innovation",
+
+    "type": "GOVERNMENT",
+    "level": "PRIMARY"
+  },
+  {
+    "name": "Eminent Heights High",
+    "registrationNumber": "REG-0032",
+    "address": "131 Eminent St, Dodoma",
+    "phone": "0754100031",
+    "email": "info@eminent-heights-high.ac.tz",
+    "website": "https://eminent-heights-high.ac.tz",
+    "motto": "Rising Above, Shining Bright",
+
+    "type": "PRIVATE",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Apex Academy",
+    "registrationNumber": "REG-0033",
+    "address": "132 Apex St, Dodoma",
+    "phone": "0754100032",
+    "email": "info@apex-academy.ac.tz",
+    "website": "https://apex-academy.ac.tz",
+    "motto": "At the Peak of Excellence",
+
+    "type": "GOVERNMENT",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Catalyst High",
+    "registrationNumber": "REG-0034",
+    "address": "133 Catalyst St, Dodoma",
+    "phone": "0754100033",
+    "email": "info@catalyst-high.ac.tz",
+    "website": "https://catalyst-high.ac.tz",
+    "motto": "Igniting Minds, Fueling Futures",
+
+    "type": "PRIVATE",
+    "level": "PRIMARY"
+  },
+  {
+    "name": "Renaissance Secondary School",
+    "registrationNumber": "REG-0035",
+    "address": "134 Renaissance St, Dodoma",
+    "phone": "0754100034",
+    "email": "info@renaissance-secondary-school.ac.tz",
+    "website": "https://renaissance-secondary-school.ac.tz",
+    "motto": "Reviving Knowledge, Rekindling Passion",
+
+    "type": "GOVERNMENT",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Elite Endeavors Institute",
+    "registrationNumber": "REG-0036",
+    "address": "135 Elite St, Dodoma",
+    "phone": "0754100035",
+    "email": "info@elite-endeavors-institute.ac.tz",
+    "website": "https://elite-endeavors-institute.ac.tz",
+    "motto": "Striving for Elite Achievement",
+
+    "type": "PRIVATE",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Noble Nexus High School",
+    "registrationNumber": "REG-0037",
+    "address": "136 Noble St, Dodoma",
+    "phone": "0754100036",
+    "email": "info@noble-nexus-high-school.ac.tz",
+    "website": "https://noble-nexus-high-school.ac.tz",
+    "motto": "Connecting Minds, Inspiring Hearts",
+
+    "type": "GOVERNMENT",
+    "level": "PRIMARY"
+  },
+  {
+    "name": "Voyageur High",
+    "registrationNumber": "REG-0038",
+    "address": "137 Voyageur St, Dodoma",
+    "phone": "0754100037",
+    "email": "info@voyageur-high.ac.tz",
+    "website": "https://voyageur-high.ac.tz",
+    "motto": "Embarking on a Journey of Excellence",
+
+    "type": "PRIVATE",
+    "level": "SECONDARY"
+  },
+  {
+    "name": "Excellence Express Secondary School",
+    "registrationNumber": "REG-0039",
+    "address": "138 Excellence St, Dodoma",
+    "phone": "0754100038",
+    "email": "info@excellence-express-secondary-school.ac.tz",
+    "website": "https://excellence-express-secondary-school.ac.tz",
+    "motto": "On the Fast Track to Success",
+
+    "type": "GOVERNMENT",
+    "level": "SECONDARY"
+  }
+]

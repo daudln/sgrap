@@ -1,12 +1,10 @@
-import { CircleUser, Package2 } from "lucide-react";
+import { LogOut, Package2, Settings, User } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
-import { signOut } from "@/app/auth/_actions/actions";
 import Navbar from "@/components/navbar";
 import NavigationMenu from "@/components/navigation-menu";
 import { ThemeSwitcher } from "@/components/theme-switcher";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,20 +13,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { validateRequest } from "@/auth";
 import { NAVIGATION_LINK } from "@/lib/navlinks";
-import { redirect } from "next/navigation";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import auth from "@/auth";
+import { headers } from "next/headers";
+import SignoutButton from "../(auth)/_components/signout-button";
 
 export default async function layout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { user } = await validateRequest();
-  if (!user) {
-    return redirect("auth/login");
-  }
-
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
   return (
     <div>
       <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -58,37 +56,27 @@ export default async function layout({
           <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
             <Navbar />
             <div className="w-full text-end">
-              <p>Hi, {user.name}</p>
+              <p>Hi, {session?.user.name}</p>
             </div>
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="rounded-full"
-                >
-                  <CircleUser className="h-5 w-5" />
-                  <span className="sr-only">Toggle user menu</span>
-                </Button>
+              <DropdownMenuTrigger className="focus:outline-none focus:ring-[2px] focus:ring-offset-2 focus:ring-primary rounded-full">
+                <Avatar>
+                  <AvatarFallback>
+                    {session?.user.name?.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent>
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer">
-                  Settings
+                <DropdownMenuItem>
+                  <User className="h-4 w-4" /> Profile
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer hover:text-red-500 transition-all">
-                  <form action={signOut}>
-                    <Button
-                      type="submit"
-                      variant="link"
-                      className="text-red-500"
-                      size="sm"
-                    >
-                      Logout
-                    </Button>
-                  </form>
+                <DropdownMenuItem>
+                  <Settings className="h-4 w-4" /> Settings
+                </DropdownMenuItem>
+                <DropdownMenuItem className="text-destructive">
+                  <SignoutButton />
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

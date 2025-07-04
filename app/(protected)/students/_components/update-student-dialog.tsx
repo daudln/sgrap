@@ -3,15 +3,15 @@
 import DialogBox from "@/components/dialog-box";
 import { Dispatch, SetStateAction } from "react";
 import UpdateStudentForm from "./update-student-form";
-import { StudentData } from "@/types/user";
+import { StudentOutput } from "@/app/(protected)/_procedures/student";
 
 interface Props {
   open: boolean;
-  profile: StudentData;
+  student: StudentOutput;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-function UpdateStudentDialog({ profile, open, setOpen }: Props) {
+function UpdateStudentDialog({ student, open, setOpen }: Props) {
   return (
     <DialogBox
       open={open}
@@ -19,7 +19,7 @@ function UpdateStudentDialog({ profile, open, setOpen }: Props) {
       title="Update Student"
       description="Update the student details"
     >
-      <UpdateStudentForm profile={profile} setOpen={setOpen} />
+      <UpdateStudentForm student={student} setOpen={setOpen} />
     </DialogBox>
   );
 }

@@ -21,10 +21,35 @@ export type Student = {
 };
 
 export type StudentData = {
-  profile: Profile;
-  user: User;
-  student: Student;
-  school: School;
+  id: string;
+  name: string;
+  email: string;
+  school: string;
+  gender: "MALE" | "FEMALE" | null;
+  classLevel:
+    | "NURSERY"
+    | "PRE_NURSERY"
+    | "KINDERGARTEN"
+    | "GRADE_1"
+    | "GRADE_2"
+    | "GRADE_3"
+    | "GRADE_4"
+    | "GRADE_5"
+    | "GRADE_6"
+    | "GRADE_7"
+    | "GRADE_8"
+    | "FORM_ONE"
+    | "FORM_TWO"
+    | "FORM_THREE"
+    | "FORM_FOUR"
+    | "FORM_FIVE"
+    | "FORM_SIX";
+  dateOfBirth: Date | null;
+  phoneNumber: string | null;
+  image: string | null;
+  userType: "ADMIN" | "USER" | null;
+  createdAt: Date;
+  updatedAt: Date | null;
 };
 
 export type Teacher = {

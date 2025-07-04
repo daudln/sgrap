@@ -1,6 +1,7 @@
 import React from "react";
 import QueryProvider from "@/providers/query-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
+import { TRPCReactProvider } from "@/trpc/client";
 
 interface RootProviderProps {
   children: React.ReactNode;
@@ -8,7 +9,7 @@ interface RootProviderProps {
 
 const RootProvider = ({ children }: RootProviderProps) => {
   return (
-    <QueryProvider>
+    <TRPCReactProvider>
       <ThemeProvider
         attribute="class"
         defaultTheme="light"
@@ -17,7 +18,7 @@ const RootProvider = ({ children }: RootProviderProps) => {
       >
         {children}
       </ThemeProvider>
-    </QueryProvider>
+    </TRPCReactProvider>
   );
 };
 

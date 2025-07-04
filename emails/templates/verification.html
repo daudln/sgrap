@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Email verification</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .header {
+        font-size: 24px;
+        color: #2563eb;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .button {
+        display: inline-block;
+        background-color: #2563eb;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 5px;
+        text-decoration: none;
+        margin: 20px 0;
+      }
+      .footer {
+        margin-top: 30px;
+        font-size: 12px;
+        color: #666;
+        text-align: center;
+      }
+      .verification-button-container {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">Verify Your Email Address</div>
+
+    <p>Hello {{ userName }},</p>
+
+    <p>
+      Thank you for signing up with {{ companyName }}! Please verify your email
+      address to activate your account.
+    </p>
+
+    <p class="verification-button-container">
+      <a href="{{ verificationLink }}" class="button">Verify Email Address</a>
+    </p>
+    <p>
+      If the button doesn't work, copy and paste this link into your browser:
+    </p>
+    <p>{{ verificationLink }}</p>
+    <p>
+      This verification link will expire in 24 hours. If you didn't create an
+      account with us, please ignore this email.
+    </p>
+
+    <div class="footer">
+      <p>Need help? Contact our support team at {{ supportEmail }}</p>
+      <p>© {{ year }} {{ companyName }}. All rights reserved.</p>
+      <p>
+        {{ companyAddress }}<br />
+        {{ companyCity }}
+      </p>
+      <p>
+        <a href="{{ unsubscribeLink }}">Unsubscribe</a> |
+        <a href="{{ privacyPolicyLink }}">Privacy Policy</a>
+      </p>
+    </div>
+  </body>
+</html>

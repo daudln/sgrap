@@ -18,7 +18,8 @@ const accountRoute = new Hono().basePath("/account").get("/", async (c) => {
     where: (user, { eq }) => eq(user.id, id),
     columns: {
       id: true,
-      name: true,
+      first_name: true,
+      last_name: true,
       email: true,
     },
   });

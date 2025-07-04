@@ -1,3 +1,5 @@
+import { teacher } from "@/db/schema/teacher";
+import { InferSelectModel, relations } from "drizzle-orm";
 import {
   boolean,
   pgEnum,
@@ -6,30 +8,21 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
-import { createUserSchema, user } from "./uaa";
-import { InferSelectModel, relations } from "drizzle-orm";
-import { school } from "./school";
 import { createInsertSchema } from "drizzle-zod";
-import { z } from "zod";
-import { student } from "./student";
-import { teacher } from "@/db/schema/teacher";
+import { student } from "@/db/schema/student";
+import { user } from "@/db/schema/auth";
+import { baseTable } from "@/db/schema/base";
 
-export const GenderEnum = pgEnum("gender", ["MALE", "FEMALE"]);
+export const genderEnum = pgEnum("gender_enum", ["MALE", "FEMALE"]);
 
 export const profile = pgTable("profile", {
-  id: varchar("id", { length: 100 })
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" })
-    .primaryKey(),
-  image: text("image"),
-  gender: GenderEnum("gender").notNull(),
+  ...baseTable,
+  id: text("id")
+    .primaryKey()
+    .references(() => user.id, { onDelete: "cascade" }),
   phoneNumber: varchar("phone_number", { length: 12 }),
-  schoolId: text("school_id")
-    .notNull()
-    .references(() => school.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
-  updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
-  isActive: boolean("is_active").notNull().default(true),
+  dateOfBirth: timestamp("date_of_birth", { mode: "date" }),
+  gender: genderEnum("gender_enum"),
 });
 
 export const profileRelations = relations(profile, ({ one }) => ({
@@ -37,22 +30,10 @@ export const profileRelations = relations(profile, ({ one }) => ({
     fields: [profile.id],
     references: [user.id],
   }),
-  school: one(school, {
-    fields: [profile.schoolId],
-    references: [school.id],
-  }),
   student: one(student),
   teacher: one(teacher),
 }));
 
 export type Profile = InferSelectModel<typeof profile>;
 
-export const createProfileSchema = z.object({
-  firstName: z.string(),
-  lastName: z.string(),
-  middleName: z.string().optional(),
-  gender: z.enum(["MALE", "FEMALE"]),
-  schoolId: z.string(),
-  phoneNumber: z.string().optional(),
-  image: z.string().optional(),
-});
+export const createProfileSchema = createInsertSchema(profile);

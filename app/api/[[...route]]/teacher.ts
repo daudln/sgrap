@@ -11,7 +11,7 @@ import { profile } from "@/db/schema/profile";
 import { user } from "@/db/schema/uaa";
 import { school } from "@/db/schema/school";
 import { generateId } from "lucia";
-import { createStudentSchema } from "@/schema/student";
+import { createTeacherSchema } from "@/db/schema/teacher";
 
 const teacherRoute = new Hono()
   .basePath("/teachers")
@@ -28,13 +28,9 @@ const teacherRoute = new Hono()
     "/",
     zValidator(
       "json",
-      createStudentSchema
-        .omit({
-          classLevel: true,
-        })
-        .extend({
-          email: z.string().email(),
-        })
+      createTeacherSchema.extend({
+        email: z.string().email(),
+      })
     ),
     async (c) => {
       const body = c.req.valid("json");
@@ -94,13 +90,9 @@ const teacherRoute = new Hono()
     zValidator(
       "json",
       z.array(
-        createStudentSchema
-          .omit({
-            classLevel: true,
-          })
-          .extend({
-            email: z.string().email(),
-          })
+        createTeacherSchema.extend({
+          email: z.string().email(),
+        })
       )
     ),
     async (c) => {
@@ -142,13 +134,9 @@ const teacherRoute = new Hono()
     zValidator("param", getEntitySchema),
     zValidator(
       "json",
-      createStudentSchema
-        .omit({
-          classLevel: true,
-        })
-        .extend({
-          email: z.string().email(),
-        })
+      createTeacherSchema.extend({
+        email: z.string().email(),
+      })
     ),
     async (c) => {
       const id = c.req.param("id");

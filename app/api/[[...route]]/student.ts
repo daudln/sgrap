@@ -11,6 +11,7 @@ import { profile } from "@/db/schema/profile";
 import { user } from "@/db/schema/uaa";
 import { school } from "@/db/schema/school";
 import { generateId } from "lucia";
+import { generateRandomRecoveryCode } from "@/lib/utils";
 
 const studentRoute = new Hono()
   .basePath("/students")
@@ -25,7 +26,6 @@ const studentRoute = new Hono()
   })
   .post("/", zValidator("json", createStudentSchema), async (c) => {
     const body = c.req.valid("json");
-    const name = `${body.firstName}  ${body.lastName}`;
     const existingStudent = await db
       .select()
       .from(student)
@@ -36,7 +36,7 @@ const studentRoute = new Hono()
         and(
           eq(school.id, body.schoolId),
           eq(student.classLevel, body.classLevel),
-          eq(user.name, name)
+          eq(user.first_name, body.firstName)
         )
       );
 
@@ -50,12 +50,14 @@ const studentRoute = new Hono()
     }
 
     const userId = generateId(15);
+    const recoveryCode = generateRandomRecoveryCode();
 
     const [newUser] = await db
       .insert(user)
       .values({
-        name,
-        id: userId,
+        name: body.firstName,
+        gender: body.gender,
+        recovery_code: recoveryCode,
       })
       .returning({
         id: user.id,
@@ -148,19 +150,21 @@ const studentRoute = new Hono()
         .update(user)
         .set({
           id: existingStudent.user.id,
-          name: `${body.firstName} ${body.middleName} ${body.lastName}`,
+          firstName: body.firstName,
+          lastName: body.lastName,
+          gender: body.gender,
         })
         .where(eq(user.id, existingStudent.user.id))
         .returning({
           id: user.id,
-          name: user.name,
+          firstName: user.firstName,
+          lastName: user.firstName,
         });
       const [updatedProfile] = await db
         .update(profile)
         .set({
           id: updatedUser.id,
           schoolId: body.schoolId,
-          gender: body.gender,
         })
         .where(eq(profile.id, existingStudent.profile.id))
         .returning();

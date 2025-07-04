@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 
 const font = localFont({
-  src: "fonts/Manrope/Manrope-VariableFont_wght.ttf",
+  src: "fonts/Poppins/Poppins-Regular.ttf",
 });
 
 import "./globals.css";

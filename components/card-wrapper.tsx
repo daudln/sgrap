@@ -31,8 +31,8 @@ const CardWrapper = ({
   className,
 }: CardWrapperProps) => {
   return (
-    <div className="p-4 xl:px-32 size-full flex items-center justify-center">
-      <Card className={cn("min-w-96 shadow-md", className)}>
+    <div className="p-4 xl:px-32 size-full flex items-center justify-center w-full">
+      <Card className={cn("min-w-[450px] shadow-md", className)}>
         <CardHeader>
           <CardTitle className="text-3xl">{headerLabel}</CardTitle>
           <CardDescription>{cardDescription}</CardDescription>

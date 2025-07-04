@@ -4,6 +4,9 @@ import { ColumnDef, FilterFn } from "@tanstack/react-table";
 
 import { useState } from "react";
 
+import CreateStudentDialog from "@/app/(protected)/students/_components/create-student-dialog";
+import DeleteStudentDialog from "@/app/(protected)/students/_components/delete-student";
+import UpdateStudentDialog from "@/app/(protected)/students/_components/update-student-dialog";
 import { DataTableColumnHeader } from "@/components/datatable/column-header";
 import { DataTable } from "@/components/datatable/data-table";
 import { Button } from "@/components/ui/button";
@@ -15,23 +18,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { StudentData } from "@/types/user";
+import { CLASS_FILTER, GENDER_FILTER } from "@/lib/constants";
+import { formatClassName } from "@/lib/helpers";
+import { useTRPC } from "@/trpc/client";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { MoreHorizontal } from "lucide-react";
 import { BsTrash3 } from "react-icons/bs";
 import { LuPencil } from "react-icons/lu";
-import CreateStudentDialog from "./create-student-dialog";
-import DeleteStudentDialog from "./delete-student";
-import UpdateStudentDialog from "./update-student-dialog";
-import { formatClassName } from "@/lib/helpers";
-import {
-  CLASS_FILTER,
-  GENDER_FILTER,
-  INITIAL_IMPORT_RESULTS,
-  VARIANTS,
-} from "@/lib/constants";
-import useGetStudents from "@/hooks/student/use-get-students";
+import { StudentOutput } from "@/app/(protected)/_procedures/student";
 
-function RowActions({ profile }: { profile: StudentData }) {
+function RowActions({ student }: { student: StudentOutput }) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
 
@@ -40,12 +36,12 @@ function RowActions({ profile }: { profile: StudentData }) {
       <DeleteStudentDialog
         open={showDeleteDialog}
         setOpen={setShowDeleteDialog}
-        id={profile.user.id}
+        id={student.id}
       />
       <UpdateStudentDialog
         setOpen={setShowEditDialog}
         open={showEditDialog}
-        profile={profile}
+        student={student}
       />
 
       <DropdownMenu>
@@ -82,8 +78,8 @@ function RowActions({ profile }: { profile: StudentData }) {
   );
 }
 
-const filterFn: FilterFn<StudentData> = (row, id, value: string[] | string) => {
-  const searchableRowContent = `${row.original.user.email} ${row.original.school.motto} ${row.original.school.name} ${row.original.profile.gender} ${row.original.student.classLevel}`;
+const filterFn: FilterFn<StudentOutput> = (row, id, value: string[] | string) => {
+  const searchableRowContent = `${row.original.email} ${row.original.school} ${row.original.gender} ${row.original.classLevel}`;
 
   if (Array.isArray(value)) {
     return value.some((v) => row.getValue(id) === v);
@@ -91,15 +87,15 @@ const filterFn: FilterFn<StudentData> = (row, id, value: string[] | string) => {
   return searchableRowContent.toLowerCase().includes(value.toLowerCase());
 };
 
-const getDataForExport = (student: StudentData) => ({
-  name: student.user.name,
-  email: student.user.email,
-  school: student.school.name,
-  gender: student.profile.gender,
-  class: student.student.classLevel,
+const getDataForExport = (student: StudentOutput) => ({
+  name: student.name,
+  email: student.email,
+  school: student.school,
+  gender: student.gender,
+  class: student.classLevel,
 });
 
-const columns: ColumnDef<StudentData>[] = [
+const columns: ColumnDef<StudentOutput>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => (
@@ -108,7 +104,7 @@ const columns: ColumnDef<StudentData>[] = [
     filterFn: filterFn,
     cell: ({ row }) => (
       <div className="flex gap-2 capitalize">
-        <div className="capitalize">{row.original.user.name}</div>
+        <div className="capitalize">{row.original.name}</div>
       </div>
     ),
   },
@@ -120,7 +116,7 @@ const columns: ColumnDef<StudentData>[] = [
     filterFn: filterFn,
     cell: ({ row }) => (
       <div className="flex gap-2">
-        <div className="">{row.original.user.email || "-"}</div>
+        <div className="">{row.original.email || "-"}</div>
       </div>
     ),
   },
@@ -132,7 +128,7 @@ const columns: ColumnDef<StudentData>[] = [
     filterFn: filterFn,
     cell: ({ row }) => (
       <div className="flex gap-2">
-        <div className="">{row.original.profile.gender || "-"}</div>
+        <div className="">{row.original.gender || "-"}</div>
       </div>
     ),
   },
@@ -144,7 +140,7 @@ const columns: ColumnDef<StudentData>[] = [
     filterFn: filterFn,
     cell: ({ row }) => (
       <div className="flex gap-2">
-        <div className="">{row.original.profile?.phoneNumber || "-"}</div>
+        <div className="">{row.original.phoneNumber || "-"}</div>
       </div>
     ),
   },
@@ -157,7 +153,7 @@ const columns: ColumnDef<StudentData>[] = [
     cell: ({ row }) => (
       <div className="flex gap-2">
         <div className="">
-          {formatClassName(row.original.student.classLevel || "-")}
+          {formatClassName(row.original.classLevel || "-")}
         </div>
       </div>
     ),
@@ -178,15 +174,19 @@ const columns: ColumnDef<StudentData>[] = [
   {
     id: "actions",
     enableHiding: false,
-    cell: ({ row }) => <RowActions profile={row.original} />,
+    cell: ({ row }) => <RowActions student={row.original} />,
     filterFn: filterFn,
   },
 ];
 
 const StudentTable = () => {
-  const { data, isLoading, error } = useGetStudents();
   const [open, setOpen] = useState(false);
   const filters = [GENDER_FILTER, CLASS_FILTER];
+
+  const trpc = useTRPC();
+  const { data, isLoading } = useSuspenseQuery(
+    trpc.student.getPaginated.queryOptions({})
+  );
 
   return (
     <>
@@ -195,7 +195,7 @@ const StudentTable = () => {
       </div>
 
       <DataTable
-        data={data || []}
+        data={data.data}
         columns={columns}
         filters={filters}
         filterPlaceholder="Filter students..."

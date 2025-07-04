@@ -1,7 +1,5 @@
-import DialogBox from "@/components/dialog-box";
-import { Button } from "@/components/ui/button";
-import React, { Dispatch, SetStateAction } from "react";
-import { PiPlus } from "react-icons/pi";
+import { ResponsiveDialog } from "@/components/responsive-dialog";
+import { Dispatch, SetStateAction } from "react";
 import CreateStudentForm from "./create-student-form";
 
 interface Props {
@@ -11,19 +9,12 @@ interface Props {
 
 const CreateSubjectDialog = ({ open, setOpen }: Props) => {
   return (
-    <DialogBox
-      open={open}
-      onOpenChange={setOpen}
-      triger={
-        <Button variant="outline" size="sm">
-          <PiPlus className="mr-2" /> Student
-        </Button>
-      }
-      title="Create student"
+    <ResponsiveDialog
+      title="Create Student"
       description="Fill the form below to create a new student"
     >
-      <CreateStudentForm setOpen={setOpen} />
-    </DialogBox>
+      <CreateStudentForm />
+    </ResponsiveDialog>
   );
 };
 

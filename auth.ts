@@ -1,65 +1,43 @@
-import { Lucia, User, Session } from "lucia";
-import adapter from "@/lib/lucia/adapter";
-import { cookies } from "next/headers";
-import { cache } from "react";
+import { db } from "@/db";
+import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { nextCookies } from "better-auth/next-js";
+import emailService from "./emails/utils";
 
-export const lucia = new Lucia(adapter, {
-  getUserAttributes(attributes) {
-    return {
-      name: attributes.name,
-    };
-  },
-  sessionCookie: {
-    attributes: {
-      secure: process.env.NODE_ENV === "production",
+export const auth = betterAuth({
+  database: drizzleAdapter(db, {
+    provider: "pg",
+  }),
+  emailAndPassword: {
+    enabled: true,
+    requireEmailVerification: true,
+    sendResetPassword: async ({ user, url }) => {
+      await emailService.sendEmail(
+        user.email,
+        "Reset your password",
+        "forgot-password.html",
+        {
+          userName: user.name,
+          resetLink: url,
+        }
+      );
     },
   },
+  emailVerification: {
+    sendVerificationEmail: async ({ user, url }) => {
+      await emailService.sendEmail(
+        user.email,
+        "Verify your email address",
+        "verification.html",
+        {
+          userName: user.name,
+          verificationLink: url,
+        }
+      );
+    },
+    sendOnSignUp: true,
+  },
+  plugins: [nextCookies()],
 });
 
-export const validateRequest = cache(
-  async (): Promise<
-    { user: User; session: Session } | { user: null; session: null }
-  > => {
-    const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null;
-    if (!sessionId) {
-      return {
-        user: null,
-        session: null,
-      };
-    }
-
-    const result = await lucia.validateSession(sessionId);
-    // next.js throws when you attempt to set cookie when rendering page
-    try {
-      if (result.session && result.session.fresh) {
-        const sessionCookie = lucia.createSessionCookie(result.session.id);
-        cookies().set(
-          sessionCookie.name,
-          sessionCookie.value,
-          sessionCookie.attributes
-        );
-      }
-      if (!result.session) {
-        const sessionCookie = lucia.createBlankSessionCookie();
-        cookies().set(
-          sessionCookie.name,
-          sessionCookie.value,
-          sessionCookie.attributes
-        );
-      }
-    } catch {}
-    return result;
-  }
-);
-
-// IMPORTANT!
-declare module "lucia" {
-  interface Register {
-    Lucia: typeof lucia;
-    DatabaseUserAttributes: DatabaseUserAttributes;
-  }
-}
-
-interface DatabaseUserAttributes {
-  name: string;
-}
+export default auth;

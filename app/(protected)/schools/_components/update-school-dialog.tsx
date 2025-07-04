@@ -1,33 +1,20 @@
 "use client";
 
-import DialogBox from "@/components/dialog-box";
-import { CreateSchoolInput } from "@/schema/school";
-import { useQueryClient } from "@tanstack/react-query";
-import { Dispatch, SetStateAction } from "react";
-import { toast } from "sonner";
+import { SchoolRouterOutput } from "@/app/(protected)/_procedures/school";
 import UpdateSchoolForm from "@/app/(protected)/schools/_components/update-school-form";
+import DialogBox from "@/components/dialog-box";
+import { Dispatch, SetStateAction } from "react";
 
 interface Props {
   open: boolean;
-  schoolId: string;
+  school: SchoolRouterOutput;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export type School = CreateSchoolInput & {
-  id: string;
-};
-function UpdateSchoolDialog({ schoolId, open, setOpen }: Props) {
-  const queryClient = useQueryClient();
-
-  const schools = queryClient.getQueryData<{ data: School[] }>(["schools"]);
-  const school = schools?.data?.find((school) => school.id === schoolId) as
-    | School
-    | undefined;
-  if (!school)
-    toast.error("Something went wrong", {
-      id: schoolId,
-    });
-
+function UpdateSchoolDialog({ school, open, setOpen }: Props) {
+  if (!school) {
+    return null;
+  }
   return (
     <DialogBox
       open={open}
@@ -35,7 +22,7 @@ function UpdateSchoolDialog({ schoolId, open, setOpen }: Props) {
       title="Update school"
       description="Update the subject details"
     >
-      <UpdateSchoolForm school={school!} setOpen={setOpen} />
+      <UpdateSchoolForm school={school} setOpen={setOpen} />
     </DialogBox>
   );
 }

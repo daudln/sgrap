@@ -10,9 +10,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useTRPC } from "@/trpc/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { deleteSchool } from "../_actions/actions";
 
 interface Props {
   open: boolean;
@@ -21,31 +21,28 @@ interface Props {
 }
 
 function DeleteSubjectDialog({ open, setOpen, schoolId }: Props) {
+  const trpc = useTRPC();
+  const deleteSchool = trpc.school.delete.mutationOptions();
   const queryClient = useQueryClient();
 
   const deleteMutation = useMutation({
-    mutationFn: deleteSchool,
-    onSuccess: async ({ data }) => {
-      if ("!data?.success") {
-        toast.error("data?.message", {
-          id: schoolId,
-        });
-      } else {
-        toast.success("data?.message", {
-          id: schoolId,
-        });
-      }
+    mutationFn: deleteSchool.mutationFn,
+    onSuccess: async () => {
+      toast.success("School deleted", {
+        id: schoolId,
+      });
 
       await queryClient.invalidateQueries({
         queryKey: ["schools"],
       });
     },
-    onError: () => {
+    onError: (error) => {
       toast.error("Something went wrong", {
         id: schoolId,
       });
     },
   });
+
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogContent>
