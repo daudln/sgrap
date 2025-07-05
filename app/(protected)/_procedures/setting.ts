@@ -54,3 +54,5 @@ export const settingRouter = createTRPCRouter({
     return regions;
   }),
 });
+
+export default settingRouter;

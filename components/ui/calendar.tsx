@@ -224,7 +224,6 @@ function Calendar({
         ),
         MonthGrid: ({ className, children, ...props }) => (
           <MonthGrid
-            children={children}
             className={className}
             displayYears={displayYears}
             startMonth={startMonth}
@@ -232,7 +231,9 @@ function Calendar({
             navView={navView}
             setNavView={setNavView}
             {...props}
-          />
+          >
+            {children}
+          </MonthGrid>
         ),
         ...components,
       }}
@@ -305,22 +306,25 @@ function Nav({
   const handlePreviousClick = React.useCallback(() => {
     if (!previousMonth) return;
     if (navView === "years") {
+      const range = displayYears.to - displayYears.from + 1;
       setDisplayYears((prev) => ({
-        from: prev.from - (prev.to - prev.from + 1),
-        to: prev.to - (prev.to - prev.from + 1),
+        from: prev.from - range,
+        to: prev.to - range,
       }));
-      onPrevClick?.(
-        new Date(
-          displayYears.from - (displayYears.to - displayYears.from),
-          0,
-          1
-        )
-      );
+      onPrevClick?.(new Date(displayYears.from - range, 0, 1));
       return;
     }
     goToMonth(previousMonth);
     onPrevClick?.(previousMonth);
-  }, [previousMonth, goToMonth]);
+  }, [
+    previousMonth,
+    goToMonth,
+    navView,
+    displayYears.from,
+    displayYears.to,
+    setDisplayYears,
+    onPrevClick,
+  ]);
 
   const handleNextClick = React.useCallback(() => {
     if (!nextMonth) return;

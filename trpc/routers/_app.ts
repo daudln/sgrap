@@ -1,9 +1,10 @@
 import authRouter from "@/app/(protected)/_procedures/auth";
 import roleRouter from "@/app/(protected)/_procedures/role";
 import schoolRouter from "@/app/(protected)/_procedures/school";
-import { settingRouter } from "@/app/(protected)/_procedures/setting";
+import settingRouter from "@/app/(protected)/_procedures/setting";
 import statsRouter from "@/app/(protected)/_procedures/stats";
 import studentRouter from "@/app/(protected)/_procedures/student";
+import subjectRouter from "@/app/(protected)/_procedures/subject";
 import { createTRPCRouter } from "@/trpc/init";
 
 export const appRouter = createTRPCRouter({
@@ -13,6 +14,7 @@ export const appRouter = createTRPCRouter({
   student: studentRouter,
   role: roleRouter,
   setting: settingRouter,
+  subject: subjectRouter,
 });
 // export type definition of API
 export type AppRouter = typeof appRouter;

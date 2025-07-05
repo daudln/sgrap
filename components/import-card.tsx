@@ -1,4 +1,3 @@
-const REQUIRED_OPTIONS = ["code", "name", "category"] as const;
 import { Button } from "@/components/ui/button";
 import ImportTable from "@/components/import-table";
 import useConfirm from "@/hooks/use-confirm";
@@ -7,9 +6,11 @@ import { useStore } from "@/store/store";
 type Props = {
   data: string[][];
   onSubmit: (data: any[]) => void;
+  columns: string[];
+  requiredColumns: string[];
 };
 
-const ImportCard = ({ data, onSubmit }: Props) => {
+const ImportCard = ({ data, onSubmit, columns, requiredColumns }: Props) => {
   const onCancelImport = useStore((s) => s.onCancelImport);
   const setSelectedColumns = useStore((s) => s.setSelectedColumns);
   const selectedColumns = useStore((s) => s.selectedColumns);
@@ -64,9 +65,9 @@ const ImportCard = ({ data, onSubmit }: Props) => {
                   onCancelImport();
                 }
               }}
-              disabled={progress < REQUIRED_OPTIONS.length}
+              disabled={progress < requiredColumns.length}
             >
-              Submit ({progress} / {REQUIRED_OPTIONS.length})
+              Submit ({progress} / {requiredColumns.length})
             </Button>
           </div>
         </div>
@@ -74,6 +75,7 @@ const ImportCard = ({ data, onSubmit }: Props) => {
           headers={headers}
           body={body}
           selectedColumns={selectedColumns}
+          columns={columns}
           onTableHeadSelectChange={onTableHeadSelectChange}
         />
       </div>

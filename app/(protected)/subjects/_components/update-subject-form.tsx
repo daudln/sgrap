@@ -1,5 +1,6 @@
 "use client";
 
+import { SubjectOutput } from "@/app/(protected)/_procedures/subject";
 import ActionButton from "@/components/action-button";
 import { SelectInput } from "@/components/select-input";
 import {
@@ -11,13 +12,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { subjectCategory } from "@/db/schema/subject";
-import useGetSubject from "@/hooks/subject/use-get-subject";
-import useUpdateSubject from "@/hooks/subject/use-update-subject";
-import { UpdateSubjectInput, updateSubjectSchema } from "@/schema/subject";
+import { updateSubjectSchema } from "@/db/schema/subject";
+import { useTRPC } from "@/trpc/client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useCallback } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 const SUBJECT_CATEGORIES = [
@@ -32,33 +33,52 @@ const SUBJECT_CATEGORIES = [
 ];
 
 interface UpdateSubjectProps {
-  subjectId: string;
+  subject: SubjectOutput;
+  setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-const UpdateSubjectForm = ({ subjectId }: UpdateSubjectProps) => {
-  const mutation = useUpdateSubject();
-  const { data } = useGetSubject(subjectId);
-  console.log(data);
-  const form = useForm<UpdateSubjectInput>({
+const UpdateSubjectForm = ({ subject, setOpen }: UpdateSubjectProps) => {
+  const trpc = useTRPC();
+  const updateSubject = trpc.subject.update.mutationOptions();
+  const queryClient = useQueryClient();
+
+  const form = useForm<z.infer<typeof updateSubjectSchema>>({
     resolver: zodResolver(updateSubjectSchema),
     defaultValues: {
-      name: data?.data.name,
-      code: data?.data.code,
-      description: data?.data.description ?? undefined,
-      category: data?.data.category,
-      id: data?.data.id,
+      id: subject.id,
+      name: subject.name,
+      category: subject.category,
     },
   });
 
-  const handleOptionChange = useCallback(
-    (value: string) => {
-      form.setValue("category", value as z.infer<typeof subjectCategory>);
+  const handleSelectChange = useCallback(
+    (field: keyof z.infer<typeof updateSubjectSchema>, value: string) => {
+      form.setValue(field, value);
     },
     [form]
   );
 
-  const onSubmit = (data: UpdateSubjectInput) => {
-    mutation.mutate(data);
+  const updateMutation = useMutation({
+    mutationFn: updateSubject.mutationFn,
+    onSuccess: async () => {
+      toast.success("Subject updated successfully", {
+        id: "update-subject",
+      });
+      queryClient.invalidateQueries({
+        queryKey: trpc.subject.getAll.queryKey(),
+      });
+      form.reset();
+      setOpen((prev) => !prev);
+    },
+    onError: () => {
+      toast.error("Something went wrong", {
+        id: "update-subject",
+      });
+    },
+  });
+
+  const onSubmit = (data: z.infer<typeof updateSubjectSchema>) => {
+    updateMutation.mutate(data);
   };
   return (
     <Form {...form}>
@@ -82,62 +102,30 @@ const UpdateSubjectForm = ({ subjectId }: UpdateSubjectProps) => {
           />
           <FormField
             control={form.control}
-            name="code"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Code</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder="KSW" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder="Description (optional)" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
             name="category"
             render={({ field }) => (
               <FormItem className="flex flex-col my-2">
                 <FormLabel>Category</FormLabel>
                 <FormControl>
                   <SelectInput
-                    onChange={handleOptionChange}
+                    onChange={(val) =>
+                      form.setValue(
+                        "category",
+                        val as z.infer<typeof updateSubjectSchema>["category"]
+                      )
+                    }
                     className="w-full"
                     options={SUBJECT_CATEGORIES}
                     label="Category"
+                    selectedValue={form.getValues("category")}
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="id"
-            render={({ field }) => (
-              <FormItem hidden>
-                <FormControl>
-                  <Input {...field} hidden readOnly />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
         </div>
-        <ActionButton label="Update" status={mutation.status} />
+        <ActionButton label="Update" status={updateMutation.status} />
       </form>
     </Form>
   );

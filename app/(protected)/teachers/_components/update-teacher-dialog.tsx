@@ -1,8 +1,6 @@
 "use client";
 
-import DialogBox from "@/components/dialog-box";
 import { Dispatch, SetStateAction } from "react";
-import UpdateTeacherForm from "./update-teacher-form";
 import { TeacherData } from "@/types/user";
 
 interface Props {

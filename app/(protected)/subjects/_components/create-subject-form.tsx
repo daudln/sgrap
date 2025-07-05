@@ -11,11 +11,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import useCreateSubject from "@/hooks/subject/use-create-subject";
-import { CreateSubjectInput, createSubjectSchema } from "@/schema/subject";
+import { createSubjectSchema } from "@/db/schema/subject";
+import { useTRPC } from "@/trpc/client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dispatch, SetStateAction, useCallback } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 
 const SUBJECT_CATEGORIES = [
   {
@@ -30,27 +33,41 @@ const SUBJECT_CATEGORIES = [
 
 interface CreateSubjectProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
-  defaultValues?: CreateSubjectInput;
 }
 
-const CreateSubjectForm = ({
-  setOpen,
-  defaultValues,
-}: CreateSubjectProps & {}) => {
-  const mutation = useCreateSubject();
-  const form = useForm<CreateSubjectInput>({
+const CreateSubjectForm = ({ setOpen }: CreateSubjectProps & {}) => {
+  const trpc = useTRPC();
+  const createSubject = trpc.subject.create.mutationOptions();
+  const queryClient = useQueryClient();
+  const form = useForm<z.infer<typeof createSubjectSchema>>({
     resolver: zodResolver(createSubjectSchema),
-    defaultValues: defaultValues,
-  });
-  const handleOptionChange = useCallback(
-    (value: string) => {
-      form.setValue("category", value as "ART" | "SCIENCE");
+    defaultValues: {
+      name: "",
+      category: "ART",
     },
-    [form]
-  );
+  });
 
-  const onSubmit = (data: CreateSubjectInput) => {
-    mutation.mutate(data);
+  const createMutation = useMutation({
+    mutationFn: createSubject.mutationFn,
+    onSuccess: async () => {
+      toast.success("Subject updated successfully", {
+        id: "create-subject",
+      });
+      queryClient.invalidateQueries({
+        queryKey: trpc.subject.getAll.queryKey(),
+      });
+      form.reset();
+      setOpen((prev) => !prev);
+    },
+    onError: () => {
+      toast.error("Something went wrong", {
+        id: "create-subject",
+      });
+    },
+  });
+
+  const onSubmit = (data: z.infer<typeof createSubjectSchema>) => {
+    createMutation.mutate(data);
   };
   return (
     <Form {...form}>
@@ -74,43 +91,22 @@ const CreateSubjectForm = ({
           />
           <FormField
             control={form.control}
-            name="code"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Code</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder="KSW" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder="Description (optional)" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
             name="category"
             render={({ field }) => (
               <FormItem className="flex flex-col my-2">
                 <FormLabel>Category</FormLabel>
                 <FormControl>
                   <SelectInput
-                    onChange={handleOptionChange}
+                    onChange={(val) =>
+                      form.setValue(
+                        "category",
+                        val as z.infer<typeof createSubjectSchema>["category"]
+                      )
+                    }
                     className="w-full"
                     options={SUBJECT_CATEGORIES}
                     label="Category"
-                    placeholder="Select category"
+                    selectedValue={form.getValues("category")}
                   />
                 </FormControl>
                 <FormMessage />
@@ -118,8 +114,7 @@ const CreateSubjectForm = ({
             )}
           />
         </div>
-
-        <ActionButton label="Create" status={mutation.status} />
+        <ActionButton label="Create" status={createMutation.status} />
       </form>
     </Form>
   );

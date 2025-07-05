@@ -1,24 +1,7 @@
 "use client";
 
-import ActionButton from "@/components/action-button";
-import { SelectInput } from "@/components/select-input";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { UpdateTeacherInput, updateTeacherSchema } from "@/schema/teacher";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Dispatch, SetStateAction, useCallback } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { GENDER_OPTIONS } from "@/lib/constants";
 import { TeacherData } from "@/types/user";
+import { Dispatch, SetStateAction } from "react";
 
 interface UpdateProfileProps {
   setOpen: Dispatch<SetStateAction<boolean>>;

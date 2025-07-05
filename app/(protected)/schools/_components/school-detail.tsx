@@ -98,13 +98,13 @@ const SchoolDetailPage = ({ id }: { id: string }) => {
             )}
           </div>
           <div>
-            <strong>Region:</strong> {school.region}
+            <strong>Region:</strong> {school.region?.name}
           </div>
           <div>
-            <strong>District:</strong> {school.district}
+            <strong>District:</strong> {school.district?.name}
           </div>
           <div>
-            <strong>Ward:</strong> {school.ward}
+            <strong>Ward:</strong> {school.ward?.name}
           </div>
           <div className="col-span-full">
             <strong>Address:</strong> {school.address}

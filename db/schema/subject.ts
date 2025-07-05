@@ -1,6 +1,6 @@
 import { relations } from "drizzle-orm";
 import { pgEnum, pgTable, text, unique, varchar } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
+import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { z } from "zod";
 import { baseTable } from "@/db/schema/base";
 import { school } from "@/db/schema/school";
@@ -27,8 +27,12 @@ export const schoolSubject = pgTable(
     subject_id: text("subject_id")
       .notNull()
       .references(() => subject.id, { onDelete: "cascade" }),
+    code: varchar("code", { length: 50 }).notNull(),
   },
-  (t) => [unique().on(t.school_id, t.subject_id)]
+  (t) => [
+    unique().on(t.school_id, t.subject_id),
+    unique().on(t.code, t.school_id, t.subject_id),
+  ]
 );
 
 export const schoolSubjectRelations = relations(
@@ -54,6 +58,10 @@ export const createSchoolSubjectSchema = createInsertSchema(schoolSubject);
 
 export const createSubjectSchema = createInsertSchema(subject);
 
-export const subjectCategory = z.enum(["ART", "SCIENCE"]);
+export const updateSubjectSchema = createUpdateSchema(subject).extend({
+  id: z.string(),
+});
+
+export const subjectCategory = createSubjectSchema.shape.category;
 
 export type Subject = z.infer<typeof createSubjectSchema>;

@@ -10,7 +10,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import useDeleteStudent from "@/hooks/student/use-delete-student";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -23,7 +22,6 @@ interface Props {
 function DeleteSubjectDialog({ open, setOpen, subjectId }: Props) {
   const queryClient = useQueryClient();
 
-  const mutation = useDeleteStudent(subjectId);
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogContent>
@@ -42,7 +40,7 @@ function DeleteSubjectDialog({ open, setOpen, subjectId }: Props) {
               toast.loading("Deleting subject...", {
                 id: subjectId,
               });
-              mutation.mutate();
+              // mutation.mutate();
             }}
           >
             Continue

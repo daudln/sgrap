@@ -12,6 +12,7 @@ import TableHeadSelect from "@/components/table-head-select";
 
 type Props = {
   headers: string[];
+  columns: string[];
   body: string[][];
   selectedColumns: Record<string, string | null>;
   onTableHeadSelectChange: (index: number, value: string | null) => void;
@@ -19,6 +20,7 @@ type Props = {
 
 const ImportTable = ({
   headers,
+  columns,
   body,
   selectedColumns,
   onTableHeadSelectChange,
@@ -32,6 +34,7 @@ const ImportTable = ({
               <TableHead key={index} className="px-4 py-2">
                 <TableHeadSelect
                   columnIndex={index}
+                  columns={columns}
                   selectedColumns={selectedColumns}
                   onChange={onTableHeadSelectChange}
                 />

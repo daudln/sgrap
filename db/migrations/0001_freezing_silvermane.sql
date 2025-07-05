@@ -1,0 +1,2 @@
+ALTER TABLE "school_subject" ADD COLUMN "code" varchar(50) NOT NULL;--> statement-breakpoint
+ALTER TABLE "school_subject" ADD CONSTRAINT "school_subject_code_school_id_subject_id_unique" UNIQUE("code","school_id","subject_id");
